@@ -1,12 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
 import { Search, FileText, Calendar, User } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const docTypeFilters = [
+  { value: "all", label: "All" },
+  { value: "progress", label: "Progress Notes" },
+  { value: "lab", label: "Labs" },
+  { value: "imaging", label: "Imaging" },
+  { value: "consult", label: "Consults" },
+]
 
 const mockDocuments = [
   {
@@ -55,6 +62,7 @@ export function EvidencePanel() {
   const { selectedPatient } = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
+  const [docTypeFilter, setDocTypeFilter] = useState("all")
 
   if (!selectedPatient) {
     return (
@@ -72,60 +80,78 @@ export function EvidencePanel() {
   )
 
   return (
-    <div className="space-y-6 p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Clinical Evidence Search</CardTitle>
-          <div className="relative pt-4">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
+    <div className="p-4">
+      <div className="bg-white rounded-lg border border-slate-100">
+        {/* Header - minimal */}
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-[11px] text-slate-400 mb-2">Evidence Search</p>
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
+            <input
+              type="text"
               placeholder="Search documentation..."
-              className="pl-9"
+              className="w-full h-7 pl-7 pr-3 rounded-md text-[11px] bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {filteredDocs.map((doc) => (
-              <Card
-                key={doc.id}
-                className="cursor-pointer transition-colors hover:bg-accent"
-                onClick={() => setSelectedDoc(doc.id === selectedDoc ? null : doc.id)}
+          
+          {/* Type filters */}
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
+            {docTypeFilters.map((filter) => (
+              <button
+                key={filter.value}
+                className={cn(
+                  "h-6 px-2 rounded text-[11px] transition-all",
+                  docTypeFilter === filter.value 
+                    ? "bg-slate-700 text-white font-medium" 
+                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                )}
+                onClick={() => setDocTypeFilter(filter.value)}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <h4 className="font-medium text-sm">{doc.type}</h4>
-                        <Badge variant="secondary" className="text-xs">
-                          {doc.relevance}% relevant
-                        </Badge>
-                      </div>
-                      <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {doc.date}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {doc.author}
-                        </div>
-                      </div>
-                      <p className="mt-2 text-sm text-muted-foreground">{doc.excerpt}</p>
-                    </div>
-                    <Button variant="outline" size="sm">
-                      View Full
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                {filter.label}
+              </button>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        
+        {/* Documents list */}
+        <div className="divide-y divide-slate-100">
+          {filteredDocs.map((doc) => (
+            <div
+              key={doc.id}
+              className="p-3 cursor-pointer transition-colors hover:bg-slate-50"
+              onClick={() => setSelectedDoc(doc.id === selectedDoc ? null : doc.id)}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                    <h4 className="text-[12px] font-medium text-slate-700">{doc.type}</h4>
+                    <Badge variant="secondary" className="text-[9px] h-4 px-1.5">
+                      {doc.relevance}%
+                    </Badge>
+                  </div>
+                  <div className="mt-1.5 flex gap-3 text-[10px] text-slate-400">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-2.5 w-2.5" />
+                      {doc.date}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <User className="h-2.5 w-2.5" />
+                      {doc.author}
+                    </div>
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-slate-500 line-clamp-2">{doc.excerpt}</p>
+                </div>
+                <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2 text-slate-400 hover:text-slate-600">
+                  View
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,14 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+
 import {
-  Bell,
   ChevronDown,
   LayoutDashboard,
   Shield,
   Settings,
   ClipboardList,
-  Clock,
   LogOut,
   HelpCircle,
   Search,
@@ -47,213 +45,164 @@ const baseNavItems = [
 ]
 
 const roleConfig = {
-  case_manager: { name: "Case Manager", icon: User, initials: "CM", color: "bg-blue-600" },
-  physician: { name: "Physician", icon: Stethoscope, initials: "MD", color: "bg-purple-600" },
-  auditor: { name: "Auditor", icon: FileCheck, initials: "AU", color: "bg-emerald-600" },
+  case_manager: { 
+    name: "Case Manager", 
+    shortName: "CM",
+    icon: User, 
+    initials: "CM", 
+    color: "bg-blue-600",
+    headerBg: "bg-gradient-to-r from-blue-50/80 to-slate-50/80",
+    headerBorder: "border-blue-100/50",
+    accentColor: "text-blue-600",
+    activeBg: "bg-blue-100/80",
+  },
+  physician: { 
+    name: "Physician", 
+    shortName: "MD",
+    icon: Stethoscope, 
+    initials: "MD", 
+    color: "bg-purple-600",
+    headerBg: "bg-gradient-to-r from-purple-50/80 to-slate-50/80",
+    headerBorder: "border-purple-100/50",
+    accentColor: "text-purple-600",
+    activeBg: "bg-purple-100/80",
+  },
+  auditor: { 
+    name: "Auditor", 
+    shortName: "AU",
+    icon: FileCheck, 
+    initials: "AU", 
+    color: "bg-emerald-600",
+    headerBg: "bg-gradient-to-r from-emerald-50/80 to-slate-50/80",
+    headerBorder: "border-emerald-100/50",
+    accentColor: "text-emerald-600",
+    activeBg: "bg-emerald-100/80",
+  },
 }
-
-const SESSION_DURATION = 30 * 60
-const WARNING_THRESHOLD = 5 * 60
-
-const roles = [
-  { id: "case_manager", name: "Case Manager", icon: User },
-  { id: "physician", name: "Physician", icon: Stethoscope },
-  { id: "auditor", name: "Auditor", icon: FileCheck },
-]
-
-const navItems = baseNavItems.filter(item => roles.some(role => role.id === item.roles[0]));
 
 export function AppHeader() {
   const pathname = usePathname()
   const { currentRole, setCurrentRole, currentUser } = useApp()
-  const [sessionTime, setSessionTime] = useState(SESSION_DURATION)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionTime((prev) => (prev <= 1 ? SESSION_DURATION : prev - 1))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    const resetSession = () => setSessionTime(SESSION_DURATION)
-    const events = ["mousedown", "keydown", "scroll", "touchstart"]
-    events.forEach((event) => window.addEventListener(event, resetSession))
-    return () => events.forEach((event) => window.removeEventListener(event, resetSession))
-  }, [])
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
-
-  const isWarning = sessionTime <= WARNING_THRESHOLD
   const currentRoleData = roleConfig[currentRole]
   const navItems = baseNavItems.filter(item => item.roles.includes(currentRole))
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
-      <div className="flex h-11 items-center justify-between px-3">
-        {/* Left: Logo + Search */}
-        <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600">
-              <span className="text-[11px] font-bold text-white">CS</span>
-            </div>
-            <span className="text-[13px] font-semibold text-slate-800 hidden sm:block">CareSummarizer</span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-slate-100 text-slate-500 cursor-pointer hover:bg-slate-200 transition-colors">
-            <Search className="h-3.5 w-3.5" />
-            <span className="text-[11px]">Search</span>
-            <kbd className="ml-2 px-1 py-0.5 rounded bg-white text-[9px] text-slate-400 border border-slate-200">Ctrl+K</kbd>
+    <header className={cn(
+      "sticky top-0 z-50 w-full border-b backdrop-blur-sm",
+      currentRoleData.headerBg,
+      currentRoleData.headerBorder
+    )}>
+      <div className="flex h-12 items-center px-3 md:px-4">
+        {/* Left: Logo only - clean minimal branding */}
+        <Link href="/" className="flex items-center mr-4 md:mr-6">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm">
+            <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
           </div>
-        </div>
+        </Link>
 
-        {/* Center: Navigation - Compact on mobile, show only 3 items */}
-        <nav className="flex items-center gap-0.5 sm:gap-1">
-          <TooltipProvider delayDuration={0}>
-            {navItems.slice(0, 3).map((item, index) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
-              // On mobile, only show first 2 items
-              const hideOnMobile = index >= 2
-              return (
-                <Tooltip key={item.href}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex flex-col items-center justify-center gap-0.5 px-2 sm:px-3 py-1.5 rounded-md transition-colors min-w-[36px] sm:min-w-[52px]",
-                        isActive
-                          ? "bg-blue-50 text-blue-600"
-                          : "text-slate-500 hover:bg-slate-100 hover:text-slate-700",
-                        hideOnMobile && "hidden sm:flex"
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="text-[8px] sm:text-[9px] font-medium leading-none hidden sm:block">{item.name}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-[10px]">
-                    {item.name}
-                  </TooltipContent>
-                </Tooltip>
-              )
-            })}
-          </TooltipProvider>
+        {/* Center: Navigation - Clean pill style */}
+        <nav className="flex items-center gap-1 flex-1">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                  isActive
+                    ? cn("bg-white shadow-sm", currentRoleData.accentColor)
+                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{item.name}</span>
+              </Link>
+            )
+          })}
         </nav>
 
-        {/* Right: Role toggle + Utils + User - simplified for mobile */}
-        <div className="flex items-center gap-0.5 sm:gap-1">
-          {/* Role Toggle */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="h-7 gap-1 px-1.5 sm:px-2 text-[11px] font-medium bg-slate-100 hover:bg-slate-200 text-slate-700"
-              >
-                <currentRoleData.icon className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{currentRoleData.name}</span>
-                <ChevronDown className="h-3 w-3 text-slate-400 hidden sm:block" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel className="text-[10px] text-slate-500 font-normal">Switch Role (Demo)</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {Object.entries(roleConfig).map(([id, role]) => (
-                <DropdownMenuItem 
-                  key={id}
-                  onClick={() => setCurrentRole(id as "case_manager" | "physician" | "auditor")}
-                  className={cn(
-                    "text-[11px] gap-2",
-                    currentRole === id && "bg-blue-50 text-blue-600"
-                  )}
-                >
-                  <role.icon className="h-3.5 w-3.5" />
-                  <div className="flex flex-col">
-                    <span>{role.name}</span>
-                    <span className="text-[9px] text-slate-400">
-                      {id === "case_manager" && "Full access, prepare cases"}
-                      {id === "physician" && "Review & approve cases"}
-                      {id === "auditor" && "View-only, compliance"}
-                    </span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <div className="h-4 w-px bg-slate-200 mx-0.5 sm:mx-1 hidden sm:block" />
-
-          {/* Session Timer - hide on mobile */}
+        {/* Right: Minimal utilities */}
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Search - Icon only on mobile */}
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={cn(
-                  "hidden sm:flex items-center gap-1 px-1.5 py-1 rounded text-[10px] font-mono tabular-nums",
-                  isWarning ? "text-amber-600 bg-amber-50" : "text-slate-400"
-                )}>
-                  <Clock className="h-3 w-3" />
-                  {formatTime(sessionTime)}
-                </div>
+                <button className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white/60 transition-colors">
+                  <Search className="h-4 w-4" />
+                </button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-[10px]">
-                Session expires in {formatTime(sessionTime)}
-              </TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">Search (Ctrl+K)</TooltipContent>
             </Tooltip>
+
+            
 
             {/* Notifications */}
             <NotificationCenter />
 
-            {/* Help - hide on mobile */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="hidden sm:flex h-7 w-7 rounded-md items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">
-                  <HelpCircle className="h-4 w-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-[10px]">Help</TooltipContent>
-            </Tooltip>
+            {/* Divider */}
+            <div className="h-5 w-px bg-slate-200/60 mx-1 hidden md:block" />
+
+            {/* Role Switcher - Compact */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="h-8 gap-1.5 px-2 rounded-full bg-white/60 hover:bg-white text-xs font-medium shadow-sm"
+                >
+                  <Avatar className="h-5 w-5">
+                    <AvatarFallback className={cn("text-[9px] font-semibold text-white", currentRoleData.color)}>
+                      {currentRoleData.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:inline text-slate-700">{currentRoleData.shortName}</span>
+                  <ChevronDown className="h-3 w-3 text-slate-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuLabel className="text-xs font-normal text-slate-500">
+                  Signed in as <span className="font-medium text-slate-700">{currentUser.name}</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-[10px] text-slate-400 uppercase tracking-wide">Switch Role</DropdownMenuLabel>
+                {Object.entries(roleConfig).map(([id, role]) => (
+                  <DropdownMenuItem 
+                    key={id}
+                    onClick={() => setCurrentRole(id as "case_manager" | "physician" | "auditor")}
+                    className={cn(
+                      "text-xs gap-2 cursor-pointer",
+                      currentRole === id && "bg-slate-100"
+                    )}
+                  >
+                    <div className={cn("h-5 w-5 rounded-full flex items-center justify-center", role.color)}>
+                      <role.icon className="h-3 w-3 text-white" />
+                    </div>
+                    <span>{role.name}</span>
+                    {currentRole === id && (
+                      <span className="ml-auto text-[10px] text-slate-400">Active</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-xs gap-2">
+                  <Settings className="h-3.5 w-3.5 text-slate-400" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-xs gap-2">
+                  <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
+                  Help Center
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-xs gap-2 text-red-600 focus:text-red-600">
+                  <LogOut className="h-3.5 w-3.5" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </TooltipProvider>
-
-          <div className="h-4 w-px bg-slate-200 mx-0.5 sm:mx-1 hidden sm:block" />
-
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-7 gap-1.5 px-1 sm:px-1.5 hover:bg-slate-100">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback className={cn("text-[10px] font-semibold text-white", currentRoleData.color)}>
-                    {currentRoleData.initials}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel className="text-[11px]">
-                <div className="flex flex-col">
-                  <span className="font-medium">{currentUser.name}</span>
-                  <span className="text-[10px] text-slate-500 font-normal">{currentRoleData.name} - Memorial Hospital</span>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-[11px] gap-2">
-                <Settings className="h-3.5 w-3.5" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-[11px] gap-2">
-                <HelpCircle className="h-3.5 w-3.5" />
-                Help
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-[11px] gap-2 text-red-600 focus:text-red-600 focus:bg-red-50">
-                <LogOut className="h-3.5 w-3.5" />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
     </header>
