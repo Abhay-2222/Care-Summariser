@@ -26,8 +26,9 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/lib/app-context"
 import { useRouter } from "next/navigation"
-import { statusConfig } from "@/lib/workflow-utils"
+import { statusConfig, urgencyConfig } from "@/lib/workflow-utils"
 import type { CaseStatus } from "@/lib/types"
+import { typography } from "@/lib/design-system"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -362,10 +363,10 @@ export function PatientListPanel() {
                         )}>
                           {patient.name}
                         </span>
-                        {/* Status badge */}
+                        {/* Status badge - consistent styling everywhere */}
                         <span className={cn(
                           "flex-shrink-0 text-[9px] font-medium px-1.5 py-0.5 rounded",
-                          statusInfo.bgColor, statusInfo.color
+                          statusInfo.badgeClass
                         )}>
                           {statusInfo.label}
                         </span>
