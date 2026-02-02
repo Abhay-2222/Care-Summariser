@@ -249,8 +249,8 @@ export function PatientListPanel() {
           )}
         </div>
         
-        {/* Urgency counts - minimal inline */}
-        <div className="flex items-center gap-4 mt-2.5 text-[10px]">
+        {/* Urgency counts - consistent text-[11px] */}
+        <div className="flex items-center gap-4 mt-2.5">
           {urgencyOptions.map((filter) => {
             const isActive = selectedFilter === filter.value
             const count = urgencyCounts[filter.value as keyof typeof urgencyCounts]
@@ -260,13 +260,13 @@ export function PatientListPanel() {
               <button
                 key={filter.value}
                 className={cn(
-                  "flex items-center gap-1 transition-colors",
-                  isActive ? "text-slate-600 font-medium" : "text-slate-400 hover:text-slate-500",
+                  "flex items-center gap-1.5 text-[11px] transition-colors",
+                  isActive ? "text-slate-700 font-medium" : "text-slate-400 hover:text-slate-500",
                 )}
                 onClick={() => setSelectedFilter(filter.value)}
               >
                 <Icon className={cn(
-                  "h-2.5 w-2.5",
+                  "h-3 w-3",
                   filter.value === "STAT" && "text-red-400",
                   filter.value === "URGENT" && "text-amber-400",
                 )} />
@@ -276,8 +276,8 @@ export function PatientListPanel() {
           })}
         </div>
 
-        {/* Status filters - simpler pills */}
-        <div className="flex flex-wrap gap-1 mt-2">
+        {/* Status filters - consistent text-[11px] */}
+        <div className="flex flex-wrap gap-1.5 mt-2.5">
           {statusOptions.map((status) => {
             const isActive = statusFilter === status.value
             const count = statusCounts[status.value as keyof typeof statusCounts] || 0
@@ -286,14 +286,14 @@ export function PatientListPanel() {
               <button
                 key={status.value}
                 className={cn(
-                  "h-5 px-2 rounded text-[9px] transition-all",
+                  "h-6 px-2 rounded text-[11px] transition-all",
                   isActive 
-                    ? "bg-slate-700 text-white" 
-                    : "text-slate-400 hover:text-slate-600",
+                    ? "bg-slate-700 text-white font-medium" 
+                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
                 )}
                 onClick={() => setStatusFilter(status.value)}
               >
-                {status.label} {count}
+                {status.label} <span className="text-[10px] opacity-70">{count}</span>
               </button>
             )
           })}

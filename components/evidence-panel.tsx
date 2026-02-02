@@ -1,12 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
 import { Search, FileText, Calendar, User } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const docTypeFilters = [
+  { value: "all", label: "All" },
+  { value: "progress", label: "Progress Notes" },
+  { value: "lab", label: "Labs" },
+  { value: "imaging", label: "Imaging" },
+  { value: "consult", label: "Consults" },
+]
 
 const mockDocuments = [
   {
@@ -55,6 +62,7 @@ export function EvidencePanel() {
   const { selectedPatient } = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null)
+  const [docTypeFilter, setDocTypeFilter] = useState("all")
 
   if (!selectedPatient) {
     return (
@@ -75,17 +83,35 @@ export function EvidencePanel() {
     <div className="p-4">
       <div className="bg-white rounded-lg border border-slate-100">
         {/* Header - minimal */}
-        <div className="px-4 py-3 border-b border-slate-50">
+        <div className="px-4 py-3 border-b border-slate-100">
           <p className="text-[11px] text-slate-400 mb-2">Evidence Search</p>
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
             <input
               type="text"
               placeholder="Search documentation..."
-              className="w-full h-7 pl-7 pr-3 rounded-md text-xs bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
+              className="w-full h-7 pl-7 pr-3 rounded-md text-[11px] bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          
+          {/* Type filters */}
+          <div className="flex flex-wrap gap-1.5 mt-2.5">
+            {docTypeFilters.map((filter) => (
+              <button
+                key={filter.value}
+                className={cn(
+                  "h-6 px-2 rounded text-[11px] transition-all",
+                  docTypeFilter === filter.value 
+                    ? "bg-slate-700 text-white font-medium" 
+                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                )}
+                onClick={() => setDocTypeFilter(filter.value)}
+              >
+                {filter.label}
+              </button>
+            ))}
           </div>
         </div>
         

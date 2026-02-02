@@ -1,10 +1,18 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
 import { AlertCircle, CheckCircle2, Clock, FileText } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const statusFilters = [
+  { value: "all", label: "All" },
+  { value: "pending", label: "Pending" },
+  { value: "approved", label: "Approved" },
+  { value: "denied", label: "Denied" },
+]
 
 const mockAppeals = [
   {
@@ -29,6 +37,7 @@ const mockAppeals = [
 
 export function AppealsPanel() {
   const { selectedPatient } = useApp()
+  const [statusFilter, setStatusFilter] = useState("all")
 
   if (!selectedPatient) {
     return (
@@ -40,14 +49,34 @@ export function AppealsPanel() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-200">
+      <div className="bg-white rounded-lg border border-slate-100">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-[13px] font-medium text-slate-800">Appeals</h2>
-          <Button size="sm" className="gap-1.5 text-[11px] h-7">
-            <FileText className="h-3 w-3" />
-            New Appeal
-          </Button>
+        <div className="px-4 py-3 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-2.5">
+            <p className="text-[11px] text-slate-400">Appeals Management</p>
+            <Button size="sm" className="gap-1.5 text-[11px] h-7">
+              <FileText className="h-3 w-3" />
+              New Appeal
+            </Button>
+          </div>
+          
+          {/* Status filters */}
+          <div className="flex flex-wrap gap-1.5">
+            {statusFilters.map((filter) => (
+              <button
+                key={filter.value}
+                className={cn(
+                  "h-6 px-2 rounded text-[11px] transition-all",
+                  statusFilter === filter.value 
+                    ? "bg-slate-700 text-white font-medium" 
+                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                )}
+                onClick={() => setStatusFilter(filter.value)}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
         
         {/* Content */}
