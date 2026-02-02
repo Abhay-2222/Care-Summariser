@@ -1,14 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+
 import {
-  Bell,
   ChevronDown,
   LayoutDashboard,
   Shield,
   Settings,
   ClipboardList,
-  Clock,
   LogOut,
   HelpCircle,
   Search,
@@ -85,29 +83,6 @@ const roleConfig = {
 export function AppHeader() {
   const pathname = usePathname()
   const { currentRole, setCurrentRole, currentUser } = useApp()
-  const [sessionTime, setSessionTime] = useState(30 * 60)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSessionTime((prev) => (prev <= 1 ? 30 * 60 : prev - 1))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    const resetSession = () => setSessionTime(30 * 60)
-    const events = ["mousedown", "keydown", "scroll", "touchstart"]
-    events.forEach((event) => window.addEventListener(event, resetSession))
-    return () => events.forEach((event) => window.removeEventListener(event, resetSession))
-  }, [])
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, "0")}`
-  }
-
-  const isWarning = sessionTime <= 5 * 60
   const currentRoleData = roleConfig[currentRole]
   const navItems = baseNavItems.filter(item => item.roles.includes(currentRole))
 
@@ -118,12 +93,13 @@ export function AppHeader() {
       currentRoleData.headerBorder
     )}>
       <div className="flex h-12 items-center px-3 md:px-4">
-        {/* Left: Logo */}
-        <Link href="/" className="flex items-center gap-2 mr-4 md:mr-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 shadow-sm">
-            <span className="text-xs font-bold text-white">CS</span>
+        {/* Left: Logo only - clean minimal branding */}
+        <Link href="/" className="flex items-center mr-4 md:mr-6">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm">
+            <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
           </div>
-          <span className="text-sm font-semibold text-slate-800 hidden md:block">CareSummarizer</span>
         </Link>
 
         {/* Center: Navigation - Clean pill style */}
@@ -162,19 +138,7 @@ export function AppHeader() {
               <TooltipContent side="bottom" className="text-xs">Search (Ctrl+K)</TooltipContent>
             </Tooltip>
 
-            {/* Session Timer - Compact */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className={cn(
-                  "hidden md:flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-mono",
-                  isWarning ? "text-amber-600 bg-amber-50" : "text-slate-400 bg-white/50"
-                )}>
-                  <Clock className="h-3 w-3" />
-                  {formatTime(sessionTime)}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Session time remaining</TooltipContent>
-            </Tooltip>
+            
 
             {/* Notifications */}
             <NotificationCenter />

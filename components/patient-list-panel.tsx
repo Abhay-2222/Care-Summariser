@@ -227,26 +227,26 @@ export function PatientListPanel() {
       )}
       
       {/* Header */}
-      <div className="px-3 py-2 border-b border-slate-200">
-        {/* Search */}
+      <div className="px-3 py-2.5 border-b border-slate-100">
+        {/* Search - minimal styling */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
           <Input
             id="patient-search"
-            placeholder="Search patients..."
-            className="h-8 pl-8 pr-8 rounded-md text-[12px] bg-slate-50 border-slate-200 focus:bg-white"
+            placeholder="Search..."
+            className="h-7 pl-7 pr-6 rounded text-[11px] bg-slate-50/50 border-slate-100 focus:bg-white placeholder:text-slate-300"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery ? (
             <button 
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center text-slate-300 hover:text-slate-500"
             >
-              <X className="h-3 w-3" />
+              <X className="h-2.5 w-2.5" />
             </button>
           ) : (
-            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 font-mono">/</span>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-300 font-mono">/</span>
           )}
         </div>
         

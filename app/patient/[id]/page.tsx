@@ -131,16 +131,16 @@ export default function PatientDetailPage() {
                 <TabsContent value="clinical-summary" className="m-0 flex-1 overflow-hidden">
                   <ClinicalSummaryView />
                 </TabsContent>
-                <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto p-4">
+                <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-slate-50">
                   <PriorAuthComposer />
                 </TabsContent>
-                <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto p-4">
+                <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-slate-50">
                   <EvidencePanel />
                 </TabsContent>
-                <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto p-4">
+                <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-slate-50">
                   <AppealsPanel />
                 </TabsContent>
-                <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto p-4">
+                <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-slate-50 p-4">
                   <CollaborationPanel patientId={id} patientName={selectedPatient.name} />
                 </TabsContent>
               </Tabs>

@@ -39,84 +39,86 @@ export function AppealsPanel() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Appeals & Resubmission</CardTitle>
-            <Button className="gap-2">
-              <FileText className="h-4 w-4" />
-              New Appeal
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
+    <div className="p-4">
+      <div className="bg-white rounded-lg border border-slate-200">
+        {/* Header */}
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-[13px] font-medium text-slate-800">Appeals</h2>
+          <Button size="sm" className="gap-1.5 text-[11px] h-7">
+            <FileText className="h-3 w-3" />
+            New Appeal
+          </Button>
+        </div>
+        
+        {/* Content */}
+        <div className="p-4">
           {mockAppeals.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <CheckCircle2 className="mb-4 h-12 w-12 text-muted-foreground" />
-              <h3 className="mb-2 font-semibold">No Active Appeals</h3>
-              <p className="text-center text-sm text-muted-foreground">There are no pending appeals for this patient</p>
+            <div className="flex flex-col items-center justify-center py-10">
+              <CheckCircle2 className="mb-3 h-8 w-8 text-slate-300" />
+              <h3 className="text-[13px] font-medium text-slate-700 mb-1">No Active Appeals</h3>
+              <p className="text-[11px] text-slate-400 text-center">There are no pending appeals for this patient</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {mockAppeals.map((appeal) => (
-                <Card key={appeal.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          {appeal.status === "Approved" ? (
-                            <CheckCircle2 className="h-5 w-5 text-success" />
-                          ) : appeal.status === "Pending Review" ? (
-                            <Clock className="h-5 w-5 text-warning" />
-                          ) : (
-                            <AlertCircle className="h-5 w-5 text-destructive" />
-                          )}
-                          <h4 className="font-medium">{appeal.caseNumber}</h4>
-                          <Badge
-                            variant={
-                              appeal.status === "Approved"
-                                ? "success"
-                                : appeal.status === "Pending Review"
-                                  ? "warning"
-                                  : "secondary"
-                            }
-                          >
-                            {appeal.status}
-                          </Badge>
-                        </div>
-                        <div className="mt-3 grid gap-2 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Submitted:</span>{" "}
-                            <span className="font-medium">{appeal.submittedDate}</span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Reason:</span> {appeal.reason}
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Next Step:</span> {appeal.nextStep}
-                          </div>
-                          {appeal.dueDate !== "-" && (
-                            <div>
-                              <span className="text-muted-foreground">Due Date:</span>{" "}
-                              <span className="font-medium text-warning">{appeal.dueDate}</span>
-                            </div>
-                          )}
-                        </div>
+                <div key={appeal.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        {appeal.status === "Approved" ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                        ) : appeal.status === "Pending Review" ? (
+                          <Clock className="h-3.5 w-3.5 text-amber-500" />
+                        ) : (
+                          <AlertCircle className="h-3.5 w-3.5 text-red-500" />
+                        )}
+                        <h4 className="text-[12px] font-medium text-slate-700">{appeal.caseNumber}</h4>
+                        <Badge
+                          variant={
+                            appeal.status === "Approved"
+                              ? "success"
+                              : appeal.status === "Pending Review"
+                                ? "warning"
+                                : "secondary"
+                          }
+                          className="text-[9px] h-4 px-1.5"
+                        >
+                          {appeal.status}
+                        </Badge>
                       </div>
-                      {appeal.status === "Pending Review" && (
-                        <Button variant="outline" size="sm">
-                          Update Appeal
-                        </Button>
-                      )}
+                      <div className="mt-2 space-y-1 text-[11px]">
+                        <div className="flex gap-2">
+                          <span className="text-slate-400 w-16">Submitted</span>
+                          <span className="text-slate-600">{appeal.submittedDate}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <span className="text-slate-400 w-16">Reason</span>
+                          <span className="text-slate-600">{appeal.reason}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <span className="text-slate-400 w-16">Next Step</span>
+                          <span className="text-slate-600">{appeal.nextStep}</span>
+                        </div>
+                        {appeal.dueDate !== "-" && (
+                          <div className="flex gap-2">
+                            <span className="text-slate-400 w-16">Due Date</span>
+                            <span className="text-amber-600 font-medium">{appeal.dueDate}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                    {appeal.status === "Pending Review" && (
+                      <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2 text-slate-400 hover:text-slate-600">
+                        Update
+                      </Button>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
