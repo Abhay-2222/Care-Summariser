@@ -73,15 +73,16 @@ export function EvidencePanel() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-200">
-        {/* Header */}
-        <div className="px-4 py-3 border-b border-slate-100">
-          <h2 className="text-[13px] font-medium text-slate-800 mb-2">Evidence Search</h2>
+      <div className="bg-white rounded-lg border border-slate-100">
+        {/* Header - minimal */}
+        <div className="px-4 py-3 border-b border-slate-50">
+          <p className="text-[11px] text-slate-400 mb-2">Evidence Search</p>
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
-            <Input
+            <input
+              type="text"
               placeholder="Search documentation..."
-              className="h-7 pl-7 text-[11px] bg-slate-50/50 border-slate-100 placeholder:text-slate-300"
+              className="w-full h-7 pl-7 pr-3 rounded-md text-xs bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
