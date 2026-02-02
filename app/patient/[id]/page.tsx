@@ -14,12 +14,6 @@ import { Activity, FileText, Search, RefreshCw, Loader2, Brain, Eye, BarChart3, 
 import { useApp } from "@/lib/app-context"
 import { useEffect, useState, createContext, useContext } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 // Tab context to allow child components to switch tabs
 const TabContext = createContext<{
@@ -89,60 +83,48 @@ export default function PatientDetailPage() {
           <AppHeader />
           <div className="flex flex-1 overflow-hidden">
             <PatientListPanel />
-            <main className="flex-1 overflow-hidden flex flex-col bg-slate-100">
+            <main className="flex-1 overflow-hidden flex flex-col bg-white">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                {/* Compact tab bar with CareLens toggle */}
-                <div className="border-b border-slate-200 bg-white px-3 py-1.5 flex-shrink-0">
-                  <div className="flex items-center justify-between gap-3">
-                    {/* Icon-driven tabs */}
-                    <TabsList className="h-8 bg-slate-100 p-0.5 rounded-md">
-                      <TooltipProvider delayDuration={0}>
-                        {tabItems.map((tab) => {
-                          const Icon = tab.icon
-                          return (
-                            <Tooltip key={tab.value}>
-                              <TooltipTrigger asChild>
-                                <TabsTrigger 
-                                  value={tab.value} 
-                                  className="h-7 px-2.5 gap-1.5 rounded text-[11px] data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
-                                >
-                                  <Icon className="h-3.5 w-3.5" />
-                                  <span className="hidden md:inline">{tab.label}</span>
-                                </TabsTrigger>
-                              </TooltipTrigger>
-                              <TooltipContent side="bottom" className="text-[10px]">
-                                {tab.label}
-                              </TooltipContent>
-                            </Tooltip>
-                          )
-                        })}
-                      </TooltipProvider>
+                {/* Clean tab bar with underline style like Datadog */}
+                <div className="border-b border-slate-200 bg-white px-4 flex-shrink-0">
+                  <div className="flex items-center justify-between">
+                    {/* Clean underline tabs */}
+                    <TabsList className="h-auto bg-transparent p-0 gap-0">
+                      {tabItems.map((tab) => {
+                        const Icon = tab.icon
+                        const isActive = activeTab === tab.value
+                        return (
+                          <TabsTrigger 
+                            key={tab.value}
+                            value={tab.value} 
+                            className="relative h-11 px-4 gap-2 rounded-none bg-transparent text-[13px] font-normal text-slate-500 hover:text-slate-900 data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:shadow-none"
+                          >
+                            <Icon className="h-4 w-4" />
+                            <span className="hidden sm:inline">{tab.label}</span>
+                            {/* Active underline indicator */}
+                            {isActive && (
+                              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900" />
+                            )}
+                          </TabsTrigger>
+                        )
+                      })}
                     </TabsList>
 
-                    {/* CareLens Toggle Button */}
-                    <TooltipProvider delayDuration={0}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant={careLensOpen ? "default" : "outline"}
-                            size="sm"
-                            className={`h-8 gap-1.5 text-[11px] ${careLensOpen ? "bg-purple-600 hover:bg-purple-700 text-white" : "bg-transparent hover:bg-purple-50 text-purple-600 border-purple-200"}`}
-                            onClick={() => setCareLensOpen(!careLensOpen)}
-                          >
-                            <careLensButton.icon className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline">{careLensButton.label}</span>
-                            {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
-                              <span className="ml-1 h-4 w-4 rounded-full bg-amber-500 text-[9px] text-white flex items-center justify-center">
-                                {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
-                              </span>
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="text-[10px]">
-                          {careLensButton.description}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    {/* CareLens Toggle Button - minimal style */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-purple-700 bg-purple-50" : "text-slate-500 hover:text-purple-600 hover:bg-purple-50"}`}
+                      onClick={() => setCareLensOpen(!careLensOpen)}
+                    >
+                      <careLensButton.icon className="h-4 w-4" />
+                      <span className="hidden sm:inline">{careLensButton.label}</span>
+                      {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
+                        <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-medium flex items-center justify-center">
+                          {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
+                        </span>
+                      )}
+                    </Button>
                   </div>
                 </div>
 

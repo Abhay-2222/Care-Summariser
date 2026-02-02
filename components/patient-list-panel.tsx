@@ -225,12 +225,7 @@ export function PatientListPanel() {
           </Button>
         </div>
       )}
-      {/* Human-centered helper - reduces cognitive load */}
-      <div className="px-3 py-2 bg-gradient-to-r from-blue-50 to-slate-50 border-b border-blue-100">
-        <p className="text-[9px] text-blue-700 leading-relaxed">
-          <strong>Your queue, organized:</strong> STAT cases surface first. CareLens pre-analyzes each case so you can focus on clinical decisions, not data gathering.
-        </p>
-      </div>
+      
       {/* Header */}
       <div className="px-3 py-2 border-b border-slate-200">
         {/* Search */}
