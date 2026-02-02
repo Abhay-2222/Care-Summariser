@@ -1,6 +1,7 @@
 "use client"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { toast } from "@/components/ui/use-toast"
 
 import React from "react"
 
@@ -182,7 +183,7 @@ interface CoachMessage {
 }
 
 export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
-  const { selectedPatient, currentRole, currentUser, updateRiskFactorStatus } = useApp()
+  const { selectedPatient, currentRole, currentUser, updateRiskFactorStatus, updateRecommendationStatus } = useApp()
   const [confidenceOpen, setConfidenceOpen] = useState(true)
   const [risksOpen, setRisksOpen] = useState(true)
   const [gapsOpen, setGapsOpen] = useState(true)
@@ -514,50 +515,93 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                 </span>
               </CollapsibleTrigger>
               <CollapsibleContent className="pt-1 space-y-1.5">
-                {careLens.riskFactors.slice(0, 4).map((risk) => (
-                  <div 
-                    key={risk.id} 
-                    className={cn(
-                      "p-2 rounded-md border text-[10px]",
-                      risk.status === "open" 
-                        ? "bg-red-50/50 border-red-200" 
-                        : "bg-slate-50 border-slate-200 opacity-60"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-slate-700 leading-tight flex-1">{risk.factor}</p>
-                      <RiskBadge level={risk.severity} />
-                    </div>
-                    {risk.status === "open" && roleView.showActions && (
-                      <div className="flex items-center gap-1 mt-1.5">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-5 px-1.5 text-[8px] text-slate-500 hover:bg-slate-100"
-                          onClick={() => handleChallenge(risk.id, risk.factor)}
-                        >
-                          Why?
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-5 px-1.5 text-[8px] text-emerald-600 hover:bg-emerald-50"
-                          onClick={() => updateRiskFactorStatus(risk.id, "addressed", "Resolved")}
-                        >
-                          <Check className="h-2.5 w-2.5" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-5 px-1.5 text-[8px] text-slate-400 hover:bg-slate-100"
-                          onClick={() => updateRiskFactorStatus(risk.id, "challenged", "Not applicable")}
-                        >
-                          <X className="h-2.5 w-2.5" />
-                        </Button>
+                {careLens.riskFactors.slice(0, 4).map((risk) => {
+                  const isAddressed = risk.status === "addressed"
+                  const isDismissed = risk.status === "not_applicable"
+                  const isOpen = risk.status === "open"
+                  
+                  return (
+                    <div 
+                      key={risk.id} 
+                      className={cn(
+                        "rounded-lg border text-[10px] overflow-hidden transition-all",
+                        isOpen ? "bg-red-50/50 border-red-200" : 
+                        isAddressed ? "bg-emerald-50/50 border-emerald-200" :
+                        isDismissed ? "bg-slate-50 border-slate-200 opacity-50" :
+                        "bg-slate-50 border-slate-200"
+                      )}
+                    >
+                      <div className="p-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className={cn(
+                              "text-slate-700 leading-tight",
+                              (isAddressed || isDismissed) && "line-through opacity-60"
+                            )}>{risk.factor}</p>
+                            {/* Show explanation inline when expanded */}
+                            {isOpen && risk.explanation && (
+                              <p className="text-[9px] text-slate-500 mt-1 leading-relaxed">{risk.explanation}</p>
+                            )}
+                          </div>
+                          <RiskBadge level={risk.severity} />
+                        </div>
+                        
+                        {/* Status indicator for resolved items */}
+                        {isAddressed && (
+                          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-emerald-200">
+                            <Check className="h-3 w-3 text-emerald-600" />
+                            <span className="text-[9px] text-emerald-600 font-medium">Addressed</span>
+                          </div>
+                        )}
+                        {isDismissed && (
+                          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-200">
+                            <X className="h-3 w-3 text-slate-400" />
+                            <span className="text-[9px] text-slate-400 font-medium">Dismissed - Not applicable</span>
+                          </div>
+                        )}
+                        
+                        {/* Action buttons for open risks */}
+                        {isOpen && roleView.showActions && (
+                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-red-100">
+                            <button 
+                              type="button"
+                              className="text-[9px] text-slate-500 hover:text-slate-700 underline"
+                              onClick={() => handleChallenge(risk.id, risk.factor)}
+                            >
+                              Why is this flagged?
+                            </button>
+                            <div className="flex items-center gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-6 px-2 text-[9px] text-emerald-600 hover:bg-emerald-100 gap-1 bg-transparent"
+                                onClick={() => {
+                                  updateRiskFactorStatus(risk.id, "addressed", "Resolved")
+                                  toast({ title: "Risk Addressed", description: "Marked as addressed" })
+                                }}
+                              >
+                                <Check className="h-3 w-3" />
+                                Addressed
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-6 px-2 text-[9px] text-slate-400 hover:bg-slate-100 gap-1 bg-transparent"
+                                onClick={() => {
+                                  updateRiskFactorStatus(risk.id, "not_applicable", "Not applicable")
+                                  toast({ title: "Risk Dismissed", description: "Marked as not applicable" })
+                                }}
+                              >
+                                <X className="h-3 w-3" />
+                                Dismiss
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  )
+                })}
               </CollapsibleContent>
             </Collapsible>
 
@@ -608,21 +652,82 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                 </span>
               </CollapsibleTrigger>
               <CollapsibleContent className="pt-1 space-y-1.5">
-                {careLens.recommendations.slice(0, 3).map((rec) => (
-                  <div key={rec.id} className="p-2 rounded-md border bg-blue-50/50 border-blue-200 text-[10px]">
-                    <p className="text-slate-700 leading-tight">{rec.text}</p>
-                    {rec.status === "pending" && roleView.showActions && (
-                      <div className="flex items-center gap-1 mt-1.5">
-                        <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[8px] text-emerald-600 hover:bg-emerald-50">
-                          <Check className="h-2.5 w-2.5" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[8px] text-slate-400 hover:bg-slate-100">
-                          <X className="h-2.5 w-2.5" />
-                        </Button>
+                {careLens.recommendations.slice(0, 3).map((rec) => {
+                  const isCompleted = rec.status === "completed"
+                  const isDismissed = rec.status === "dismissed"
+                  const isPending = rec.status === "pending"
+                  const isInProgress = rec.status === "in_progress"
+                  
+                  return (
+                    <div 
+                      key={rec.id} 
+                      className={cn(
+                        "rounded-lg border text-[10px] overflow-hidden transition-all",
+                        isPending || isInProgress ? "bg-blue-50/50 border-blue-200" : 
+                        isCompleted ? "bg-emerald-50/50 border-emerald-200" :
+                        isDismissed ? "bg-slate-50 border-slate-200 opacity-50" :
+                        "bg-slate-50 border-slate-200"
+                      )}
+                    >
+                      <div className="p-2">
+                        <p className={cn(
+                          "text-slate-700 leading-tight",
+                          (isCompleted || isDismissed) && "line-through opacity-60"
+                        )}>{rec.text}</p>
+                        
+                        {/* Status indicator for completed items */}
+                        {isCompleted && (
+                          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-emerald-200">
+                            <Check className="h-3 w-3 text-emerald-600" />
+                            <span className="text-[9px] text-emerald-600 font-medium">Completed</span>
+                          </div>
+                        )}
+                        {isDismissed && (
+                          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-200">
+                            <X className="h-3 w-3 text-slate-400" />
+                            <span className="text-[9px] text-slate-400 font-medium">Skipped</span>
+                          </div>
+                        )}
+                        {isInProgress && (
+                          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-blue-200">
+                            <Loader2 className="h-3 w-3 text-blue-600 animate-spin" />
+                            <span className="text-[9px] text-blue-600 font-medium">In progress</span>
+                          </div>
+                        )}
+                        
+                        {/* Action buttons for pending recommendations */}
+                        {isPending && roleView.showActions && (
+                          <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-blue-100">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2 text-[9px] text-emerald-600 hover:bg-emerald-100 gap-1 bg-transparent"
+                              onClick={() => {
+                                updateRecommendationStatus(rec.id, "completed", "Done")
+                                toast({ title: "Recommendation Completed", description: "Action marked as done" })
+                              }}
+                            >
+                              <Check className="h-3 w-3" />
+                              Done
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2 text-[9px] text-slate-400 hover:bg-slate-100 gap-1 bg-transparent"
+                              onClick={() => {
+                                updateRecommendationStatus(rec.id, "dismissed", "Skipped")
+                                toast({ title: "Recommendation Skipped", description: "Action dismissed" })
+                              }}
+                            >
+                              <X className="h-3 w-3" />
+                              Skip
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  )
+                })}
               </CollapsibleContent>
             </Collapsible>
 

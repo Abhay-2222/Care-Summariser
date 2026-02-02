@@ -106,6 +106,9 @@ export function ClinicalSummaryView() {
   const [mdNotes, setMdNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCareLensHint, setShowCareLensHint] = useState(!hasSeenSwipeHint)
+  
+  // Track requested items - stores rule IDs that have been requested
+  const [requestedItems, setRequestedItems] = useState<Set<string>>(new Set())
 
   if (!selectedPatient) {
     return (
@@ -129,8 +132,9 @@ export function ClinicalSummaryView() {
     })
   }
 
-  const handleRequestDoc = (alertId: string) => {
-    requestDocumentation(alertId)
+  const handleRequestDoc = (ruleId: string) => {
+    requestDocumentation(ruleId)
+    setRequestedItems(prev => new Set([...prev, ruleId]))
     toast({
       title: "Documentation Requested",
       description: "Request has been sent to the clinical team",
@@ -397,19 +401,33 @@ export function ClinicalSummaryView() {
                                 </div>
                               )}
                               
-                              {/* Missing doc - show request button */}
+                              {/* Missing doc - show request button or requested state */}
                               {rule.status === "missing" && (
                                 <div className="flex items-center gap-2 mt-1.5">
-                                  <span className={cn(typography.label, "text-red-500")}>Need:</span>
-                                  <span className="text-[9px] text-red-600">{rule.evidence || "Clinical documentation"}</span>
-                                  <Button 
-                                    size="sm" 
-                                    variant="ghost"
-                                    className="h-5 px-1.5 text-[9px] text-red-600 hover:bg-red-100 ml-auto"
-                                    onClick={() => handleRequestDoc(rule.id)}
-                                  >
-                                    Request
-                                  </Button>
+                                  {requestedItems.has(rule.id) ? (
+                                    // Requested state - show confirmation
+                                    <>
+                                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-medium flex items-center gap-1">
+                                        <Clock className="h-2.5 w-2.5" />
+                                        Requested
+                                      </span>
+                                      <span className="text-[9px] text-slate-400">Sent to clinical team</span>
+                                    </>
+                                  ) : (
+                                    // Show request button
+                                    <>
+                                      <span className={cn(typography.label, "text-red-500")}>Need:</span>
+                                      <span className="text-[9px] text-red-600">{rule.evidence || "Clinical documentation"}</span>
+                                      <Button 
+                                        size="sm" 
+                                        variant="ghost"
+                                        className="h-5 px-1.5 text-[9px] text-red-600 hover:bg-red-100 ml-auto bg-transparent"
+                                        onClick={() => handleRequestDoc(rule.id)}
+                                      >
+                                        Request
+                                      </Button>
+                                    </>
+                                  )}
                                 </div>
                               )}
                               
@@ -491,113 +509,23 @@ export function ClinicalSummaryView() {
         </div>
       </div>
 
-      {/* Fixed Action Bar - with padding for mobile FAB */}
-      <div className="flex-shrink-0 px-4 py-3 border-t border-slate-200 bg-white pl-20 md:pl-4">
+      {/* Minimal Footer Bar - primary actions are in WorkflowBar */}
+      <div className="flex-shrink-0 px-4 py-2 border-t border-slate-100 bg-slate-50/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Action buttons based on role and status */}
-            {canClaim && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-blue-600 hover:bg-blue-700"
-                onClick={handleClaimCase}
-              >
-                <Play className="h-3.5 w-3.5" />
-                Claim Case
-              </Button>
-            )}
-
-            {canSendToPhysician && isAssignedToMe && (
-              <>
-                <Button 
-                  className="h-8 gap-1.5 text-[11px] bg-blue-600 hover:bg-blue-700"
-                  onClick={() => {
-                    setActiveTab("prior-auth")
-                    toast({
-                      title: "PA Composer",
-                      description: "Opening Prior Authorization composer...",
-                    })
-                  }}
-                >
-                  <FileText className="h-3.5 w-3.5" />
-                  Generate PA
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="h-8 gap-1.5 text-[11px] bg-transparent"
-                  onClick={() => setShowSendToMDSheet(true)}
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  Send to MD
-                </Button>
-              </>
-            )}
-
-            {canPhysicianReview && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-purple-600 hover:bg-purple-700"
-                onClick={() => setShowPhysicianModal(true)}
-              >
-                <UserCheck className="h-3.5 w-3.5" />
-                Review & Decide
-              </Button>
-            )}
-
-            {canSubmit && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-emerald-600 hover:bg-emerald-700"
-                onClick={handleSubmitPA}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Submit PA
-                  </>
-                )}
-              </Button>
-            )}
-
-            {workflow.status === "submitted" && (
-              <span className="text-[11px] text-sky-600 font-medium flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                Awaiting Payer Response
-              </span>
-            )}
-
-            {workflow.status === "approved" && (
-              <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Approved
-              </span>
-            )}
-
-            {workflow.status === "denied" && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-amber-600 hover:bg-amber-700"
-              >
-                <FileText className="h-3.5 w-3.5" />
-                Start Appeal
-              </Button>
-            )}
-            
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={handleExport}>
-                    <Download className="h-3.5 w-3.5 text-slate-500" />
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={handleExport}>
+                    <Download className="h-3.5 w-3.5 text-slate-400" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-[10px]">Export</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <Search className="h-3.5 w-3.5 text-slate-500" />
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={() => setActiveTab("evidence")}>
+                    <Search className="h-3.5 w-3.5 text-slate-400" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-[10px]">View Evidence</TooltipContent>
@@ -605,9 +533,9 @@ export function ClinicalSummaryView() {
             </TooltipProvider>
           </div>
           
-          <div className="flex items-center gap-2 text-[10px] text-slate-400">
-            <span>Updated {new Date(workflow.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-          </div>
+          <span className="text-[10px] text-slate-400">
+            Updated {new Date(workflow.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
         </div>
       </div>
 
