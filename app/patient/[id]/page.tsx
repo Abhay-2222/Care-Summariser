@@ -4,7 +4,7 @@ import { useParams } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { PatientListPanel } from "@/components/patient-list-panel"
 import { CareLensDrawer } from "@/components/care-lens-drawer"
-import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClinicalSummaryView } from "@/components/clinical-summary-view"
 import { PriorAuthComposer } from "@/components/prior-auth-composer"
 import { EvidencePanel } from "@/components/evidence-panel"
@@ -88,8 +88,8 @@ export default function PatientDetailPage() {
                 {/* Minimal tab bar - no box, just underline */}
                 <div className="border-b border-slate-100 bg-white px-4 flex-shrink-0">
                   <div className="flex items-center justify-between">
-                    {/* Clean underline tabs - no wrapper styling */}
-                    <nav className="flex gap-1">
+                    {/* Clean underline tabs - TabsList with no visual styling */}
+                    <TabsList className="h-auto bg-transparent p-0 gap-1 border-0 shadow-none">
                       {tabItems.map((tab) => {
                         const Icon = tab.icon
                         const isActive = activeTab === tab.value
@@ -108,7 +108,7 @@ export default function PatientDetailPage() {
                           </TabsTrigger>
                         )
                       })}
-                    </nav>
+                    </TabsList>
 
                     {/* CareLens Toggle Button - minimal style */}
                     <Button
