@@ -37,6 +37,7 @@ import { statusConfig } from "@/lib/workflow-utils"
 import { typography, requirementStatusStyles, getProgressColor } from "@/lib/design-system"
 import { PhysicianApprovalModal } from "@/components/physician-approval-modal"
 import { PatientObjectCard } from "@/components/patient-object-card"
+import { WorkflowBar } from "@/components/workflow-bar"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
@@ -92,9 +93,14 @@ export function ClinicalSummaryView() {
   const { toast } = useToast()
   const { setActiveTab } = useTabContext()
   const [showPHI, setShowPHI] = useState(true)
-  const [problemListOpen, setProblemListOpen] = useState(true)
-  const [payerRulesOpen, setPayerRulesOpen] = useState(true)
-  const [summaryOpen, setSummaryOpen] = useState(true)
+  
+  // Smart accordions - expand sections with issues, collapse completed sections
+  const hasMissingRules = selectedPatient?.payerRules?.some(r => r.status === "missing" || r.status === "unclear")
+  const hasActiveProblems = selectedPatient?.problemList?.some(p => p.status === "active")
+  
+  const [problemListOpen, setProblemListOpen] = useState(hasActiveProblems ?? true)
+  const [payerRulesOpen, setPayerRulesOpen] = useState(hasMissingRules ?? true) // Always open if issues
+  const [summaryOpen, setSummaryOpen] = useState(!hasMissingRules) // Collapse if payer rules need attention
   const [showPhysicianModal, setShowPhysicianModal] = useState(false)
   const [showSendToMDSheet, setShowSendToMDSheet] = useState(false)
   const [mdNotes, setMdNotes] = useState("")
@@ -230,47 +236,17 @@ export function ClinicalSummaryView() {
         </div>
       )}
       
+      {/* Sticky Workflow Bar - Phase 2 */}
+      <WorkflowBar 
+        onRequestDocs={handleRequestDoc}
+        onSendToMD={handleSendToPhysician}
+        onGeneratePA={() => setActiveTab("prior-auth")}
+        onSubmit={() => setActiveTab("prior-auth")}
+      />
+
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-4">
-          {/* Workflow Status Banner - consistent badge styling */}
-          <div className={cn(
-            "flex items-center justify-between px-3 py-2 rounded-lg",
-            statusInfo.bgColor,
-            statusInfo.borderColor
-          )}>
-            <div className="flex items-center gap-3">
-              <span className={cn(
-                "text-[9px] font-semibold px-2 py-0.5 rounded",
-                statusInfo.badgeClass
-              )}>
-                {statusInfo.label}
-              </span>
-              {workflow.assignment && (
-                <span className={typography.label}>
-                  Assigned to: <span className="text-slate-600">{workflow.assignment.assignedTo}</span>
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              {/* Progress indicator using design system */}
-              <div className="flex items-center gap-2">
-                <div className="w-24 h-1.5 bg-white/50 rounded-full overflow-hidden">
-                  <div 
-                    className={cn("h-full rounded-full", getProgressColor(workflow.progressPercent))}
-                    style={{ width: `${workflow.progressPercent}%` }}
-                  />
-                </div>
-                <span className={cn(typography.label, "tabular-nums")}>{workflow.progressPercent}%</span>
-              </div>
-              {workflow.readyForPA && (
-                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
-                  Ready for PA
-                </span>
-              )}
-            </div>
-          </div>
-
           {/* Patient Object Card - 3 dense rows with all info at-a-glance */}
           <PatientObjectCard 
             patient={selectedPatient}
