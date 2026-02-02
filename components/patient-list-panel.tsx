@@ -226,32 +226,32 @@ export function PatientListPanel() {
         </div>
       )}
       
-      {/* Header */}
-      <div className="px-3 py-2.5 border-b border-slate-100">
-        {/* Search - minimal styling */}
+      {/* Header - Clean minimal design */}
+      <div className="px-3 py-3 border-b border-slate-100">
+        {/* Search - clean styling */}
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-300" />
           <Input
             id="patient-search"
             placeholder="Search..."
-            className="h-7 pl-7 pr-6 rounded text-[11px] bg-slate-50/50 border-slate-100 focus:bg-white placeholder:text-slate-300"
+            className="h-8 pl-8 pr-6 rounded-lg text-[11px] bg-slate-50 border-0 focus:bg-white focus:ring-1 focus:ring-slate-200 placeholder:text-slate-400"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery ? (
             <button 
               onClick={() => setSearchQuery("")}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center text-slate-300 hover:text-slate-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600"
             >
-              <X className="h-2.5 w-2.5" />
+              <X className="h-3 w-3" />
             </button>
           ) : (
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-300 font-mono">/</span>
+            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-slate-300 font-mono">/</span>
           )}
         </div>
         
-        {/* Urgency filters */}
-        <div className="flex gap-0.5 mt-2 p-0.5 bg-slate-100 rounded-md">
+        {/* Combined minimal filters - inspired by clean dashboard */}
+        <div className="flex items-center gap-3 mt-3 text-[10px] text-slate-400">
           {urgencyOptions.map((filter) => {
             const isActive = selectedFilter === filter.value
             const count = urgencyCounts[filter.value as keyof typeof urgencyCounts]
@@ -261,24 +261,26 @@ export function PatientListPanel() {
               <button
                 key={filter.value}
                 className={cn(
-                  "flex-1 h-6 rounded flex items-center justify-center gap-1 text-[10px] font-medium transition-all",
-                  isActive ? "bg-white shadow-sm text-slate-700" : "text-slate-500 hover:text-slate-700",
+                  "flex items-center gap-1 transition-colors",
+                  isActive ? "text-slate-700" : "hover:text-slate-600",
                 )}
                 onClick={() => setSelectedFilter(filter.value)}
               >
                 <Icon className={cn(
                   "h-3 w-3",
-                  isActive && filter.value === "STAT" && "text-red-500",
-                  isActive && filter.value === "URGENT" && "text-amber-500",
+                  filter.value === "STAT" && "text-red-400",
+                  filter.value === "URGENT" && "text-amber-400",
+                  filter.value === "ALL" && "text-slate-400",
+                  filter.value === "ROUTINE" && "text-slate-400",
                 )} />
-                <span className="tabular-nums">{count}</span>
+                <span className={cn("tabular-nums", isActive && "font-medium")}>{count}</span>
               </button>
             )
           })}
         </div>
 
-        {/* Status filters */}
-        <div className="flex gap-1 mt-2 overflow-x-auto pb-0.5 hide-scrollbar">
+        {/* Status filters - clean inline pills */}
+        <div className="flex flex-wrap gap-1.5 mt-3">
           {statusOptions.map((status) => {
             const isActive = statusFilter === status.value
             const count = statusCounts[status.value as keyof typeof statusCounts] || 0
@@ -287,13 +289,15 @@ export function PatientListPanel() {
               <button
                 key={status.value}
                 className={cn(
-                  "flex-shrink-0 h-6 px-2 rounded-full flex items-center gap-1 text-[10px] font-medium transition-all border",
-                  isActive ? status.color + " border-transparent" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300",
+                  "h-6 px-2.5 rounded-md flex items-center gap-1.5 text-[10px] transition-all",
+                  isActive 
+                    ? "bg-slate-800 text-white font-medium" 
+                    : "text-slate-500 hover:bg-slate-100",
                 )}
                 onClick={() => setStatusFilter(status.value)}
               >
                 <span>{status.label}</span>
-                <span className="tabular-nums opacity-70">{count}</span>
+                <span className={cn("tabular-nums", isActive ? "text-slate-300" : "text-slate-400")}>{count}</span>
               </button>
             )
           })}

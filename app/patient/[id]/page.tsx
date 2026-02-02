@@ -4,7 +4,7 @@ import { useParams } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { PatientListPanel } from "@/components/patient-list-panel"
 import { CareLensDrawer } from "@/components/care-lens-drawer"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
 import { ClinicalSummaryView } from "@/components/clinical-summary-view"
 import { PriorAuthComposer } from "@/components/prior-auth-composer"
 import { EvidencePanel } from "@/components/evidence-panel"
@@ -85,11 +85,11 @@ export default function PatientDetailPage() {
             <PatientListPanel />
             <main className="flex-1 overflow-hidden flex flex-col bg-white">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                {/* Clean tab bar with underline style like Datadog */}
-                <div className="border-b border-slate-200 bg-white px-4 flex-shrink-0">
+                {/* Minimal tab bar - no box, just underline */}
+                <div className="border-b border-slate-100 bg-white px-4 flex-shrink-0">
                   <div className="flex items-center justify-between">
-                    {/* Clean underline tabs */}
-                    <TabsList className="h-auto bg-transparent p-0 gap-0">
+                    {/* Clean underline tabs - no wrapper styling */}
+                    <nav className="flex gap-1">
                       {tabItems.map((tab) => {
                         const Icon = tab.icon
                         const isActive = activeTab === tab.value
@@ -97,18 +97,18 @@ export default function PatientDetailPage() {
                           <TabsTrigger 
                             key={tab.value}
                             value={tab.value} 
-                            className="relative h-11 px-4 gap-2 rounded-none bg-transparent text-[13px] font-normal text-slate-500 hover:text-slate-900 data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:shadow-none"
+                            className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-slate-400 hover:text-slate-700 data-[state=active]:bg-transparent data-[state=active]:text-slate-800 data-[state=active]:shadow-none data-[state=active]:border-0"
                           >
-                            <Icon className="h-4 w-4" />
+                            <Icon className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">{tab.label}</span>
                             {/* Active underline indicator */}
                             {isActive && (
-                              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900" />
+                              <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-slate-800 rounded-full" />
                             )}
                           </TabsTrigger>
                         )
                       })}
-                    </TabsList>
+                    </nav>
 
                     {/* CareLens Toggle Button - minimal style */}
                     <Button
