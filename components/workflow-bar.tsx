@@ -144,7 +144,7 @@ export function WorkflowBar({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Request docs button - always visible if there are missing items */}
+          {/* Issues indicator button - navigates to payer requirements section */}
           {missingRules > 0 && (
             <Button
               variant="outline"
@@ -153,7 +153,7 @@ export function WorkflowBar({
               onClick={onRequestDocs}
             >
               <AlertTriangle className="h-3 w-3" />
-              <span className="hidden sm:inline">Request Docs</span>
+              <span className="hidden sm:inline">{missingRules} Missing</span>
               <span className="sm:hidden">{missingRules}</span>
             </Button>
           )}
