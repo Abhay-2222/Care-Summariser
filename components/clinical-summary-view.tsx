@@ -242,7 +242,10 @@ export function ClinicalSummaryView() {
       
       {/* Sticky Workflow Bar - Phase 2 */}
       <WorkflowBar 
-        onRequestDocs={handleRequestDoc}
+        onRequestDocs={() => {
+          // Open payer rules section and scroll into view
+          setPayerRulesOpen(true)
+        }}
         onSendToMD={handleSendToPhysician}
         onGeneratePA={() => setActiveTab("prior-auth")}
         onSubmit={() => setActiveTab("prior-auth")}
