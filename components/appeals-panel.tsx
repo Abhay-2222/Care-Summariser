@@ -1,11 +1,13 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
 import { AlertCircle, CheckCircle2, Clock, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { typography } from "@/lib/design-system"
 
 const statusFilters = [
   { value: "all", label: "All" },
@@ -53,23 +55,24 @@ export function AppealsPanel() {
         {/* Header */}
         <div className="px-4 py-3 border-b border-slate-100">
           <div className="flex items-center justify-between mb-2.5">
-            <p className="text-[11px] text-slate-400">Appeals Management</p>
+            <p className={cn(typography.sectionHeader, "text-slate-500")}>APPEALS MANAGEMENT</p>
             <Button size="sm" className="gap-1.5 text-[11px] h-7">
               <FileText className="h-3 w-3" />
               New Appeal
             </Button>
           </div>
           
-          {/* Status filters */}
-          <div className="flex flex-wrap gap-1.5">
+          {/* Status filters - pill style matching other panels */}
+          <div className="flex items-center gap-1 overflow-x-auto pb-1">
             {statusFilters.map((filter) => (
               <button
                 key={filter.value}
+                type="button"
                 className={cn(
-                  "h-6 px-2 rounded text-[11px] transition-all",
+                  "flex-shrink-0 h-6 px-2.5 rounded-full text-[10px] font-medium transition-all whitespace-nowrap",
                   statusFilter === filter.value 
-                    ? "bg-slate-700 text-white font-medium" 
-                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                    ? "bg-slate-800 text-white" 
+                    : "bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-600",
                 )}
                 onClick={() => setStatusFilter(filter.value)}
               >

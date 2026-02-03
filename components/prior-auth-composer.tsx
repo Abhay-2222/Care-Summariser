@@ -1,14 +1,15 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
+
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
 import { useToast } from "@/hooks/use-toast"
 import { Wand2, Download, Copy, Eye } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { typography } from "@/lib/design-system"
 
 export function PriorAuthComposer() {
   const { selectedPatient } = useApp()
@@ -48,31 +49,33 @@ export function PriorAuthComposer() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-200">
+      <div className="bg-white rounded-lg border border-slate-100">
         {/* Header */}
         <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-[13px] font-medium text-slate-800">Prior Authorization</h2>
-          <Badge variant="secondary" className="text-[10px] h-5">{selectedPatient.insurance}</Badge>
+          <p className={cn(typography.sectionHeader, "text-slate-500")}>PRIOR AUTHORIZATION</p>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">
+            {selectedPatient.insurance}
+          </span>
         </div>
         
         {/* Content */}
         <div className="p-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Patient</p>
-              <p className="text-[12px] text-slate-700 mt-0.5">{selectedPatient.name}</p>
+              <p className={typography.label}>PATIENT</p>
+              <p className={cn(typography.title, "mt-0.5")}>{selectedPatient.name}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">MRN</p>
-              <p className="text-[12px] text-slate-700 mt-0.5">{selectedPatient.mrn}</p>
+              <p className={typography.label}>MRN</p>
+              <p className={cn(typography.title, "mt-0.5")}>{selectedPatient.mrn}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Primary Diagnosis</p>
-              <p className="text-[12px] text-slate-700 mt-0.5">{selectedPatient.diagnoses[0]}</p>
+              <p className={typography.label}>PRIMARY DIAGNOSIS</p>
+              <p className={cn(typography.title, "mt-0.5")}>{selectedPatient.diagnoses[0]}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Length of Stay</p>
-              <p className="text-[12px] text-slate-700 mt-0.5">{selectedPatient.lengthOfStay}</p>
+              <p className={typography.label}>LENGTH OF STAY</p>
+              <p className={cn(typography.title, "mt-0.5")}>{selectedPatient.lengthOfStay}</p>
             </div>
           </div>
 

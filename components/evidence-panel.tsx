@@ -1,11 +1,13 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useApp } from "@/lib/app-context"
-import { Search, FileText, Calendar, User } from "lucide-react"
+import { Search, FileText, Calendar, User, CheckCircle2, Link2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { typography } from "@/lib/design-system"
 
 const docTypeFilters = [
   { value: "all", label: "All" },
@@ -13,8 +15,10 @@ const docTypeFilters = [
   { value: "lab", label: "Labs" },
   { value: "imaging", label: "Imaging" },
   { value: "consult", label: "Consults" },
+  { value: "needed", label: "Needed for Auth" }, // New filter for docs needed for authorization
 ]
 
+// Mock documents with requirements they satisfy
 const mockDocuments = [
   {
     id: "1",
@@ -23,6 +27,8 @@ const mockDocuments = [
     author: "Dr. Sarah Mitchell",
     excerpt: "Patient continues to improve. Diuresis ongoing with good response...",
     relevance: 95,
+    satisfiesRequirements: ["Medical Necessity", "Clinical Documentation"],
+    isNeededForAuth: true,
   },
   {
     id: "2",
@@ -31,6 +37,8 @@ const mockDocuments = [
     author: "Lab System",
     excerpt: "BNP: 840 (decreased from 1240), Creatinine: 1.2, Potassium: 4.1...",
     relevance: 92,
+    satisfiesRequirements: ["Lab Documentation"],
+    isNeededForAuth: true,
   },
   {
     id: "3",
@@ -39,6 +47,8 @@ const mockDocuments = [
     author: "Dr. James Chen, Radiology",
     excerpt: "Chest X-ray shows interval improvement in pulmonary edema...",
     relevance: 88,
+    satisfiesRequirements: ["Diagnostic Imaging"],
+    isNeededForAuth: true,
   },
   {
     id: "4",
@@ -47,6 +57,8 @@ const mockDocuments = [
     author: "Dr. Maria Rodriguez, Cardiology",
     excerpt: "Acute decompensated heart failure likely secondary to medication non-compliance...",
     relevance: 90,
+    satisfiesRequirements: ["Specialist Consultation", "Medical Necessity"],
+    isNeededForAuth: true,
   },
   {
     id: "5",
@@ -55,6 +67,8 @@ const mockDocuments = [
     author: "Dr. Robert Kim",
     excerpt: "67yo F presenting with acute SOB and chest pain. History of CHF, last admission 3 months ago...",
     relevance: 85,
+    satisfiesRequirements: ["Initial Assessment"],
+    isNeededForAuth: false,
   },
 ]
 
@@ -72,19 +86,29 @@ export function EvidencePanel() {
     )
   }
 
-  const filteredDocs = mockDocuments.filter(
-    (doc) =>
+  const filteredDocs = mockDocuments.filter((doc) => {
+    const matchesSearch =
       searchQuery === "" ||
       doc.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.excerpt.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      doc.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    const matchesFilter = 
+      docTypeFilter === "all" || 
+      (docTypeFilter === "needed" && doc.isNeededForAuth) ||
+      doc.type.toLowerCase().includes(docTypeFilter.toLowerCase())
+    
+    return matchesSearch && matchesFilter
+  })
+
+  // Count docs needed for auth
+  const neededForAuthCount = mockDocuments.filter(d => d.isNeededForAuth).length
 
   return (
     <div className="p-4">
       <div className="bg-white rounded-lg border border-slate-100">
-        {/* Header - minimal */}
+        {/* Header - minimal with design system typography */}
         <div className="px-4 py-3 border-b border-slate-100">
-          <p className="text-[11px] text-slate-400 mb-2">Evidence Search</p>
+          <p className={cn(typography.sectionHeader, "mb-2")}>EVIDENCE SEARCH</p>
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
             <input
@@ -96,60 +120,114 @@ export function EvidencePanel() {
             />
           </div>
           
-          {/* Type filters */}
+          {/* Type filters with consistent badge styling */}
           <div className="flex flex-wrap gap-1.5 mt-2.5">
             {docTypeFilters.map((filter) => (
               <button
                 key={filter.value}
+                type="button"
                 className={cn(
                   "h-6 px-2 rounded text-[11px] transition-all",
                   docTypeFilter === filter.value 
                     ? "bg-slate-700 text-white font-medium" 
                     : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                  filter.value === "needed" && "border border-blue-200"
                 )}
                 onClick={() => setDocTypeFilter(filter.value)}
               >
                 {filter.label}
+                {filter.value === "needed" && (
+                  <span className="ml-1 text-[9px]">({neededForAuthCount})</span>
+                )}
               </button>
             ))}
           </div>
         </div>
         
-        {/* Documents list */}
+        {/* Documents list with Satisfies badges */}
         <div className="divide-y divide-slate-100">
           {filteredDocs.map((doc) => (
             <div
               key={doc.id}
-              className="p-3 cursor-pointer transition-colors hover:bg-slate-50"
+              className={cn(
+                "p-3 cursor-pointer transition-colors hover:bg-slate-50",
+                selectedDoc === doc.id && "bg-blue-50 border-l-2 border-l-blue-500"
+              )}
               onClick={() => setSelectedDoc(doc.id === selectedDoc ? null : doc.id)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <FileText className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                    <h4 className="text-[12px] font-medium text-slate-700">{doc.type}</h4>
-                    <Badge variant="secondary" className="text-[9px] h-4 px-1.5">
-                      {doc.relevance}%
-                    </Badge>
+                    <h4 className={cn(typography.title)}>{doc.type}</h4>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                      {doc.relevance}% match
+                    </span>
+                    {doc.isNeededForAuth && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200">
+                        Auth Doc
+                      </span>
+                    )}
                   </div>
-                  <div className="mt-1.5 flex gap-3 text-[10px] text-slate-400">
-                    <div className="flex items-center gap-1">
+                  
+                  {/* Metadata row */}
+                  <div className="mt-1.5 flex gap-3">
+                    <div className={cn(typography.label, "flex items-center gap-1")}>
                       <Calendar className="h-2.5 w-2.5" />
                       {doc.date}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className={cn(typography.label, "flex items-center gap-1")}>
                       <User className="h-2.5 w-2.5" />
                       {doc.author}
                     </div>
                   </div>
-                  <p className="mt-1.5 text-[11px] text-slate-500 line-clamp-2">{doc.excerpt}</p>
+                  
+                  {/* Excerpt */}
+                  <p className={cn(typography.body, "mt-1.5 line-clamp-2")}>{doc.excerpt}</p>
+                  
+                  {/* Satisfies Requirements - clickable links back to Summary */}
+                  {doc.satisfiesRequirements && doc.satisfiesRequirements.length > 0 && (
+                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-100">
+                      <Link2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />
+                      <span className={cn(typography.label, "text-emerald-600")}>Satisfies:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {doc.satisfiesRequirements.map((req) => (
+                          <span 
+                            key={req}
+                            className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 cursor-pointer hover:bg-emerald-100"
+                          >
+                            {req}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2 text-slate-400 hover:text-slate-600">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-[10px] h-6 px-2 text-slate-400 hover:text-slate-600 bg-transparent"
+                >
                   View
                 </Button>
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Footer stats */}
+        <div className="px-4 py-2 border-t border-slate-100 bg-slate-50">
+          <div className="flex items-center justify-between">
+            <span className={typography.label}>
+              {filteredDocs.length} documents · {neededForAuthCount} needed for authorization
+            </span>
+            <div className="flex items-center gap-1 text-emerald-600">
+              <CheckCircle2 className="h-3 w-3" />
+              <span className={cn(typography.label, "text-emerald-600")}>
+                {mockDocuments.filter(d => d.satisfiesRequirements && d.satisfiesRequirements.length > 0).length} linked to requirements
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

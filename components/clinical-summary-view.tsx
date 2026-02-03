@@ -23,8 +23,6 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronRight,
-  Eye,
-  EyeOff,
   Send,
   UserCheck,
   Play,
@@ -36,7 +34,10 @@ import { useApp } from "@/lib/app-context"
 import { useToast } from "@/hooks/use-toast"
 import type { ConfidenceLevel } from "@/lib/types"
 import { statusConfig } from "@/lib/workflow-utils"
+import { typography, requirementStatusStyles, getProgressColor } from "@/lib/design-system"
 import { PhysicianApprovalModal } from "@/components/physician-approval-modal"
+import { PatientObjectCard } from "@/components/patient-object-card"
+import { WorkflowBar } from "@/components/workflow-bar"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
@@ -92,14 +93,22 @@ export function ClinicalSummaryView() {
   const { toast } = useToast()
   const { setActiveTab } = useTabContext()
   const [showPHI, setShowPHI] = useState(true)
-  const [problemListOpen, setProblemListOpen] = useState(true)
-  const [payerRulesOpen, setPayerRulesOpen] = useState(true)
-  const [summaryOpen, setSummaryOpen] = useState(true)
+  
+  // Smart accordions - expand sections with issues, collapse completed sections
+  const hasMissingRules = selectedPatient?.payerRules?.some(r => r.status === "missing" || r.status === "unclear")
+  const hasActiveProblems = selectedPatient?.problemList?.some(p => p.status === "active")
+  
+  const [problemListOpen, setProblemListOpen] = useState(hasActiveProblems ?? true)
+  const [payerRulesOpen, setPayerRulesOpen] = useState(hasMissingRules ?? true) // Always open if issues
+  const [summaryOpen, setSummaryOpen] = useState(!hasMissingRules) // Collapse if payer rules need attention
   const [showPhysicianModal, setShowPhysicianModal] = useState(false)
   const [showSendToMDSheet, setShowSendToMDSheet] = useState(false)
   const [mdNotes, setMdNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCareLensHint, setShowCareLensHint] = useState(!hasSeenSwipeHint)
+  
+  // Track requested items - stores rule IDs that have been requested
+  const [requestedItems, setRequestedItems] = useState<Set<string>>(new Set())
 
   if (!selectedPatient) {
     return (
@@ -123,8 +132,9 @@ export function ClinicalSummaryView() {
     })
   }
 
-  const handleRequestDoc = (alertId: string) => {
-    requestDocumentation(alertId)
+  const handleRequestDoc = (ruleId: string) => {
+    requestDocumentation(ruleId)
+    setRequestedItems(prev => new Set([...prev, ruleId]))
     toast({
       title: "Documentation Requested",
       description: "Request has been sent to the clinical team",
@@ -230,109 +240,23 @@ export function ClinicalSummaryView() {
         </div>
       )}
       
+      {/* Sticky Workflow Bar - Phase 2 */}
+      <WorkflowBar 
+        onRequestDocs={handleRequestDoc}
+        onSendToMD={handleSendToPhysician}
+        onGeneratePA={() => setActiveTab("prior-auth")}
+        onSubmit={() => setActiveTab("prior-auth")}
+      />
+
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-4">
-          {/* Workflow Status Banner */}
-          <div className={cn(
-            "flex items-center justify-between px-3 py-2 rounded-lg border",
-            statusInfo.bgColor,
-            "border-slate-200"
-          )}>
-            <div className="flex items-center gap-3">
-              <span className={cn("text-[11px] font-semibold", statusInfo.color)}>
-                Status: {statusInfo.label}
-              </span>
-              {workflow.assignment && (
-                <span className="text-[10px] text-slate-500">
-                  Assigned to: {workflow.assignment.assignedTo}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              {/* Progress indicator */}
-              <div className="flex items-center gap-2">
-                <div className="w-24 h-1.5 bg-white/50 rounded-full overflow-hidden">
-                  <div 
-                    className={cn(
-                      "h-full rounded-full",
-                      workflow.progressPercent >= 80 ? "bg-emerald-500" :
-                      workflow.progressPercent >= 50 ? "bg-amber-500" : "bg-slate-400"
-                    )}
-                    style={{ width: `${workflow.progressPercent}%` }}
-                  />
-                </div>
-                <span className="text-[10px] text-slate-500 tabular-nums">{workflow.progressPercent}%</span>
-              </div>
-              {workflow.readyForPA && (
-                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
-                  Ready for PA
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Patient Header - Compact */}
-          <div className="bg-white rounded-lg border border-slate-200 p-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-[14px] font-semibold text-slate-800 truncate">{selectedPatient.name}</h2>
-                  {selectedPatient.urgency === "STAT" && (
-                    <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-red-100 text-red-700">STAT</span>
-                  )}
-                  {selectedPatient.urgency === "URGENT" && (
-                    <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-amber-100 text-amber-700">URGENT</span>
-                  )}
-                </div>
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
-                  <span>{selectedPatient.age}yo {selectedPatient.gender}</span>
-                  <span>|</span>
-                  <span>MRN: {maskPHI(selectedPatient.mrn)}</span>
-                  <span>|</span>
-                  <span>Room {selectedPatient.room}</span>
-                  <span>|</span>
-                  <span>{selectedPatient.insurance}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <ConfidenceIndicator level={selectedPatient.careLens.overallConfidence} />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => setShowPHI(!showPHI)}
-                >
-                  {showPHI ? <EyeOff className="h-3.5 w-3.5 text-slate-400" /> : <Eye className="h-3.5 w-3.5 text-slate-400" />}
-                </Button>
-              </div>
-            </div>
-            {/* Quick stats */}
-            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100">
-              <div className="text-[10px]">
-                <span className="text-slate-400">LOS:</span>
-                <span className="ml-1 font-medium text-slate-600">{selectedPatient.lengthOfStay}</span>
-              </div>
-              <div className="text-[10px]">
-                <span className="text-slate-400">Admitted:</span>
-                <span className="ml-1 font-medium text-slate-600">{selectedPatient.admissionDate}</span>
-              </div>
-              <div className="text-[10px]">
-                <span className="text-slate-400">Docs:</span>
-                <span className="ml-1 font-medium text-slate-600">{selectedPatient.documentsProcessed}</span>
-              </div>
-              <div className="text-[10px]">
-                <span className="text-slate-400">Risk:</span>
-                <span className={cn(
-                  "ml-1 font-medium",
-                  selectedPatient.careLens.denialRisk === "High" ? "text-red-600" :
-                  selectedPatient.careLens.denialRisk === "Medium" ? "text-amber-600" : "text-emerald-600"
-                )}>
-                  {selectedPatient.careLens.denialRisk}
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* Patient Object Card - 3 dense rows with all info at-a-glance */}
+          <PatientObjectCard 
+            patient={selectedPatient}
+            showPHI={showPHI}
+            onTogglePHI={() => setShowPHI(!showPHI)}
+          />
 
           {/* Alerts - Patient-impact language to reduce cognitive load */}
           {selectedPatient.alerts.length > 0 && (
@@ -367,14 +291,14 @@ export function ClinicalSummaryView() {
             </div>
           )}
 
-          {/* Problem List - Collapsible */}
+          {/* Problem List - Collapsible with design system typography */}
           <Collapsible open={problemListOpen} onOpenChange={setProblemListOpen}>
-            <div className="bg-white rounded-lg border border-slate-200">
+            <div className="bg-white rounded-lg border border-slate-100">
               <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-2">
                   {problemListOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className="text-[12px] font-semibold text-slate-700">Problem List</span>
-                  <span className="text-[10px] text-slate-400">({selectedPatient.problemList.length})</span>
+                  <span className={cn(typography.sectionHeader, "text-slate-700")}>PROBLEM LIST</span>
+                  <span className={typography.label}>({selectedPatient.problemList.length})</span>
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -414,61 +338,125 @@ export function ClinicalSummaryView() {
             </div>
           </Collapsible>
 
-          {/* Payer Rules - Collapsible */}
+          {/* Payer Requirements with Evidence Links - Smart defaults: unmet first */}
           <Collapsible open={payerRulesOpen} onOpenChange={setPayerRulesOpen}>
-            <div className="bg-white rounded-lg border border-slate-200">
+            <div className="bg-white rounded-lg border border-slate-100">
               <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-2">
                   {payerRulesOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className="text-[12px] font-semibold text-slate-700">Payer Requirements</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-medium">
-                    {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length}
+                  <span className={cn(typography.sectionHeader, "text-slate-700")}>PAYER REQUIREMENTS</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-medium">
+                    {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length} met
                   </span>
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="px-3 pb-3 space-y-1.5">
-                  {selectedPatient.payerRules.map(rule => (
-                    <div 
-                      key={rule.id}
-                      className={cn(
-                        "flex items-start gap-2 py-2 px-2.5 rounded",
-                        rule.status === "satisfied" ? "bg-emerald-50" :
-                        rule.status === "missing" ? "bg-red-50" : "bg-amber-50"
-                      )}
-                    >
-                      {rule.status === "satisfied" ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 mt-0.5 flex-shrink-0" />
-                      ) : rule.status === "missing" ? (
-                        <AlertTriangle className="h-3.5 w-3.5 text-red-600 mt-0.5 flex-shrink-0" />
-                      ) : (
-                        <AlertCircle className="h-3.5 w-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] text-slate-700">{rule.rule}</p>
-                        {rule.evidence && (
-                          <p className="text-[9px] text-slate-400 mt-0.5">{rule.evidence}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                  {/* Show unmet requirements first (blocking issues always visible) */}
+                  {[...selectedPatient.payerRules]
+                    .sort((a, b) => {
+                      const priority = { missing: 0, unclear: 1, satisfied: 2 }
+                      return priority[a.status] - priority[b.status]
+                    })
+                    .map(rule => {
+                      const styles = requirementStatusStyles[rule.status]
+                      // Mock linked documents based on rule
+                      const linkedDocs = rule.status === "satisfied" 
+                        ? ["Progress Note (Jan 7)", "Cardiology Consult"] 
+                        : null
+                      
+                      return (
+                        <div 
+                          key={rule.id}
+                          className={cn(
+                            "py-2 px-2.5 rounded border",
+                            styles.container
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            {rule.status === "satisfied" ? (
+                              <CheckCircle2 className={cn("h-3.5 w-3.5 mt-0.5 flex-shrink-0", styles.icon)} />
+                            ) : rule.status === "missing" ? (
+                              <AlertTriangle className={cn("h-3.5 w-3.5 mt-0.5 flex-shrink-0", styles.icon)} />
+                            ) : (
+                              <AlertCircle className={cn("h-3.5 w-3.5 mt-0.5 flex-shrink-0", styles.icon)} />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className={cn(typography.body, "text-slate-700")}>{rule.rule}</p>
+                              
+                              {/* Evidence Links - Click to navigate to Evidence tab */}
+                              {rule.status === "satisfied" && linkedDocs && (
+                                <div className="flex items-center gap-1.5 mt-1.5">
+                                  <span className={typography.label}>Linked:</span>
+                                  {linkedDocs.map((doc, i) => (
+                                    <button
+                                      key={doc}
+                                      type="button"
+                                      className="text-[9px] text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                      onClick={() => setActiveTab("evidence")}
+                                    >
+                                      {doc}{i < linkedDocs.length - 1 ? "," : ""}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              {/* Missing doc - show request button or requested state */}
+                              {rule.status === "missing" && (
+                                <div className="flex items-center gap-2 mt-1.5">
+                                  {requestedItems.has(rule.id) ? (
+                                    // Requested state - show confirmation
+                                    <>
+                                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-medium flex items-center gap-1">
+                                        <Clock className="h-2.5 w-2.5" />
+                                        Requested
+                                      </span>
+                                      <span className="text-[9px] text-slate-400">Sent to clinical team</span>
+                                    </>
+                                  ) : (
+                                    // Show request button
+                                    <>
+                                      <span className={cn(typography.label, "text-red-500")}>Need:</span>
+                                      <span className="text-[9px] text-red-600">{rule.evidence || "Clinical documentation"}</span>
+                                      <Button 
+                                        size="sm" 
+                                        variant="ghost"
+                                        className="h-5 px-1.5 text-[9px] text-red-600 hover:bg-red-100 ml-auto bg-transparent"
+                                        onClick={() => handleRequestDoc(rule.id)}
+                                      >
+                                        Request
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {/* Unclear - show what's needed */}
+                              {rule.status === "unclear" && rule.evidence && (
+                                <p className={cn(typography.label, "text-amber-600 mt-1")}>{rule.evidence}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
                 </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
-          {/* AI Summary - Collapsible */}
+          {/* AI Summary - Collapsible with design system typography */}
           <Collapsible open={summaryOpen} onOpenChange={setSummaryOpen}>
-            <div className="bg-white rounded-lg border border-slate-200">
+            <div className="bg-white rounded-lg border border-slate-100">
               <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-2">
                   {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className="text-[12px] font-semibold text-slate-700">AI Clinical Summary</span>
+                  <span className={cn(typography.sectionHeader, "text-slate-700")}>AI CLINICAL SUMMARY</span>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-6 px-2 text-[10px] text-slate-500"
+                  className="h-6 px-2 text-[10px] text-slate-500 bg-transparent"
                   onClick={(e) => { e.stopPropagation(); handleRegenerate() }}
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
@@ -478,27 +466,27 @@ export function ClinicalSummaryView() {
               <CollapsibleContent>
                 <div className="px-3 pb-3 space-y-3">
                   <div>
-                    <h4 className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Chief Complaint</h4>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">{selectedPatient.chiefComplaint}</p>
+                    <h4 className={cn(typography.label, "mb-1")}>CHIEF COMPLAINT</h4>
+                    <p className={cn(typography.body, "leading-relaxed")}>{selectedPatient.chiefComplaint}</p>
                   </div>
                   <div>
-                    <h4 className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Medications</h4>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">{selectedPatient.medications}</p>
+                    <h4 className={cn(typography.label, "mb-1")}>MEDICATIONS</h4>
+                    <p className={cn(typography.body, "leading-relaxed")}>{selectedPatient.medications}</p>
                   </div>
                   <div>
-                    <h4 className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Clinical Course</h4>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">{selectedPatient.clinicalCourse}</p>
+                    <h4 className={cn(typography.label, "mb-1")}>CLINICAL COURSE</h4>
+                    <p className={cn(typography.body, "leading-relaxed")}>{selectedPatient.clinicalCourse}</p>
                   </div>
                 </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
-          {/* Timeline - Compact */}
-          <div className="bg-white rounded-lg border border-slate-200 p-3">
-            <h3 className="text-[12px] font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          {/* Timeline - Compact with design system typography */}
+          <div className="bg-white rounded-lg border border-slate-100 p-3">
+            <h3 className={cn(typography.sectionHeader, "text-slate-700 mb-3 flex items-center gap-2")}>
               <Clock className="h-3.5 w-3.5 text-slate-400" />
-              Timeline
+              TIMELINE
             </h3>
             <div className="space-y-2">
               {selectedPatient.timeline.slice(0, 3).map((event, index) => (
@@ -521,113 +509,23 @@ export function ClinicalSummaryView() {
         </div>
       </div>
 
-      {/* Fixed Action Bar - with padding for mobile FAB */}
-      <div className="flex-shrink-0 px-4 py-3 border-t border-slate-200 bg-white pl-20 md:pl-4">
+      {/* Minimal Footer Bar - primary actions are in WorkflowBar */}
+      <div className="flex-shrink-0 px-4 py-2 border-t border-slate-100 bg-slate-50/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Action buttons based on role and status */}
-            {canClaim && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-blue-600 hover:bg-blue-700"
-                onClick={handleClaimCase}
-              >
-                <Play className="h-3.5 w-3.5" />
-                Claim Case
-              </Button>
-            )}
-
-            {canSendToPhysician && isAssignedToMe && (
-              <>
-                <Button 
-                  className="h-8 gap-1.5 text-[11px] bg-blue-600 hover:bg-blue-700"
-                  onClick={() => {
-                    setActiveTab("prior-auth")
-                    toast({
-                      title: "PA Composer",
-                      description: "Opening Prior Authorization composer...",
-                    })
-                  }}
-                >
-                  <FileText className="h-3.5 w-3.5" />
-                  Generate PA
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="h-8 gap-1.5 text-[11px] bg-transparent"
-                  onClick={() => setShowSendToMDSheet(true)}
-                >
-                  <Send className="h-3.5 w-3.5" />
-                  Send to MD
-                </Button>
-              </>
-            )}
-
-            {canPhysicianReview && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-purple-600 hover:bg-purple-700"
-                onClick={() => setShowPhysicianModal(true)}
-              >
-                <UserCheck className="h-3.5 w-3.5" />
-                Review & Decide
-              </Button>
-            )}
-
-            {canSubmit && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-emerald-600 hover:bg-emerald-700"
-                onClick={handleSubmitPA}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Submit PA
-                  </>
-                )}
-              </Button>
-            )}
-
-            {workflow.status === "submitted" && (
-              <span className="text-[11px] text-sky-600 font-medium flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                Awaiting Payer Response
-              </span>
-            )}
-
-            {workflow.status === "approved" && (
-              <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Approved
-              </span>
-            )}
-
-            {workflow.status === "denied" && (
-              <Button 
-                className="h-8 gap-1.5 text-[11px] bg-amber-600 hover:bg-amber-700"
-              >
-                <FileText className="h-3.5 w-3.5" />
-                Start Appeal
-              </Button>
-            )}
-            
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={handleExport}>
-                    <Download className="h-3.5 w-3.5 text-slate-500" />
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={handleExport}>
+                    <Download className="h-3.5 w-3.5 text-slate-400" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-[10px]">Export</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <Search className="h-3.5 w-3.5 text-slate-500" />
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={() => setActiveTab("evidence")}>
+                    <Search className="h-3.5 w-3.5 text-slate-400" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-[10px]">View Evidence</TooltipContent>
@@ -635,9 +533,9 @@ export function ClinicalSummaryView() {
             </TooltipProvider>
           </div>
           
-          <div className="flex items-center gap-2 text-[10px] text-slate-400">
-            <span>Updated {new Date(workflow.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-          </div>
+          <span className="text-[10px] text-slate-400">
+            Updated {new Date(workflow.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
         </div>
       </div>
 

@@ -21,13 +21,16 @@ import {
   MoreHorizontal,
   Sparkles,
   ClipboardList,
+  ChevronDown,
+  Filter,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/lib/app-context"
 import { useRouter } from "next/navigation"
-import { statusConfig } from "@/lib/workflow-utils"
+import { statusConfig, urgencyConfig } from "@/lib/workflow-utils"
 import type { CaseStatus } from "@/lib/types"
+import { typography } from "@/lib/design-system"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -226,31 +229,68 @@ export function PatientListPanel() {
         </div>
       )}
       
-      {/* Header - Ultra minimal */}
-      <div className="px-3 py-2.5">
-        {/* Search - tiny and subtle */}
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
-          <input
-            id="patient-search"
-            type="text"
-            placeholder="Search..."
-            className="w-full h-7 pl-7 pr-6 rounded-md text-xs bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          )}
+      {/* Header - Optimized minimal design */}
+      <div className="px-3 py-2.5 border-b border-slate-100">
+        {/* Search + Filters in one row */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-300" />
+            <input
+              id="patient-search"
+              type="text"
+              placeholder="Search..."
+              className="w-full h-8 pl-8 pr-8 rounded-lg text-[12px] bg-slate-50 border border-slate-100 text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-transparent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button 
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          
+          {/* Status dropdown - replaces pills */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 px-2.5 text-[11px] gap-1.5 bg-white border-slate-200"
+              >
+                <Filter className="h-3 w-3 text-slate-400" />
+                {statusFilter === "ALL" ? "All" : statusOptions.find(s => s.value === statusFilter)?.label}
+                <ChevronDown className="h-3 w-3 text-slate-400" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              {statusOptions.map((status) => {
+                const count = statusCounts[status.value as keyof typeof statusCounts] || 0
+                const isActive = statusFilter === status.value
+                return (
+                  <DropdownMenuItem
+                    key={status.value}
+                    onClick={() => setStatusFilter(status.value)}
+                    className={cn(
+                      "flex items-center justify-between text-[11px] cursor-pointer",
+                      isActive && "bg-slate-100"
+                    )}
+                  >
+                    <span>{status.label}</span>
+                    <span className="text-slate-400 tabular-nums">{count}</span>
+                  </DropdownMenuItem>
+                )
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
-        {/* Urgency counts - consistent text-[11px] */}
-        <div className="flex items-center gap-4 mt-2.5">
+        {/* Urgency quick filters - compact icons only */}
+        <div className="flex items-center gap-0.5 mt-2">
           {urgencyOptions.map((filter) => {
             const isActive = selectedFilter === filter.value
             const count = urgencyCounts[filter.value as keyof typeof urgencyCounts]
@@ -259,48 +299,27 @@ export function PatientListPanel() {
             return (
               <button
                 key={filter.value}
+                type="button"
                 className={cn(
-                  "flex items-center gap-1.5 text-[11px] transition-colors",
-                  isActive ? "text-slate-700 font-medium" : "text-slate-400 hover:text-slate-500",
+                  "flex items-center gap-1 px-2 py-1 rounded text-[10px] transition-all",
+                  isActive 
+                    ? "bg-slate-800 text-white font-medium" 
+                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-50",
                 )}
                 onClick={() => setSelectedFilter(filter.value)}
               >
                 <Icon className={cn(
                   "h-3 w-3",
-                  filter.value === "STAT" && "text-red-400",
-                  filter.value === "URGENT" && "text-amber-400",
+                  !isActive && filter.value === "STAT" && "text-red-400",
+                  !isActive && filter.value === "URGENT" && "text-amber-400",
                 )} />
-                <span className="tabular-nums">{count}</span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Status filters - consistent text-[11px] */}
-        <div className="flex flex-wrap gap-1.5 mt-2.5">
-          {statusOptions.map((status) => {
-            const isActive = statusFilter === status.value
-            const count = statusCounts[status.value as keyof typeof statusCounts] || 0
-            
-            return (
-              <button
-                key={status.value}
-                className={cn(
-                  "h-6 px-2 rounded text-[11px] transition-all",
-                  isActive 
-                    ? "bg-slate-700 text-white font-medium" 
-                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
-                )}
-                onClick={() => setStatusFilter(status.value)}
-              >
-                {status.label} <span className="text-[10px] opacity-70">{count}</span>
+                {filter.value !== "ALL" && <span className="tabular-nums">{count}</span>}
+                {filter.value === "ALL" && <span>All</span>}
               </button>
             )
           })}
         </div>
       </div>
-      
-      <div className="border-b border-slate-100" />
 
       {/* Patient List */}
       <div className="flex-1 overflow-y-auto">
@@ -362,10 +381,10 @@ export function PatientListPanel() {
                         )}>
                           {patient.name}
                         </span>
-                        {/* Status badge */}
+                        {/* Status badge - consistent styling everywhere */}
                         <span className={cn(
                           "flex-shrink-0 text-[9px] font-medium px-1.5 py-0.5 rounded",
-                          statusInfo.bgColor, statusInfo.color
+                          statusInfo.badgeClass
                         )}>
                           {statusInfo.label}
                         </span>
@@ -483,26 +502,23 @@ export function PatientListPanel() {
         </div>
       )}
 
-      {/* Footer stats */}
-      <div className="px-3 py-2 border-t border-slate-200 bg-slate-50">
-        <div className="flex items-center justify-between text-[10px] text-slate-500">
-          <div className="flex items-center gap-2">
-            <span>{sortedPatients.length} of {patients.length}</span>
-            {currentRole === "case_manager" && !bulkMode && (
-              <button
-                className="text-blue-600 hover:text-blue-700 font-medium"
-                onClick={() => setBulkMode(true)}
-              >
-                Bulk select
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-500" /> 
-              {statusCounts.needs_physician} need MD
-            </span>
-          </div>
+      {/* Footer - minimal, only shows filtered count when different */}
+      <div className="px-3 py-1.5 border-t border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between text-[10px] text-slate-400">
+          {sortedPatients.length !== patients.length ? (
+            <span className="tabular-nums">{sortedPatients.length} shown</span>
+          ) : (
+            <span className="tabular-nums">{patients.length} cases</span>
+          )}
+          {currentRole === "case_manager" && !bulkMode && (
+            <button
+              type="button"
+              className="text-slate-500 hover:text-slate-700"
+              onClick={() => setBulkMode(true)}
+            >
+              Bulk
+            </button>
+          )}
         </div>
       </div>
     </div>

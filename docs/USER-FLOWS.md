@@ -43,7 +43,7 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 
 ### Flow 1: Case Manager - New Case to PA Submission
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ CASE MANAGER WORKFLOW                                                        │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -115,11 +115,11 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 │              └─> NEXT ACTOR: Payer receives PA                              │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ### Flow 2: Physician - Case Review and Decision
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ PHYSICIAN WORKFLOW                                                           │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -178,11 +178,11 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 │          └─> NEXT ACTOR: Medical Director receives notification             │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ### Flow 3: Medical Director - Escalated Case Review
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ MEDICAL DIRECTOR WORKFLOW                                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -215,11 +215,11 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 │         └─> NEXT ACTOR: Original physician                                  │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ### Flow 4: Auditor - Compliance Review
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ AUDITOR WORKFLOW                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -246,13 +246,13 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 │     └─> Download PDF/CSV                                                    │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ---
 
 ## STATUS TRANSITIONS
 
-```
+\`\`\`
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                          CASE STATUS STATE MACHINE                          │
 ├────────────────────────────────────────────────────────────────────────────┤
@@ -285,7 +285,7 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 │      └─────────┘    └───────────┘  └──────────┘                            │
 │                                                                             │
 └────────────────────────────────────────────────────────────────────────────┘
-```
+\`\`\`
 
 ---
 
@@ -379,7 +379,7 @@ CareSummarizer is a Prior Authorization (PA) workflow management system with thr
 
 ## DATA FLOW SUMMARY
 
-```
+\`\`\`
 Patient Data (app-context.tsx)
     │
     ├── PatientListPanel (displays queue)
@@ -408,7 +408,7 @@ Workflow Functions (app-context.tsx)
     ├── updateRiskFactorStatus(riskId, status, reason)
     ├── requestDocumentation(alertId)
     └── regenerateSummary()
-```
+\`\`\`
 
 ---
 

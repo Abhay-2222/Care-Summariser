@@ -126,16 +126,90 @@ function isReadyForPAFromPartial(patient: Omit<Patient, "workflow">): boolean {
   return allRulesSatisfied && noHighRisks
 }
 
-// Status display helpers
-export const statusConfig: Record<CaseStatus, { label: string; color: string; bgColor: string }> = {
-  new: { label: "New", color: "text-blue-700", bgColor: "bg-blue-50" },
-  in_progress: { label: "In Progress", color: "text-amber-700", bgColor: "bg-amber-50" },
-  needs_physician: { label: "Needs MD", color: "text-purple-700", bgColor: "bg-purple-50" },
-  ready: { label: "Ready", color: "text-emerald-700", bgColor: "bg-emerald-50" },
-  submitted: { label: "Submitted", color: "text-sky-700", bgColor: "bg-sky-50" },
-  approved: { label: "Approved", color: "text-green-700", bgColor: "bg-green-50" },
-  denied: { label: "Denied", color: "text-red-700", bgColor: "bg-red-50" },
-  appealing: { label: "Appealing", color: "text-orange-700", bgColor: "bg-orange-50" },
+// Status display helpers - Consistent badge styles everywhere
+// Uses design system: bg-{color}-50, text-{color}-600, border-{color}-200
+export const statusConfig: Record<CaseStatus, { 
+  label: string
+  color: string
+  bgColor: string
+  borderColor: string
+  badgeClass: string // Combined class for easy use
+}> = {
+  new: { 
+    label: "New", 
+    color: "text-blue-600", 
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200",
+    badgeClass: "bg-blue-50 text-blue-600 border border-blue-200"
+  },
+  in_progress: { 
+    label: "In Progress", 
+    color: "text-slate-600", 
+    bgColor: "bg-slate-100",
+    borderColor: "border-slate-200",
+    badgeClass: "bg-slate-100 text-slate-600 border border-slate-200"
+  },
+  needs_physician: { 
+    label: "Needs MD", 
+    color: "text-purple-600", 
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+    badgeClass: "bg-purple-50 text-purple-600 border border-purple-200"
+  },
+  ready: { 
+    label: "Ready", 
+    color: "text-emerald-600", 
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-200",
+    badgeClass: "bg-emerald-50 text-emerald-600 border border-emerald-200"
+  },
+  submitted: { 
+    label: "Submitted", 
+    color: "text-purple-600", 
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-200",
+    badgeClass: "bg-purple-50 text-purple-600 border border-purple-200"
+  },
+  approved: { 
+    label: "Approved", 
+    color: "text-green-600", 
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200",
+    badgeClass: "bg-green-50 text-green-600 border border-green-200"
+  },
+  denied: { 
+    label: "Denied", 
+    color: "text-red-600", 
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
+    badgeClass: "bg-red-50 text-red-600 border border-red-200"
+  },
+  appealing: { 
+    label: "Appealing", 
+    color: "text-orange-600", 
+    bgColor: "bg-orange-50",
+    borderColor: "border-orange-200",
+    badgeClass: "bg-orange-50 text-orange-600 border border-orange-200"
+  },
+}
+
+// Urgency badge styles - consistent everywhere
+export const urgencyConfig: Record<string, {
+  label: string
+  badgeClass: string
+}> = {
+  STAT: { 
+    label: "STAT", 
+    badgeClass: "bg-red-50 text-red-600 border border-red-200"
+  },
+  URGENT: { 
+    label: "Urgent", 
+    badgeClass: "bg-amber-50 text-amber-600 border border-amber-200"
+  },
+  ROUTINE: { 
+    label: "Routine", 
+    badgeClass: "bg-slate-50 text-slate-500 border border-slate-200"
+  },
 }
 
 // Get next possible statuses based on current status and role
