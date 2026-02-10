@@ -59,9 +59,9 @@ export function WelcomeHero({ userName, role, className }: WelcomeHeroProps) {
           <h1 className="text-lg md:text-xl font-semibold text-slate-800">{message.greeting}</h1>
           <p className="text-[12px] md:text-[13px] text-slate-500 mt-0.5 md:mt-1">{message.subtext}</p>
         </div>
-        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-purple-50 rounded-lg border border-purple-100 self-start flex-shrink-0">
-          <Brain className="h-3.5 w-3.5 md:h-4 md:w-4 text-purple-600" />
-          <span className="text-[9px] md:text-[10px] font-medium text-purple-700 whitespace-nowrap">CareLens AI Active</span>
+        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-50 rounded-lg border border-blue-100 self-start flex-shrink-0">
+          <Brain className="h-3.5 w-3.5 md:h-4 md:w-4 text-blue-600" />
+          <span className="text-[9px] md:text-[10px] font-medium text-blue-700 whitespace-nowrap">CareLens AI Active</span>
         </div>
       </div>
 

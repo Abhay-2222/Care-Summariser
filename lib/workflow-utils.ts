@@ -151,10 +151,10 @@ export const statusConfig: Record<CaseStatus, {
   },
   needs_physician: { 
     label: "Needs MD", 
-    color: "text-purple-600", 
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-200",
-    badgeClass: "bg-purple-50 text-purple-600 border border-purple-200"
+    color: "text-amber-600", 
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
+    badgeClass: "bg-amber-50 text-amber-600 border border-amber-200"
   },
   ready: { 
     label: "Ready", 
@@ -165,10 +165,10 @@ export const statusConfig: Record<CaseStatus, {
   },
   submitted: { 
     label: "Submitted", 
-    color: "text-purple-600", 
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-200",
-    badgeClass: "bg-purple-50 text-purple-600 border border-purple-200"
+    color: "text-sky-600", 
+    bgColor: "bg-sky-50",
+    borderColor: "border-sky-200",
+    badgeClass: "bg-sky-50 text-sky-600 border border-sky-200"
   },
   approved: { 
     label: "Approved", 

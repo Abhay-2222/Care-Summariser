@@ -38,6 +38,7 @@ import {
 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 import type { ConfidenceLevel, RiskLevel } from "@/lib/types"
+import { riskStyles } from "@/lib/design-system"
 
 interface CareLensDrawerProps {
   isOpen: boolean
@@ -101,14 +102,8 @@ function ExplainableConfidence({ label, score, explanation, factors, color }: Co
 }
 
 function RiskBadge({ level }: { level: RiskLevel }) {
-  const config = {
-    High: { bg: "bg-red-50", text: "text-red-600", border: "border-red-200" },
-    Medium: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
-    Low: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200" },
-  }
-  const { bg, text, border } = config[level]
   return (
-    <span className={cn("px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase border", bg, text, border)}>
+    <span className={cn("px-1.5 py-0.5 rounded text-[8px] font-semibold uppercase", riskStyles[level])}>
       {level}
     </span>
   )
@@ -137,8 +132,8 @@ function ChatMessage({
   return (
     <div className={cn("flex gap-2", role === "user" ? "justify-end" : "justify-start")}>
       {isAssistant && (
-        <div className="h-5 w-5 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-          <Brain className="h-3 w-3 text-purple-600" />
+        <div className="h-5 w-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+          <Brain className="h-3 w-3 text-blue-600" />
         </div>
       )}
       <div className={cn(
@@ -366,7 +361,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     physician: {
       title: "Clinical Review",
       subtitle: "Read-Only Analysis",
-      badgeColor: "bg-purple-50 text-purple-600 border-purple-200",
+      badgeColor: "bg-blue-50 text-blue-600 border-blue-200",
       showChat: false,
       showActions: false,
       showExport: false,
@@ -391,13 +386,13 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
         <SheetHeader className="px-3 py-2.5 border-b border-slate-200 bg-slate-50 flex-shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="h-7 w-7 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <Brain className="h-4 w-4 text-purple-600" />
+              <div className="h-7 w-7 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <Brain className="h-4 w-4 text-blue-600" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <SheetTitle className="text-[12px] font-semibold text-slate-800">CareLens</SheetTitle>
-                  <Badge variant="outline" className="text-[7px] h-4 px-1.5 border-purple-200 text-purple-600 bg-purple-50 flex-shrink-0">
+                  <Badge variant="outline" className="text-[7px] h-4 px-1.5 border-blue-200 text-blue-600 bg-blue-50 flex-shrink-0">
                     {currentRole === "case_manager" ? "Interactive" : currentRole === "physician" ? "Review" : "Audit"}
                   </Badge>
                 </div>
@@ -477,7 +472,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
               <ExplainableConfidence 
                 label="Policy Alignment"
                 score={confidencePercents.policy}
-                color="bg-purple-500"
+                color="bg-blue-500"
                 explanation={`Based on ${selectedPatient.insurance}'s published criteria for ${selectedPatient.diagnoses[0]}.`}
                 factors={[
                   { label: `${selectedPatient.insurance} medical necessity met`, met: selectedPatient.payerRules.filter(r => r.status === "satisfied").length > 2 },
@@ -759,7 +754,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
             <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
               <CollapsibleTrigger className="w-full px-3 py-2 flex items-center justify-between hover:bg-slate-100">
                 <span className="text-[10px] font-semibold text-slate-600 flex items-center gap-1.5">
-                  <MessageSquare className="h-3.5 w-3.5 text-purple-500" />
+                  <MessageSquare className="h-3.5 w-3.5 text-blue-500" />
                   Ask CareLens
                   {chatMessages.length > 0 && (
                     <Badge variant="secondary" className="h-4 px-1 text-[8px]">{chatMessages.length}</Badge>
@@ -823,7 +818,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     />
                     <Button 
                       size="sm" 
-                      className="h-8 w-8 p-0 bg-purple-600 hover:bg-purple-700"
+                      className="h-8 w-8 p-0 bg-blue-600 hover:bg-blue-700"
                       onClick={handleSendMessage}
                       disabled={!chatInput.trim() || isTyping}
                     >

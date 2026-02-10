@@ -65,7 +65,7 @@ const statusOptions: { label: string; value: CaseStatus | "ALL"; color: string }
   { label: "All", value: "ALL", color: "bg-slate-100 text-slate-600" },
   { label: "New", value: "new", color: "bg-blue-100 text-blue-700" },
   { label: "In Progress", value: "in_progress", color: "bg-amber-100 text-amber-700" },
-  { label: "Needs MD", value: "needs_physician", color: "bg-purple-100 text-purple-700" },
+  { label: "Needs MD", value: "needs_physician", color: "bg-amber-100 text-amber-700" },
   { label: "Ready", value: "ready", color: "bg-emerald-100 text-emerald-700" },
   { label: "Submitted", value: "submitted", color: "bg-sky-100 text-sky-700" },
 ]

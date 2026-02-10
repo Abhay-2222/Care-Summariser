@@ -223,14 +223,14 @@ export function ClinicalSummaryView() {
     <div className="flex flex-col h-full">
       {/* Mobile CareLens Hint - shown once on first patient view */}
       {showCareLensHint && (
-        <div className="md:hidden bg-purple-50 border-b border-purple-200 px-3 py-2 flex items-center justify-between">
-          <p className="text-[10px] text-purple-700 flex-1">
+        <div className="md:hidden bg-blue-50 border-b border-blue-200 px-3 py-2 flex items-center justify-between">
+          <p className="text-[10px] text-blue-700 flex-1">
             <strong>Tip:</strong> Swipe left or tap the brain icon to open CareLens AI analysis
           </p>
           <button 
             type="button"
             onClick={dismissCareLensHint}
-            className="text-purple-400 hover:text-purple-600 ml-2 p-1"
+            className="text-blue-400 hover:text-blue-600 ml-2 p-1"
           >
             <span className="sr-only">Dismiss</span>
             <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -555,9 +555,9 @@ export function ClinicalSummaryView() {
       {/* Send to MD Sheet - Human-centered framing */}
       <Sheet open={showSendToMDSheet} onOpenChange={setShowSendToMDSheet}>
         <SheetContent className="w-full sm:max-w-md p-0">
-          <SheetHeader className="p-4 border-b border-slate-200 bg-gradient-to-r from-purple-50 to-slate-50">
+          <SheetHeader className="p-4 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-slate-50">
             <SheetTitle className="flex items-center gap-2 text-[14px]">
-              <Stethoscope className="h-4 w-4 text-purple-600" />
+              <Stethoscope className="h-4 w-4 text-blue-600" />
               Get Clinical Sign-Off for {selectedPatient.name.split(" ")[0]}
             </SheetTitle>
             <SheetDescription className="text-[11px]">
@@ -613,22 +613,22 @@ export function ClinicalSummaryView() {
               )}
 
               {/* Medical Necessity Items */}
-              <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
+              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
                 <div className="flex items-center gap-2 mb-2">
-                  <Stethoscope className="h-3.5 w-3.5 text-purple-600" />
-                  <p className="text-[11px] font-medium text-purple-700">Physician Will Validate</p>
+                  <Stethoscope className="h-3.5 w-3.5 text-blue-600" />
+                  <p className="text-[11px] font-medium text-blue-700">Physician Will Validate</p>
                 </div>
-                <ul className="space-y-1.5 text-[10px] text-purple-600">
+                <ul className="space-y-1.5 text-[10px] text-blue-600">
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
                     Medical necessity justification
                   </li>
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
                     Treatment plan appropriateness
                   </li>
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-purple-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
                     Clinical documentation accuracy
                   </li>
                 </ul>
@@ -656,7 +656,7 @@ export function ClinicalSummaryView() {
               Cancel
             </Button>
             <Button
-              className="flex-1 text-[11px] bg-purple-600 hover:bg-purple-700"
+              className="flex-1 text-[11px] bg-blue-600 hover:bg-blue-700"
               onClick={() => {
                 handleSendToPhysician()
                 setShowSendToMDSheet(false)

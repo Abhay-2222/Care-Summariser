@@ -156,7 +156,7 @@ export default function MedicalDirectorPage() {
                 <p className="text-sm text-slate-500">Review escalated cases and manage peer-to-peer reviews</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                <Badge variant="outline" className="bg-teal-50 text-teal-700 border-teal-200">
                   <Shield className="h-3 w-3 mr-1" />
                   Medical Director View
                 </Badge>
@@ -207,8 +207,8 @@ export default function MedicalDirectorPage() {
               <Card className="bg-white">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                      <TrendingUp className="h-4 w-4 text-purple-600" />
+                  <div className="h-8 w-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">Approval Rate</p>
@@ -252,7 +252,7 @@ export default function MedicalDirectorPage() {
                           className={cn(
                             "p-3 md:p-4 rounded-lg border cursor-pointer transition-all",
                             selectedCase?.id === caseItem.id
-                              ? "border-purple-300 bg-purple-50"
+                              ? "border-blue-300 bg-blue-50"
                               : "border-slate-200 bg-white hover:border-slate-300"
                           )}
                           onClick={() => setSelectedCase(caseItem)}
@@ -305,7 +305,7 @@ export default function MedicalDirectorPage() {
                       <div className="p-3 bg-slate-50 rounded-lg">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-purple-100 text-purple-700 text-sm">
+                            <AvatarFallback className="bg-blue-100 text-blue-700 text-sm">
                               {selectedCase.patientName.split(" ").map(n => n[0]).join("")}
                             </AvatarFallback>
                           </Avatar>
@@ -320,12 +320,12 @@ export default function MedicalDirectorPage() {
                       </div>
 
                       {/* AI Analysis */}
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                         <div className="flex items-center gap-2 mb-2">
-                          <Brain className="h-4 w-4 text-purple-600" />
-                          <span className="text-xs font-medium text-purple-900">CareLens Analysis</span>
+                          <Brain className="h-4 w-4 text-blue-600" />
+                          <span className="text-xs font-medium text-blue-900">CareLens Analysis</span>
                         </div>
-                        <p className="text-[11px] text-purple-800 leading-relaxed">{selectedCase.aiAnalysis}</p>
+                        <p className="text-[11px] text-blue-800 leading-relaxed">{selectedCase.aiAnalysis}</p>
                         <div className="mt-2 flex items-center gap-3">
                           <Badge variant="outline" className={cn(
                             "text-[10px]",

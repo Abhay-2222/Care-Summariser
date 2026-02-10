@@ -164,7 +164,7 @@ const notificationConfig: Record<NotificationType, { icon: typeof Bell; color: s
   pa_info_requested: { icon: AlertTriangle, color: "text-amber-600", bgColor: "bg-amber-100" },
   deadline_warning: { icon: Clock, color: "text-red-600", bgColor: "bg-red-100" },
   case_assigned: { icon: Users, color: "text-blue-600", bgColor: "bg-blue-100" },
-  escalation: { icon: AlertTriangle, color: "text-purple-600", bgColor: "bg-purple-100" },
+  escalation: { icon: AlertTriangle, color: "text-amber-600", bgColor: "bg-amber-100" },
   p2p_scheduled: { icon: Phone, color: "text-blue-600", bgColor: "bg-blue-100" },
   message: { icon: MessageSquare, color: "text-slate-600", bgColor: "bg-slate-100" },
   case_update: { icon: FileText, color: "text-slate-600", bgColor: "bg-slate-100" },

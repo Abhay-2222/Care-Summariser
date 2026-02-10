@@ -53,7 +53,7 @@ export default function DashboardPage() {
             {/* Data Visualization Section - Redwood Pattern */}
             <Section 
               title="Cases by Priority" 
-              icon={<BarChart3 className="h-4 w-4 text-purple-700" />}
+              icon={<BarChart3 className="h-4 w-4 text-slate-700" />}
             >
               <div className="space-y-4">
                 <Gauge label="STAT" value={15} max={127} status="error" />

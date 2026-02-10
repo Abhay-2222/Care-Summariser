@@ -358,14 +358,14 @@ export function PhysicianApprovalModal({
                 className={cn(
                   "p-4 rounded-lg border-2 transition-all text-center",
                   selectedAction === "escalate"
-                    ? "border-purple-500 bg-purple-50"
-                    : "border-slate-200 hover:border-purple-300 hover:bg-purple-50/50"
+                    ? "border-amber-500 bg-amber-50"
+                    : "border-slate-200 hover:border-amber-300 hover:bg-amber-50/50"
                 )}
                 onClick={() => setSelectedAction("escalate")}
               >
                 <ArrowUpCircle className={cn(
                   "h-8 w-8 mx-auto mb-2",
-                  selectedAction === "escalate" ? "text-purple-600" : "text-slate-400"
+                  selectedAction === "escalate" ? "text-amber-600" : "text-slate-400"
                 )} />
                 <p className="text-[13px] font-semibold text-slate-800">Escalate</p>
                 <p className="text-[10px] text-slate-500 mt-1">Send to Medical Director</p>
@@ -407,7 +407,7 @@ export function PhysicianApprovalModal({
               "text-[12px]",
               selectedAction === "approve" && "bg-emerald-600 hover:bg-emerald-700",
               selectedAction === "defer" && "bg-amber-600 hover:bg-amber-700",
-              selectedAction === "escalate" && "bg-purple-600 hover:bg-purple-700",
+              selectedAction === "escalate" && "bg-amber-600 hover:bg-amber-700",
             )}
           >
             {selectedAction === "approve" ? "Approve for Submission" :

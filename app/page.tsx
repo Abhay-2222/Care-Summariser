@@ -58,8 +58,8 @@ export default function HomePage() {
             
             {/* Mobile swipe hint - shown only once */}
             {isMobile && !hasSeenSwipeHint && (
-              <div className="md:hidden bg-purple-50 border border-purple-200 rounded-lg p-3 text-center animate-pulse">
-                <p className="text-[10px] text-purple-700">
+              <div className="md:hidden bg-blue-50 border border-blue-200 rounded-lg p-3 text-center animate-pulse">
+                <p className="text-[10px] text-blue-700">
                   <strong>Tip:</strong> Swipe right from the left edge to open patient list anytime
                 </p>
               </div>

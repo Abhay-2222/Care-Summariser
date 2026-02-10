@@ -335,19 +335,19 @@ export default function PriorAuthPage() {
                           )}
 
                           {/* AI Prediction */}
-                          <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <Sparkles className="h-4 w-4 text-purple-600" />
-                                <span className="text-sm font-medium text-purple-900">AI Approval Prediction</span>
+                                <Sparkles className="h-4 w-4 text-blue-600" />
+                                <span className="text-sm font-medium text-blue-900">AI Approval Prediction</span>
                               </div>
-                              <Badge variant="outline" className="text-[10px] bg-purple-100 text-purple-700 border-purple-200">
+                              <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-700 border-blue-200">
                                 {selectedPA.aiPrediction.confidence} Confidence
                               </Badge>
                             </div>
                             <div className="flex items-center gap-3">
                               <Progress value={selectedPA.aiPrediction.approval} className="h-2 flex-1" />
-                              <span className="text-sm font-semibold text-purple-700">{selectedPA.aiPrediction.approval}%</span>
+                              <span className="text-sm font-semibold text-blue-700">{selectedPA.aiPrediction.approval}%</span>
                             </div>
                           </div>
 
@@ -535,15 +535,15 @@ Inpatient admission is medically necessary due to:
                       </div>
 
                       {/* AI Confidence */}
-                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                         <div className="flex items-center gap-2 mb-3">
-                          <Sparkles className="h-5 w-5 text-purple-600" />
-                          <span className="font-medium text-purple-900">AI Analysis</span>
+                          <Sparkles className="h-5 w-5 text-blue-600" />
+                          <span className="font-medium text-blue-900">AI Analysis</span>
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-center">
                           <div>
-                            <p className="text-2xl font-bold text-purple-700">92%</p>
-                            <p className="text-xs text-purple-600">Confidence</p>
+                            <p className="text-2xl font-bold text-blue-700">92%</p>
+                            <p className="text-xs text-blue-600">Confidence</p>
                           </div>
                           <div>
                             <p className="text-2xl font-bold text-emerald-700">High</p>
@@ -588,10 +588,10 @@ Inpatient admission is medically necessary due to:
                 <span className="text-sm font-medium">Medicare Advantage</span>
               </div>
             </div>
-            <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+            <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-purple-800">AI predicts <strong>92%</strong> approval likelihood</span>
+                <Sparkles className="h-4 w-4 text-blue-600" />
+                <span className="text-sm text-blue-800">AI predicts <strong>92%</strong> approval likelihood</span>
               </div>
             </div>
           </div>

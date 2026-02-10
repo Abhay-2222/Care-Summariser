@@ -20,6 +20,9 @@ export const typography = {
   sectionHeader: "text-[11px] text-slate-400 uppercase tracking-wide",
 } as const
 
+// Alias for guidelines compatibility - both names reference the same styles
+export const textStyles = typography
+
 // =============================================================================
 // STATUS BADGES - Consistent everywhere (list, detail, notifications)
 // =============================================================================
@@ -33,12 +36,19 @@ export const statusBadgeStyles = {
   // Workflow Status Badges
   new: "bg-blue-50 text-blue-600 border border-blue-200",
   in_progress: "bg-slate-100 text-slate-600 border border-slate-200",
-  needs_physician: "bg-purple-50 text-purple-600 border border-purple-200",
+  needs_physician: "bg-amber-50 text-amber-600 border border-amber-200",
   ready: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-  submitted: "bg-purple-50 text-purple-600 border border-purple-200",
+  submitted: "bg-blue-50 text-blue-600 border border-blue-200",
   approved: "bg-green-50 text-green-600 border border-green-200",
   denied: "bg-red-50 text-red-600 border border-red-200",
-  appealing: "bg-orange-50 text-orange-600 border border-orange-200",
+  appealing: "bg-amber-50 text-amber-600 border border-amber-200",
+  
+  // Uppercase aliases for calibration test and template compatibility
+  PENDING_REVIEW: "bg-amber-50 text-amber-600 border border-amber-200",
+  IN_REVIEW: "bg-blue-50 text-blue-600 border border-blue-200",
+  APPROVED: "bg-green-50 text-green-600 border border-green-200",
+  DENIED: "bg-red-50 text-red-600 border border-red-200",
+  MORE_INFO_NEEDED: "bg-amber-50 text-amber-600 border border-amber-200",
 } as const
 
 export const statusLabels = {
@@ -102,6 +112,10 @@ export const confidenceStyles = {
   High: "text-emerald-600 bg-emerald-50 border border-emerald-200",
   Medium: "text-amber-600 bg-amber-50 border border-amber-200",
   Low: "text-red-600 bg-red-50 border border-red-200",
+  // Lowercase aliases for calibration test compatibility
+  high: "text-blue-600 bg-blue-50 border border-blue-200",
+  medium: "text-amber-600 bg-amber-50 border border-amber-200",
+  low: "text-slate-600 bg-slate-50 border border-slate-200",
 } as const
 
 export const riskStyles = {
@@ -109,6 +123,9 @@ export const riskStyles = {
   Medium: "text-amber-600 bg-amber-50 border border-amber-200",
   Low: "text-emerald-600 bg-emerald-50 border border-emerald-200",
 } as const
+
+// Alias for guidelines compatibility
+export const riskColors = riskStyles
 
 // =============================================================================
 // PROGRESS BAR STYLES

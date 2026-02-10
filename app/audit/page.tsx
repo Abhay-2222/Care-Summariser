@@ -40,14 +40,14 @@ function StatCard({
   trend?: string
   trendUp?: boolean
   icon: React.ElementType
-  color?: "blue" | "emerald" | "amber" | "red" | "purple"
+  color?: "blue" | "emerald" | "amber" | "red" | "teal"
 }) {
   const colorClasses = {
     blue: "bg-blue-50 text-blue-600",
     emerald: "bg-emerald-50 text-emerald-600",
     amber: "bg-amber-50 text-amber-600",
     red: "bg-red-50 text-red-600",
-    purple: "bg-purple-50 text-purple-600",
+    teal: "bg-teal-50 text-teal-600",
   }
   
   return (
@@ -217,7 +217,7 @@ export default function AuditPage() {
               trend="0.3 days faster"
               trendUp={true}
               icon={Clock}
-              color="purple"
+              color="teal"
             />
           </div>
 
@@ -235,7 +235,7 @@ export default function AuditPage() {
               <div className="space-y-3">
                 <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-blue-500" />
                 <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-amber-500" />
-                <StatusBar label="Needs Physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-purple-500" />
+                <StatusBar label="Needs Physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-amber-500" />
                 <StatusBar label="Ready" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-emerald-500" />
                 <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-sky-500" />
                 <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-green-500" />
@@ -332,12 +332,12 @@ export default function AuditPage() {
               </div>
               <div className="space-y-2">
                 {stats.pendingPhysician > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-purple-50 border border-purple-100">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-amber-50 border border-amber-100">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-purple-500" />
+                      <div className="h-2 w-2 rounded-full bg-amber-500" />
                       <span className="text-[11px] text-slate-700">Cases awaiting physician review</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-purple-700">{stats.pendingPhysician}</span>
+                    <span className="text-[11px] font-semibold text-amber-700">{stats.pendingPhysician}</span>
                   </div>
                 )}
                 {stats.readyForSubmission > 0 && (

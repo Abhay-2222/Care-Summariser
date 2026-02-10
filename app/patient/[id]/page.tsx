@@ -114,7 +114,7 @@ export default function PatientDetailPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-purple-700 bg-purple-50" : "text-slate-500 hover:text-purple-600 hover:bg-purple-50"}`}
+                      className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-blue-700 bg-blue-50" : "text-slate-500 hover:text-blue-600 hover:bg-blue-50"}`}
                       onClick={() => setCareLensOpen(!careLensOpen)}
                     >
                       <careLensButton.icon className="h-4 w-4" />

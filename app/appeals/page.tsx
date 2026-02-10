@@ -335,15 +335,15 @@ Sincerely,
                           </div>
 
                           {/* AI Strategy */}
-                          <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                             <div className="flex items-center gap-2 mb-2">
-                              <Brain className="h-4 w-4 text-purple-600" />
-                              <span className="text-sm font-medium text-purple-900">AI-Suggested Strategy</span>
-                              <Badge variant="outline" className="text-[10px] bg-purple-100 text-purple-700 border-purple-200 ml-auto">
+                              <Brain className="h-4 w-4 text-blue-600" />
+                              <span className="text-sm font-medium text-blue-900">AI-Suggested Strategy</span>
+                              <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-700 border-blue-200 ml-auto">
                                 {selectedCase.similarCaseSuccessRate}% success rate
                               </Badge>
                             </div>
-                            <p className="text-sm text-purple-800">{selectedCase.aiSuggestedStrategy}</p>
+                            <p className="text-sm text-blue-800">{selectedCase.aiSuggestedStrategy}</p>
                           </div>
 
                           {/* Literature Support */}

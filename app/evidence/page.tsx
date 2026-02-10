@@ -67,7 +67,7 @@ import { cn } from "@/lib/utils"
 const documentTypes = {
   progress_note: { icon: FileText, label: "Progress Note", color: "text-blue-600 bg-blue-100" },
   lab_result: { icon: Activity, label: "Lab Result", color: "text-emerald-600 bg-emerald-100" },
-  imaging: { icon: ImageIcon, label: "Imaging Report", color: "text-purple-600 bg-purple-100" },
+  imaging: { icon: ImageIcon, label: "Imaging Report", color: "text-indigo-600 bg-indigo-100" },
   consultation: { icon: FileText, label: "Consultation", color: "text-amber-600 bg-amber-100" },
   procedure: { icon: FileText, label: "Procedure Note", color: "text-red-600 bg-red-100" },
   discharge: { icon: FileText, label: "Discharge Summary", color: "text-slate-600 bg-slate-100" },
@@ -275,11 +275,11 @@ export default function EvidencePanelPage() {
             </div>
 
             {/* AI Relevance Notice */}
-            <div className="p-3 bg-purple-50 rounded-lg border border-purple-100 flex items-start gap-3">
-              <Brain className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+            <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 flex items-start gap-3">
+              <Brain className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-purple-900">AI-Powered Relevance Scoring</p>
-                <p className="text-xs text-purple-700">Documents are automatically scored for relevance to the current PA case. Higher scores indicate stronger supporting evidence.</p>
+                <p className="text-sm font-medium text-blue-900">AI-Powered Relevance Scoring</p>
+                <p className="text-xs text-blue-700">Documents are automatically scored for relevance to the current PA case. Higher scores indicate stronger supporting evidence.</p>
               </div>
             </div>
 
@@ -446,14 +446,14 @@ export default function EvidencePanelPage() {
                         <p className="text-xs text-slate-400">{previewDoc.date} at {previewDoc.time}</p>
                       </div>
 
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                         <div className="flex items-center gap-2 mb-1">
-                          <Sparkles className="h-3.5 w-3.5 text-purple-600" />
-                          <span className="text-xs font-medium text-purple-900">AI Relevance Score</span>
+                          <Sparkles className="h-3.5 w-3.5 text-blue-600" />
+                          <span className="text-xs font-medium text-blue-900">AI Relevance Score</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Progress value={previewDoc.relevanceScore} className="h-2 flex-1" />
-                          <span className="text-sm font-semibold text-purple-700">{previewDoc.relevanceScore}%</span>
+                          <span className="text-sm font-semibold text-blue-700">{previewDoc.relevanceScore}%</span>
                         </div>
                       </div>
 
