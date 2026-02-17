@@ -216,7 +216,7 @@ Sincerely,
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Appeals Management</h1>
+                <h1 className="text-lg md:text-xl text-slate-900">Appeals Management</h1>
                 <p className="text-sm text-slate-500">Manage denied authorizations and generate appeal documentation</p>
               </div>
               <div className="flex items-center gap-2">
@@ -269,7 +269,7 @@ Sincerely,
                             >
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="font-medium text-sm text-slate-900">{caseItem.patientName}</p>
+                                  <p className="text-sm text-slate-900">{caseItem.patientName}</p>
                                   <p className="text-xs text-slate-500">{caseItem.paNumber}</p>
                                 </div>
                                 <Badge variant="outline" className="text-[10px] bg-red-50 text-red-700 border-red-200">
@@ -315,7 +315,7 @@ Sincerely,
                           <div className="p-3 bg-red-50 rounded-lg border border-red-100">
                             <div className="flex items-center gap-2 mb-2">
                               <XCircle className="h-4 w-4 text-red-600" />
-                              <span className="text-sm font-medium text-red-900">Denial Reason</span>
+                              <span className="text-xs text-red-900">Denial Reason</span>
                               <Badge variant="outline" className="text-[10px] ml-auto">{selectedCase.denialCode}</Badge>
                             </div>
                             <p className="text-sm text-red-800">{selectedCase.denialReason}</p>
@@ -326,9 +326,9 @@ Sincerely,
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4 text-amber-600" />
-                                <span className="text-sm font-medium text-amber-900">Appeal Deadline</span>
+                                <span className="text-xs text-amber-900">Appeal Deadline</span>
                               </div>
-                              <span className="text-sm font-semibold text-amber-700">{selectedCase.appealDeadline}</span>
+                              <span className="text-xs text-amber-700">{selectedCase.appealDeadline}</span>
                             </div>
                             <Progress value={(30 - selectedCase.daysRemaining) / 30 * 100} className="h-2" />
                             <p className="text-xs text-amber-700 mt-1">{selectedCase.daysRemaining} days remaining to file appeal</p>
@@ -338,7 +338,7 @@ Sincerely,
                           <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                             <div className="flex items-center gap-2 mb-2">
                               <Brain className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-900">AI-Suggested Strategy</span>
+                              <span className="text-xs text-blue-900">AI-Suggested Strategy</span>
                               <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-700 border-blue-200 ml-auto">
                                 {selectedCase.similarCaseSuccessRate}% success rate
                               </Badge>
@@ -350,13 +350,13 @@ Sincerely,
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               <BookOpen className="h-4 w-4 text-slate-500" />
-                              <span className="text-sm font-medium text-slate-700">Supporting Literature</span>
+                              <span className="text-xs text-slate-700">Supporting Literature</span>
                             </div>
                             <div className="space-y-2">
                               {literatureReferences.map((ref) => (
                                 <div key={ref.id} className="p-2 bg-white rounded border border-slate-200 flex items-start justify-between">
                                   <div>
-                                    <p className="text-xs font-medium text-slate-800">{ref.title}</p>
+                                    <p className="text-xs text-slate-800">{ref.title}</p>
                                     <p className="text-[10px] text-slate-500">{ref.citation}</p>
                                   </div>
                                   <Badge 
@@ -433,7 +433,7 @@ Sincerely,
                           <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 mb-3">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-900">P2P Scheduled: {caseItem.p2pScheduled}</span>
+                              <span className="text-xs text-blue-900">P2P Scheduled: {caseItem.p2pScheduled}</span>
                             </div>
                           </div>
                         )}
@@ -494,7 +494,7 @@ Sincerely,
             {!generatedLetter ? (
               <>
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Select Template</label>
+                  <label className="text-xs text-slate-700">Select Template</label>
                   <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Choose appeal type..." />
@@ -503,7 +503,7 @@ Sincerely,
                       {letterTemplates.map((template) => (
                         <SelectItem key={template.id} value={template.id}>
                           <div>
-                            <p className="font-medium">{template.name}</p>
+                            <p className="text-sm">{template.name}</p>
                             <p className="text-xs text-slate-500">{template.description}</p>
                           </div>
                         </SelectItem>
@@ -512,7 +512,7 @@ Sincerely,
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Additional Context (Optional)</label>
+                  <label className="text-xs text-slate-700">Additional Context (Optional)</label>
                   <Textarea 
                     placeholder="Add any specific points you want emphasized in the appeal..."
                     className="mt-1"
@@ -584,11 +584,11 @@ Sincerely,
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-slate-700">Preferred Date</label>
+              <label className="text-xs text-slate-700">Preferred Date</label>
               <Input type="date" className="mt-1" />
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Preferred Time</label>
+              <label className="text-xs text-slate-700">Preferred Time</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select time slot..." />
@@ -603,7 +603,7 @@ Sincerely,
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Attending Physician</label>
+              <label className="text-xs text-slate-700">Attending Physician</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select physician..." />
@@ -616,7 +616,7 @@ Sincerely,
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Key Discussion Points</label>
+              <label className="text-xs text-slate-700">Key Discussion Points</label>
               <Textarea 
                 placeholder="What specific points need to be discussed during the P2P?"
                 className="mt-1"

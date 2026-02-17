@@ -152,7 +152,7 @@ export default function MedicalDirectorPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Medical Director Dashboard</h1>
+                <h1 className="text-lg md:text-xl text-slate-900">Medical Director Dashboard</h1>
                 <p className="text-sm text-slate-500">Review escalated cases and manage peer-to-peer reviews</p>
               </div>
               <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default function MedicalDirectorPage() {
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">Pending Escalations</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.pendingEscalations}</p>
+                      <p className="text-lg md:text-xl text-slate-900">{metrics.pendingEscalations}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -186,7 +186,7 @@ export default function MedicalDirectorPage() {
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">P2P Today</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.p2pToday}</p>
+                      <p className="text-lg md:text-xl text-slate-900">{metrics.p2pToday}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -199,7 +199,7 @@ export default function MedicalDirectorPage() {
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">Avg Decision</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.avgDecisionTime}</p>
+                      <p className="text-lg md:text-xl text-slate-900">{metrics.avgDecisionTime}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -212,7 +212,7 @@ export default function MedicalDirectorPage() {
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">Approval Rate</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.approvalRate}</p>
+                      <p className="text-lg md:text-xl text-slate-900">{metrics.approvalRate}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -225,7 +225,7 @@ export default function MedicalDirectorPage() {
                     </div>
                     <div>
                       <p className="text-[10px] md:text-xs text-slate-500">Overturned</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.overturnedDenials}</p>
+                      <p className="text-lg md:text-xl text-slate-900">{metrics.overturnedDenials}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -260,7 +260,7 @@ export default function MedicalDirectorPage() {
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-medium text-slate-900 text-sm">{caseItem.patientName}</span>
+                                <span className="text-slate-900 text-sm">{caseItem.patientName}</span>
                                 <Badge
                                   variant="outline"
                                   className={cn(
@@ -310,7 +310,7 @@ export default function MedicalDirectorPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium text-slate-900">{selectedCase.patientName}</p>
+                            <p className="text-sm text-slate-900">{selectedCase.patientName}</p>
                             <p className="text-xs text-slate-500">{selectedCase.age}yo {selectedCase.gender} | {selectedCase.mrn}</p>
                           </div>
                         </div>

@@ -26,7 +26,7 @@ export function PageHeader({ title, description, actions, breadcrumb }: PageHead
       {breadcrumb && <div className="mb-2">{breadcrumb}</div>}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+          <h1 className="text-lg text-foreground">{title}</h1>
           {description && (
             <p className="text-sm text-muted-foreground">{description}</p>
           )}
@@ -77,12 +77,12 @@ export function Scorecard({ title, value, unit, trend, icon, variant = "default"
             {icon}
           </div>
         )}
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
           {title}
         </span>
       </div>
       <div className="flex items-baseline gap-1">
-        <span className="text-2xl font-bold font-mono text-foreground">{value}</span>
+        <span className="text-2xl font-mono text-foreground">{value}</span>
         {unit && <span className="text-sm text-muted-foreground">{unit}</span>}
       </div>
       {trend && (
@@ -132,7 +132,7 @@ export function ListItem({
       {leading && <div className="shrink-0">{leading}</div>}
       <div className="flex-1 min-w-0">
         <p className={cn(
-          "font-medium text-[13px] truncate leading-tight",
+          "text-[13px] truncate leading-tight",
           selected ? "text-primary" : "text-foreground"
         )}>
           {title}
@@ -186,10 +186,10 @@ export function ActivityItem({ title, description, timestamp, status = "pending"
     <div className={cn("flex items-start gap-3 p-3 rounded-xl border", config.bg)}>
       <div className="mt-0.5">{icon || config.icon}</div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-sm">{title}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        <p className="text-[12px] text-foreground">{title}</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">{description}</p>
       </div>
-      <span className="text-2xs text-muted-foreground font-mono shrink-0">{timestamp}</span>
+      <span className="text-[10px] text-muted-foreground font-mono shrink-0">{timestamp}</span>
     </div>
   )
 }
@@ -224,7 +224,7 @@ export function Timeline({ events }: TimelineProps) {
           <div key={event.id} className="flex gap-4">
             <div className="flex flex-col items-center">
               <div className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold shadow-sm",
+                "flex h-8 w-8 items-center justify-center rounded-xl text-xs shadow-sm",
                 statusColors[event.status || "pending"]
               )}>
                 {index + 1}
@@ -238,7 +238,7 @@ export function Timeline({ events }: TimelineProps) {
                 <Clock className="h-3 w-3" />
                 <span>{event.timestamp}</span>
               </div>
-              <h4 className="mt-1.5 font-medium text-sm">{event.title}</h4>
+              <h4 className="mt-1.5 text-sm">{event.title}</h4>
               <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{event.description}</p>
             </div>
           </div>
@@ -287,9 +287,9 @@ export function MessageBanner({ title, description, icon, action, variant }: Mes
     <div className={messageBannerVariants({ variant })}>
       <div className="mt-0.5">{icon || defaultIcons[variant || "info"]}</div>
       <div className="flex-1">
-        <p className="font-medium text-sm">{title}</p>
+        <p className="text-[13px] text-foreground">{title}</p>
         {description && (
-          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{description}</p>
+          <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{description}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -317,7 +317,7 @@ export function ProfileCard({ name, subtitle, avatar, meta, badges, actions }: P
           {avatar && <div className="shrink-0">{avatar}</div>}
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-sm">{name}</h3>
+              <h3 className="text-[13px] text-foreground">{name}</h3>
               {badges}
             </div>
             {subtitle && (
@@ -331,10 +331,10 @@ export function ProfileCard({ name, subtitle, avatar, meta, badges, actions }: P
         <div className="grid gap-3 sm:grid-cols-4 mt-3 pt-3 border-t border-border">
           {meta.map((item, index) => (
             <div key={index} className="space-y-0.5">
-              <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
+              <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
                 {item.label}
               </p>
-              <p className="text-xs font-medium">{item.value}</p>
+              <p className="text-xs">{item.value}</p>
             </div>
           ))}
         </div>
@@ -378,7 +378,7 @@ export function Section({
             {icon}
           </div>
         )}
-        <h3 className="text-base font-semibold">{title}</h3>
+        <h3 className="text-[13px] text-foreground">{title}</h3>
         {badge}
       </div>
       <div className="flex items-center gap-2">
@@ -436,7 +436,7 @@ export function HierarchyCard({ title, icon, items }: HierarchyCardProps) {
       <div className="space-y-4">
         {primary.length > 0 && (
           <div>
-            <p className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <p className="text-2xs uppercase tracking-wider text-muted-foreground mb-2">
               Primary
             </p>
             <div className="space-y-2">
@@ -444,7 +444,7 @@ export function HierarchyCard({ title, icon, items }: HierarchyCardProps) {
                 <div key={item.id} className="flex items-center justify-between rounded-xl pastel-blue border border-primary/20 p-3">
                   <div className="flex items-center gap-3">
                     <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-                    <span className="font-medium text-sm">{item.label}</span>
+                    <span className="text-sm">{item.label}</span>
                   </div>
                   {item.code && (
                     <span className="text-2xs font-mono text-primary bg-card px-2 py-1 rounded border border-primary/30">
@@ -459,7 +459,7 @@ export function HierarchyCard({ title, icon, items }: HierarchyCardProps) {
 
         {secondary.length > 0 && (
           <div>
-            <p className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <p className="text-2xs uppercase tracking-wider text-muted-foreground mb-2">
               Secondary
             </p>
             <div className="space-y-2">
@@ -482,7 +482,7 @@ export function HierarchyCard({ title, icon, items }: HierarchyCardProps) {
 
         {tertiary.length > 0 && (
           <div>
-            <p className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <p className="text-2xs uppercase tracking-wider text-muted-foreground mb-2">
               Related
             </p>
             <div className="flex flex-wrap gap-2">
@@ -523,7 +523,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
           {icon}
         </div>
       )}
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <h3 className="text-base text-foreground">{title}</h3>
       {description && (
         <p className="text-sm text-muted-foreground mt-2 max-w-sm leading-relaxed">
           {description}
@@ -610,7 +610,7 @@ export function Gauge({ value, max = 100, label, status = "neutral", showValue =
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-slate-500">{label}</span>
         {showValue && (
-          <span className="text-[10px] font-mono font-medium text-slate-600">{value}%</span>
+          <span className="text-[10px] font-mono text-slate-600">{value}%</span>
         )}
       </div>
       <div className={cn("h-1.5 rounded-full overflow-hidden", statusBg[status])}>
