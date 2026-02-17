@@ -2,16 +2,13 @@
 
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
-import { textStyles, statusBadgeStyles, riskStyles, containerStyles, spacing } from "@/lib/design-system"
+import { textStyles, statusBadgeStyles, containerStyles, spacing } from "@/lib/design-system"
 import { cn } from "@/lib/utils"
-import type { Patient } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   CheckCircle,
-  XCircle,
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
@@ -20,6 +17,7 @@ import {
   Shield,
   Brain,
   Stethoscope,
+  XCircle,
 } from "lucide-react"
 
 export function PhysicianLayout() {
@@ -31,7 +29,6 @@ export function PhysicianLayout() {
     currentUser,
   } = useApp()
 
-  // Filter to only cases awaiting physician review
   const pendingCases = patients.filter(
     (p) => p.workflow.status === "needs_physician"
   )
@@ -46,17 +43,13 @@ export function PhysicianLayout() {
   const goToNext = () => {
     setNotes("")
     setActionTaken(null)
-    if (currentIndex < totalCases - 1) {
-      setCurrentIndex((i) => i + 1)
-    }
+    if (currentIndex < totalCases - 1) setCurrentIndex((i) => i + 1)
   }
 
   const goToPrev = () => {
     setNotes("")
     setActionTaken(null)
-    if (currentIndex > 0) {
-      setCurrentIndex((i) => i - 1)
-    }
+    if (currentIndex > 0) setCurrentIndex((i) => i - 1)
   }
 
   const handleApprove = () => {
@@ -82,10 +75,10 @@ export function PhysicianLayout() {
     return (
       <div className="flex items-center justify-center h-full min-h-[60vh]">
         <div className="text-center space-y-3">
-          <div className="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center mx-auto">
-            <CheckCircle className="h-6 w-6 text-emerald-600" />
+          <div className="h-14 w-14 rounded-full bg-emerald-50 flex items-center justify-center mx-auto">
+            <CheckCircle className="h-7 w-7 text-emerald-600" />
           </div>
-          <p className={cn(textStyles.title, "text-slate-700")}>No cases awaiting review</p>
+          <p className="text-[15px] font-medium text-slate-700">No cases awaiting review</p>
           <p className={textStyles.body}>All physician reviews are complete. Check back later.</p>
         </div>
       </div>
@@ -106,26 +99,26 @@ export function PhysicianLayout() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Top bar: counter + navigation */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-white">
-        <div className="flex items-center gap-3">
+      {/* Top bar: Physician Review + nav */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-white">
+        <div className="flex items-center gap-2.5">
           <Stethoscope className="h-4 w-4 text-teal-600" />
-          <span className={cn(textStyles.title, "text-teal-700")}>
+          <span className="text-[13px] font-medium text-teal-700 tracking-tight">
             Physician Review
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={goToPrev}
             disabled={currentIndex === 0}
-            className="h-7 w-7 p-0"
+            className="h-7 w-7 p-0 border-slate-200 hover:border-slate-900 hover:text-slate-900 transition-colors"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             <span className="sr-only">Previous case</span>
           </Button>
-          <span className={cn(textStyles.body, "tabular-nums min-w-[60px] text-center")}>
+          <span className="text-[12px] font-mono text-slate-400 tabular-nums min-w-[60px] text-center">
             {currentIndex + 1} of {totalCases}
           </span>
           <Button
@@ -133,7 +126,7 @@ export function PhysicianLayout() {
             size="sm"
             onClick={goToNext}
             disabled={currentIndex === totalCases - 1}
-            className="h-7 w-7 p-0"
+            className="h-7 w-7 p-0 border-slate-200 hover:border-slate-900 hover:text-slate-900 transition-colors"
           >
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="sr-only">Next case</span>
@@ -141,11 +134,11 @@ export function PhysicianLayout() {
         </div>
       </div>
 
-      {/* Confirmation banner when action was taken */}
+      {/* Confirmation banner */}
       {actionTaken && (
         <div
           className={cn(
-            "px-4 py-2.5 flex items-center justify-between",
+            "px-5 py-2.5 flex items-center justify-between",
             actionTaken === "approved" && "bg-emerald-50 border-b border-emerald-200",
             actionTaken === "deferred" && "bg-amber-50 border-b border-amber-200",
             actionTaken === "escalated" && "bg-red-50 border-b border-red-200"
@@ -153,8 +146,7 @@ export function PhysicianLayout() {
         >
           <span
             className={cn(
-              textStyles.body,
-              "font-medium",
+              "text-[12px] font-medium",
               actionTaken === "approved" && "text-emerald-700",
               actionTaken === "deferred" && "text-amber-700",
               actionTaken === "escalated" && "text-red-700"
@@ -170,169 +162,146 @@ export function PhysicianLayout() {
         </div>
       )}
 
-      {/* Main content - scrollable */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {/* Patient identity + urgency */}
-        <Card className={cn(containerStyles.card, "overflow-hidden")}>
-          <div
-            className={cn(
-              "px-3 py-2 flex items-center justify-between",
-              currentCase.urgency === "STAT" && "bg-red-50 border-b border-red-100",
-              currentCase.urgency === "URGENT" && "bg-amber-50 border-b border-amber-100",
-              currentCase.urgency === "ROUTINE" && "bg-slate-50 border-b border-slate-100"
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className={cn(
-                  "text-[9px] px-1.5 py-0 font-semibold",
-                  statusBadgeStyles[currentCase.urgency]
-                )}
-              >
-                {currentCase.urgency}
-              </Badge>
-              <span className={cn(textStyles.title, "text-[13px]")}>
-                {currentCase.name}
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Patient hero header - warm off-white background */}
+        <div className="bg-[#fafaf8] border-b border-[#ece9e4] px-5 md:px-10 py-6 md:py-8">
+          <div className="max-w-3xl">
+            {/* Urgency tag */}
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[9px] px-2 py-0.5 font-semibold mb-3",
+                statusBadgeStyles[currentCase.urgency]
+              )}
+            >
+              {currentCase.urgency}
+            </Badge>
+
+            {/* Patient name - serif italic hero */}
+            <h1 className="font-serif italic text-[32px] md:text-[36px] leading-none tracking-tight text-slate-900 mb-1">
+              {currentCase.name}
+            </h1>
+            <span className="text-[12px] font-mono text-slate-400">{currentCase.mrn}</span>
+
+            {/* Info strip - horizontal, separator-divided */}
+            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-[#ece9e4]">
+              <span className="text-[13px] font-mono text-slate-500">
+                {currentCase.age}{currentCase.gender === "F" ? "F" : "M"}
               </span>
+              <div className="w-px h-3 bg-slate-200" />
+              <span className="text-[13px] font-mono text-slate-500">{currentCase.insurance}</span>
+              <div className="w-px h-3 bg-slate-200" />
+              <span className="text-[13px] font-mono text-slate-500">{currentCase.lengthOfStay}</span>
+              <div className="w-px h-3 bg-slate-200" />
+              <span className="text-[13px] font-mono text-slate-500">Room {currentCase.room}</span>
             </div>
-            <span className={textStyles.body}>{currentCase.mrn}</span>
           </div>
-          <CardContent className={spacing.cardPadding}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div>
-                <p className={textStyles.label}>Age / Gender</p>
-                <p className={textStyles.body}>
-                  {currentCase.age}{currentCase.gender === "F" ? "F" : "M"}
-                </p>
-              </div>
-              <div>
-                <p className={textStyles.label}>Insurance</p>
-                <p className={textStyles.body}>{currentCase.insurance}</p>
-              </div>
-              <div>
-                <p className={textStyles.label}>LOS</p>
-                <p className={textStyles.body}>{currentCase.lengthOfStay}</p>
-              </div>
-              <div>
-                <p className={textStyles.label}>Room</p>
-                <p className={textStyles.body}>{currentCase.room}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        </div>
 
-        {/* Chief complaint + diagnoses */}
-        <Card className={containerStyles.card}>
-          <CardContent className={spacing.cardPadding}>
-            <div className={spacing.itemGap}>
-              <div>
-                <p className={textStyles.label}>Chief complaint</p>
-                <p className={cn(textStyles.body, "mt-0.5")}>{currentCase.chiefComplaint}</p>
-              </div>
-              <div>
-                <p className={textStyles.label}>Diagnoses</p>
-                <div className="flex flex-wrap gap-1 mt-0.5">
-                  {currentCase.diagnoses.map((dx, i) => (
-                    <Badge
-                      key={i}
-                      variant="outline"
-                      className="text-[9px] px-1.5 py-0 bg-slate-50 text-slate-600 border-slate-200"
-                    >
-                      {dx}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* CareLens: High-severity risk factors only */}
-        {highRiskFactors.length > 0 && (
-          <Card className={cn(containerStyles.card, "border-red-100")}>
-            <CardContent className={spacing.cardPadding}>
-              <div className="flex items-center gap-2 mb-2">
-                <Brain className="h-3.5 w-3.5 text-blue-600" />
-                <span className={cn(textStyles.title, "text-blue-700")}>
-                  High-severity risk factors
+        {/* Content cards */}
+        <div className="px-5 md:px-10 py-5 space-y-4 max-w-3xl">
+          {/* Chief complaint + diagnoses */}
+          <div className="space-y-1">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Chief complaint</p>
+            <p className="text-[13px] text-slate-700 leading-relaxed">{currentCase.chiefComplaint}</p>
+          </div>
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Diagnoses</p>
+            <div className="flex flex-wrap gap-1.5">
+              {currentCase.diagnoses.map((dx, i) => (
+                <span
+                  key={i}
+                  className="text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200"
+                >
+                  {dx}
                 </span>
-                <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 ml-auto", riskStyles.High)}>
+              ))}
+            </div>
+          </div>
+
+          {/* High-severity risk factors - left-border accent cards */}
+          {highRiskFactors.length > 0 && (
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center gap-2">
+                <Brain className="h-3.5 w-3.5 text-blue-600" />
+                <span className="text-[12px] font-semibold text-blue-700">High-severity risk factors</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-auto bg-red-50 text-red-600 border-red-200">
                   {highRiskFactors.length}
                 </Badge>
               </div>
-              <div className={spacing.itemGap}>
-                {highRiskFactors.map((rf) => (
-                  <div
-                    key={rf.id}
-                    className="flex items-start gap-2 p-2 bg-red-50/50 rounded border border-red-100"
-                  >
-                    <AlertTriangle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
+              {highRiskFactors.map((rf) => (
+                <div
+                  key={rf.id}
+                  className="border border-red-100 border-l-[3px] border-l-red-500 rounded-md px-4 py-3 bg-white"
+                >
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className={cn(textStyles.body, "text-red-800 font-medium")}>{rf.factor}</p>
+                      <p className="text-[13px] font-semibold text-slate-900">{rf.factor}</p>
                       {rf.mitigation && (
-                        <p className={cn(textStyles.body, "text-red-600 mt-0.5")}>{rf.mitigation}</p>
+                        <p className="text-[12px] font-mono text-slate-500 mt-0.5">{rf.mitigation}</p>
                       )}
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Payer rule gaps (missing + unclear) */}
-        {(missingRules.length > 0 || unclearRules.length > 0) && (
-          <Card className={cn(containerStyles.card, "border-amber-100")}>
-            <CardContent className={spacing.cardPadding}>
-              <div className="flex items-center gap-2 mb-2">
+          {/* Payer rule gaps - left-border accent cards */}
+          {(missingRules.length > 0 || unclearRules.length > 0) && (
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center gap-2">
                 <Shield className="h-3.5 w-3.5 text-amber-600" />
-                <span className={cn(textStyles.title, "text-amber-700")}>
-                  Payer rule gaps
-                </span>
-                <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 ml-auto", statusBadgeStyles.URGENT)}>
+                <span className="text-[12px] font-semibold text-amber-700">Payer rule gaps</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-auto bg-amber-50 text-amber-600 border-amber-200">
                   {missingRules.length + unclearRules.length}
                 </Badge>
               </div>
-              <div className={spacing.itemGap}>
-                {missingRules.map((r) => (
-                  <div key={r.id} className="flex items-start gap-2 p-2 bg-red-50/50 rounded border border-red-100">
-                    <XCircle className="h-3 w-3 text-red-500 mt-0.5 flex-shrink-0" />
+              {missingRules.map((r) => (
+                <div
+                  key={r.id}
+                  className="border border-red-100 border-l-[3px] border-l-red-500 rounded-md px-4 py-3 bg-white"
+                >
+                  <div className="flex items-start gap-2">
+                    <XCircle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className={cn(textStyles.body, "text-red-800")}>{r.rule}</p>
-                      <p className={cn(textStyles.label, "mt-0.5 normal-case tracking-normal")}>Missing</p>
+                      <p className="text-[13px] font-semibold text-slate-900">{r.rule}</p>
+                      <p className="text-[11px] font-mono text-slate-400 mt-0.5">Missing</p>
                     </div>
                   </div>
-                ))}
-                {unclearRules.map((r) => (
-                  <div key={r.id} className="flex items-start gap-2 p-2 bg-amber-50/50 rounded border border-amber-100">
-                    <AlertTriangle className="h-3 w-3 text-amber-500 mt-0.5 flex-shrink-0" />
+                </div>
+              ))}
+              {unclearRules.map((r) => (
+                <div
+                  key={r.id}
+                  className="border border-amber-100 border-l-[3px] border-l-amber-500 rounded-md px-4 py-3 bg-white"
+                >
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className={cn(textStyles.body, "text-amber-800")}>{r.rule}</p>
-                      <p className={cn(textStyles.label, "mt-0.5 normal-case tracking-normal")}>Unclear</p>
+                      <p className="text-[13px] font-semibold text-slate-900">{r.rule}</p>
+                      <p className="text-[11px] font-mono text-slate-400 mt-0.5">Unclear</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Clinical course (read-only) */}
-        <Card className={containerStyles.card}>
-          <CardContent className={spacing.cardPadding}>
-            <div className="flex items-center gap-2 mb-2">
-              <FileText className="h-3.5 w-3.5 text-slate-400" />
-              <span className={textStyles.sectionHeader}>Clinical course</span>
+                </div>
+              ))}
             </div>
-            <p className={cn(textStyles.body, "leading-relaxed")}>{currentCase.clinicalCourse}</p>
-          </CardContent>
-        </Card>
+          )}
 
-        {/* Decision notes */}
-        <Card className={containerStyles.card}>
-          <CardContent className={spacing.cardPadding}>
-            <label htmlFor="physician-notes" className={cn(textStyles.label, "mb-1.5 block")}>
+          {/* Clinical course - read-only */}
+          <div className="pt-2 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <FileText className="h-3.5 w-3.5 text-slate-400" />
+              <span className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Clinical course</span>
+            </div>
+            <p className="text-[13px] text-slate-600 leading-relaxed">{currentCase.clinicalCourse}</p>
+          </div>
+
+          {/* Decision notes */}
+          <div className="pt-2 space-y-1.5">
+            <label htmlFor="physician-notes" className="text-[10px] font-medium uppercase tracking-widest text-slate-400">
               Decision notes (optional)
             </label>
             <Textarea
@@ -340,19 +309,22 @@ export function PhysicianLayout() {
               placeholder="Add reasoning for your decision..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="text-[11px] min-h-[60px] resize-none"
+              className="text-[13px] min-h-[60px] resize-none border-slate-200 focus:border-slate-400"
               disabled={!!actionTaken}
             />
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Spacer for sticky footer */}
+          <div className="h-20" />
+        </div>
       </div>
 
-      {/* Sticky action bar - 3 buttons only */}
-      <div className="border-t border-slate-200 bg-white px-4 py-3">
-        <div className="flex items-center gap-2">
+      {/* Sticky frosted-glass action bar */}
+      <div className="sticky bottom-0 border-t border-slate-200 bg-white/92 backdrop-blur-xl px-5 md:px-10 py-3">
+        <div className="flex items-center gap-3 max-w-3xl">
           <div className="flex items-center gap-1.5 mr-auto">
             <Clock className="h-3 w-3 text-slate-400" />
-            <span className={textStyles.body}>
+            <span className="text-[11px] text-slate-400 font-mono">
               Assigned by {currentCase.workflow.assignment?.assignedTo || "System"}
             </span>
           </div>
@@ -361,9 +333,9 @@ export function PhysicianLayout() {
             variant="outline"
             onClick={handleEscalate}
             disabled={!!actionTaken}
-            className="h-8 text-[11px] gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="h-9 text-[12px] gap-1.5 px-4 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
           >
-            <AlertTriangle className="h-3 w-3" />
+            <AlertTriangle className="h-3.5 w-3.5" />
             Escalate
           </Button>
           <Button
@@ -371,18 +343,18 @@ export function PhysicianLayout() {
             variant="outline"
             onClick={handleDefer}
             disabled={!!actionTaken}
-            className="h-8 text-[11px] gap-1.5 border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+            className="h-9 text-[12px] gap-1.5 px-4 border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
           >
-            <Clock className="h-3 w-3" />
+            <Clock className="h-3.5 w-3.5" />
             Defer
           </Button>
           <Button
             size="sm"
             onClick={handleApprove}
             disabled={!!actionTaken}
-            className="h-8 text-[11px] gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="h-9 text-[12px] gap-1.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-semibold tracking-tight"
           >
-            <CheckCircle className="h-3 w-3" />
+            <CheckCircle className="h-3.5 w-3.5" />
             Approve
           </Button>
         </div>
