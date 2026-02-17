@@ -105,7 +105,7 @@ export function WorkflowBar({
         <div className="flex items-center gap-4 min-w-0">
           {/* Status badge */}
           <span className={cn(
-            "flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-full",
+            "flex-shrink-0 text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wide",
             statusInfo.badgeClass
           )}>
             {statusInfo.label}

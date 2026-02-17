@@ -10,7 +10,7 @@ export default function TrainingPage() {
       <main className="flex-1 overflow-y-auto bg-background p-6">
         <div className="mx-auto max-w-6xl space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">Training & Support</h1>
+            <h1 className="text-lg text-foreground">Training & Support</h1>
             <p className="text-sm text-muted-foreground">Resources and documentation to help you succeed</p>
           </div>
 

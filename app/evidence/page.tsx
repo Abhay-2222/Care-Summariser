@@ -232,7 +232,7 @@ export default function EvidencePanelPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Evidence Management</h1>
+                <h1 className="text-lg md:text-xl text-slate-900">Evidence Management</h1>
                 <p className="text-sm text-slate-500">Search, organize, and cite clinical documentation</p>
               </div>
               <div className="flex items-center gap-2">
@@ -441,7 +441,7 @@ export default function EvidencePanelPage() {
                       </div>
                       
                       <div>
-                        <h3 className="font-semibold text-slate-900">{previewDoc.title}</h3>
+                        <h3 className="text-sm text-slate-900">{previewDoc.title}</h3>
                         <p className="text-xs text-slate-500 mt-1">{previewDoc.author}</p>
                         <p className="text-xs text-slate-400">{previewDoc.date} at {previewDoc.time}</p>
                       </div>
@@ -453,7 +453,7 @@ export default function EvidencePanelPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Progress value={previewDoc.relevanceScore} className="h-2 flex-1" />
-                          <span className="text-sm font-semibold text-blue-700">{previewDoc.relevanceScore}%</span>
+                          <span className="text-sm font-mono text-blue-700">{previewDoc.relevanceScore}%</span>
                         </div>
                       </div>
 

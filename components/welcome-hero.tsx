@@ -56,7 +56,7 @@ export function WelcomeHero({ userName, role, className }: WelcomeHeroProps) {
 
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
         <div className="min-w-0">
-          <h1 className="text-lg md:text-xl font-semibold text-slate-800">{message.greeting}</h1>
+          <h1 className="text-lg md:text-xl text-slate-800">{message.greeting}</h1>
           <p className="text-[12px] md:text-[13px] text-slate-500 mt-0.5 md:mt-1">{message.subtext}</p>
         </div>
         <div className="flex items-center gap-2 px-2.5 py-1.5 bg-blue-50 rounded-lg border border-blue-100 self-start flex-shrink-0">
@@ -74,7 +74,7 @@ export function WelcomeHero({ userName, role, className }: WelcomeHeroProps) {
             </div>
             <div>
               <p className="text-[9px] md:text-[10px] text-slate-500">{stat.label}</p>
-              <p className={cn("text-[13px] md:text-[14px] font-semibold", stat.color)}>{stat.value}</p>
+              <p className={cn("text-[13px] md:text-[14px] font-mono", stat.color)}>{stat.value}</p>
             </div>
           </div>
         ))}

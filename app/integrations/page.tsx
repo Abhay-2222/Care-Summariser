@@ -205,7 +205,7 @@ export default function IntegrationsPage() {
         <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">Integration Management</h1>
+              <h1 className="text-lg text-foreground">Integration Management</h1>
               <p className="text-sm text-muted-foreground">Configure and monitor external system connections</p>
             </div>
             {/* Summary badges */}

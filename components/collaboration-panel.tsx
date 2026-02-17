@@ -243,7 +243,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className={cn("text-[9px] font-semibold text-white", note.author.color)}>
+                            <AvatarFallback className={cn("text-[9px] text-white", note.author.color)}>
                               {note.author.initials}
                             </AvatarFallback>
                           </Avatar>
@@ -331,7 +331,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-slate-100 rounded"
                     >
                       <Avatar className="h-5 w-5">
-                        <AvatarFallback className={cn("text-[8px] font-semibold text-white", member.color)}>
+                        <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -396,7 +396,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className={cn("text-[10px] font-semibold text-white", member.color)}>
+                        <AvatarFallback className={cn("text-[10px] text-white", member.color)}>
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -479,7 +479,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <SelectItem key={member.id} value={member.id}>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-5 w-5">
-                          <AvatarFallback className={cn("text-[8px] font-semibold text-white", member.color)}>
+                          <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
                             {member.initials}
                           </AvatarFallback>
                         </Avatar>

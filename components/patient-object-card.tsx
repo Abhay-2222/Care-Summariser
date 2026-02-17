@@ -128,7 +128,7 @@ export function PatientObjectCard({
       {/* Row 3: Urgency Badge + Primary Diagnosis */}
       <div className="flex items-center gap-3 mt-2 pt-2 border-t border-slate-100">
         <span className={cn(
-          "px-2 py-0.5 rounded text-[9px] font-semibold flex-shrink-0",
+          "px-2 py-0.5 rounded text-[9px] flex-shrink-0 uppercase tracking-wide",
           urgencyStyle
         )}>
           {patient.urgency}
@@ -171,7 +171,7 @@ export function PatientObjectCardCompact({
           {patient.name}
         </h2>
         <span className={cn(
-          "px-2 py-0.5 rounded text-[9px] font-semibold flex-shrink-0",
+          "px-2 py-0.5 rounded text-[9px] flex-shrink-0 uppercase tracking-wide",
           urgencyStyle
         )}>
           {patient.urgency}

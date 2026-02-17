@@ -85,7 +85,7 @@ export function PhysicianApprovalModal({
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-[14px] font-semibold text-slate-800">{patient.name}</h3>
+                <h3 className="text-[14px] font-medium text-slate-800">{patient.name}</h3>
                 <p className="text-[12px] text-slate-500 mt-0.5">
                   {patient.age}yo {patient.gender === "F" ? "Female" : "Male"} | MRN: {patient.mrn} | {patient.insurance}
                 </p>
@@ -115,7 +115,7 @@ export function PhysicianApprovalModal({
           <div className="rounded-lg border border-slate-200 p-4">
             <div className="flex items-center gap-2 mb-3">
               <Shield className="h-4 w-4 text-blue-600" />
-              <h4 className="text-[13px] font-semibold text-slate-800">CareLens Analysis</h4>
+              <h4 className="text-[13px] font-medium text-slate-800">CareLens Analysis</h4>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
@@ -123,7 +123,7 @@ export function PhysicianApprovalModal({
               <div className="text-center p-3 rounded-md bg-slate-50">
                 <p className="text-[10px] text-slate-500 uppercase">Confidence</p>
                 <p className={cn(
-                  "text-[18px] font-bold mt-1",
+                  "text-[18px] font-mono mt-1",
                   careLens.overallConfidence === "High" ? "text-emerald-600" :
                   careLens.overallConfidence === "Medium" ? "text-amber-600" : "text-red-600"
                 )}>
@@ -135,7 +135,7 @@ export function PhysicianApprovalModal({
               <div className="text-center p-3 rounded-md bg-slate-50">
                 <p className="text-[10px] text-slate-500 uppercase">Denial Risk</p>
                 <p className={cn(
-                  "text-[18px] font-bold mt-1",
+                  "text-[18px] font-mono mt-1",
                   careLens.denialRisk === "Low" ? "text-emerald-600" :
                   careLens.denialRisk === "Medium" ? "text-amber-600" : "text-red-600"
                 )}>
@@ -146,7 +146,7 @@ export function PhysicianApprovalModal({
               {/* Rules Satisfied */}
               <div className="text-center p-3 rounded-md bg-slate-50">
                 <p className="text-[10px] text-slate-500 uppercase">Payer Rules</p>
-                <p className="text-[18px] font-bold mt-1 text-slate-700">
+                <p className="text-[18px] font-mono mt-1 text-slate-700">
                   {satisfiedRules}/{totalRules}
                 </p>
               </div>
@@ -176,7 +176,7 @@ export function PhysicianApprovalModal({
             <div className="rounded-lg border border-red-200 bg-red-50 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <XCircle className="h-4 w-4 text-red-600" />
-                <h4 className="text-[13px] font-semibold text-red-800">Blocking Approval</h4>
+                <h4 className="text-[13px] font-medium text-red-800">Blocking Approval</h4>
               </div>
               <p className="text-[11px] text-red-700 mb-3">
                 The following issues must be resolved before this case can be approved:
@@ -230,7 +230,7 @@ export function PhysicianApprovalModal({
           <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
             <div className="flex items-center gap-2 mb-3">
               <Stethoscope className="h-4 w-4 text-blue-600" />
-              <h4 className="text-[13px] font-semibold text-blue-800">Your Review Validates</h4>
+              <h4 className="text-[13px] font-medium text-blue-800">Your Review Validates</h4>
             </div>
             <ul className="space-y-2">
               <li className="flex items-start gap-2">
@@ -265,7 +265,7 @@ export function PhysicianApprovalModal({
                   <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[14px] font-semibold text-emerald-800">Everything needed for safe approval is documented</p>
+                  <p className="text-[14px] font-medium text-emerald-800">Everything needed for safe approval is documented</p>
                   <p className="text-[11px] text-emerald-600 mt-1">
                     CareLens confidence is high, all {totalRules} payer criteria are met, and no blocking risks remain.
                     Your clinical judgment is preserved in the full review below.
@@ -303,7 +303,7 @@ export function PhysicianApprovalModal({
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                 <div>
-                  <p className="text-[13px] font-semibold text-emerald-800">Ready for Approval</p>
+                  <p className="text-[13px] font-medium text-emerald-800">Ready for Approval</p>
                   <p className="text-[11px] text-emerald-600">All high-risk factors resolved and policy gaps closed. Confidence is {careLens.overallConfidence} - review recommended.</p>
                 </div>
               </div>
@@ -331,7 +331,7 @@ export function PhysicianApprovalModal({
                   "h-8 w-8 mx-auto mb-2",
                   selectedAction === "approve" ? "text-emerald-600" : "text-slate-400"
                 )} />
-                <p className="text-[13px] font-semibold text-slate-800">Approve</p>
+                <p className="text-[13px] font-medium text-slate-800">Approve</p>
                 <p className="text-[10px] text-slate-500 mt-1">Ready for PA submission</p>
               </button>
 
@@ -349,7 +349,7 @@ export function PhysicianApprovalModal({
                   "h-8 w-8 mx-auto mb-2",
                   selectedAction === "defer" ? "text-amber-600" : "text-slate-400"
                 )} />
-                <p className="text-[13px] font-semibold text-slate-800">Defer</p>
+                <p className="text-[13px] font-medium text-slate-800">Defer</p>
                 <p className="text-[10px] text-slate-500 mt-1">Needs more documentation</p>
               </button>
 
@@ -367,7 +367,7 @@ export function PhysicianApprovalModal({
                   "h-8 w-8 mx-auto mb-2",
                   selectedAction === "escalate" ? "text-amber-600" : "text-slate-400"
                 )} />
-                <p className="text-[13px] font-semibold text-slate-800">Escalate</p>
+                <p className="text-[13px] font-medium text-slate-800">Escalate</p>
                 <p className="text-[10px] text-slate-500 mt-1">Send to Medical Director</p>
               </button>
             </div>

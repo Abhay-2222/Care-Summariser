@@ -575,7 +575,7 @@ export function ClinicalSummaryView() {
 
             {/* Items Requiring MD Attention */}
             <div className="space-y-3">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase">Items Requiring Physician Review</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wide">Items Requiring Physician Review</p>
               
               {/* High Risk Factors */}
               {selectedPatient.careLens.riskFactors.filter(r => r.status === "open").length > 0 && (
@@ -638,7 +638,7 @@ export function ClinicalSummaryView() {
 
             {/* Notes for Physician */}
             <div className="space-y-2">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase">Notes for Physician (Optional)</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wide">Notes for Physician (Optional)</p>
               <Textarea
                 value={mdNotes}
                 onChange={(e) => setMdNotes(e.target.value)}

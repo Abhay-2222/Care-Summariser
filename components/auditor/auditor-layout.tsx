@@ -232,7 +232,7 @@ function StatCard({
       <p className={textStyles.label}>{label}</p>
       <p
         className={cn(
-          "text-[14px] font-semibold tabular-nums",
+          "text-[14px] font-mono tabular-nums",
           color === "emerald" && "text-emerald-600",
           color === "red" && "text-red-600",
           color === "amber" && "text-amber-600",

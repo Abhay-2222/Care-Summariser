@@ -55,7 +55,7 @@ function StatCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{title}</p>
-          <p className="text-2xl font-bold text-slate-800 mt-1">{value}</p>
+          <p className="text-2xl font-mono text-slate-800 mt-1">{value}</p>
           {subtitle && <p className="text-[11px] text-slate-500 mt-0.5">{subtitle}</p>}
           {trend && (
             <div className={cn(
@@ -135,7 +135,7 @@ export default function AuditPage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-slate-800">Access Restricted</h2>
+            <h2 className="text-base text-slate-800">Access Restricted</h2>
             <p className="text-sm text-slate-500 mt-1">This page is only available to Auditors.</p>
             <p className="text-xs text-slate-400 mt-2">Switch to Auditor role in the header to access this page.</p>
           </div>
@@ -156,7 +156,7 @@ export default function AuditPage() {
                 <Users className="h-5 w-5 text-emerald-600" />
               </div>
               <div className="flex-1">
-                <p className="text-[13px] font-semibold text-slate-800">Shared Learning System</p>
+                <p className="text-[13px] text-slate-800">Shared Learning System</p>
                 <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
                   This dashboard helps identify patterns for team improvement, not individual performance tracking. 
                   Every insight here is designed to reduce documentation burden and improve patient outcomes together.
@@ -168,7 +168,7 @@ export default function AuditPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-slate-800">Audit Dashboard</h1>
+              <h1 className="text-lg text-slate-800">Audit Dashboard</h1>
               <p className="text-sm text-slate-500 mt-0.5">Team performance and improvement opportunities</p>
             </div>
             <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export default function AuditPage() {
             {/* Status Distribution */}
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] font-semibold text-slate-800 flex items-center gap-2">
+                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-slate-400" />
                   Case Status Distribution
                 </h3>
@@ -246,7 +246,7 @@ export default function AuditPage() {
             {/* Cases by Insurance */}
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] font-semibold text-slate-800 flex items-center gap-2">
+                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
                   <Users className="h-4 w-4 text-slate-400" />
                   Cases by Insurance
                 </h3>
@@ -268,7 +268,7 @@ export default function AuditPage() {
           {/* Coaching Notes - Constructive Feedback */}
           <div className="bg-white rounded-lg border border-slate-200 p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[13px] font-semibold text-slate-800 flex items-center gap-2">
+              <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 Team Wins & Coaching Notes
               </h3>
@@ -277,7 +277,7 @@ export default function AuditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Positive Feedback */}
               <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                <p className="text-[10px] font-semibold text-emerald-700 uppercase mb-2">What's Working Well</p>
+                <p className="text-[10px] text-emerald-700 uppercase tracking-wide mb-2">What's Working Well</p>
                 <ul className="space-y-2">
                   <li className="text-[11px] text-emerald-800 flex items-start gap-2">
                     <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
@@ -295,7 +295,7 @@ export default function AuditPage() {
               </div>
               {/* Improvement Opportunities */}
               <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
-                <p className="text-[10px] font-semibold text-blue-700 uppercase mb-2">Improvement Opportunities</p>
+                <p className="text-[10px] text-blue-700 uppercase tracking-wide mb-2">Improvement Opportunities</p>
                 <ul className="space-y-2">
                   <li className="text-[11px] text-blue-800 flex items-start gap-2">
                     <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
@@ -322,7 +322,7 @@ export default function AuditPage() {
             {/* Compliance Alerts - Reframed */}
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] font-semibold text-slate-800 flex items-center gap-2">
+                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
                   Action Items
                 </h3>
@@ -337,7 +337,7 @@ export default function AuditPage() {
                       <div className="h-2 w-2 rounded-full bg-amber-500" />
                       <span className="text-[11px] text-slate-700">Cases awaiting physician review</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-amber-700">{stats.pendingPhysician}</span>
+                    <span className="text-[11px] font-mono text-amber-700">{stats.pendingPhysician}</span>
                   </div>
                 )}
                 {stats.readyForSubmission > 0 && (
@@ -346,7 +346,7 @@ export default function AuditPage() {
                       <div className="h-2 w-2 rounded-full bg-emerald-500" />
                       <span className="text-[11px] text-slate-700">Cases ready for submission</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-emerald-700">{stats.readyForSubmission}</span>
+                    <span className="text-[11px] font-mono text-emerald-700">{stats.readyForSubmission}</span>
                   </div>
                 )}
                 {(stats.byStatus.denied || 0) > 0 && (
@@ -355,7 +355,7 @@ export default function AuditPage() {
                       <div className="h-2 w-2 rounded-full bg-red-500" />
                       <span className="text-[11px] text-slate-700">Denied cases requiring appeal</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-red-700">{stats.byStatus.denied || 0}</span>
+                    <span className="text-[11px] font-mono text-red-700">{stats.byStatus.denied || 0}</span>
                   </div>
                 )}
               </div>
@@ -364,7 +364,7 @@ export default function AuditPage() {
             {/* Recent Activity */}
             <div className="bg-white rounded-lg border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] font-semibold text-slate-800 flex items-center gap-2">
+                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
                   <Activity className="h-4 w-4 text-slate-400" />
                   Recent Activity
                 </h3>

@@ -169,7 +169,7 @@ export default function PriorAuthPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Prior Authorization</h1>
+                <h1 className="text-lg md:text-xl text-slate-900">Prior Authorization</h1>
                 <p className="text-sm text-slate-500">Compose, submit, and track authorization requests</p>
               </div>
               <div className="flex items-center gap-2">
@@ -282,7 +282,7 @@ export default function PriorAuthPage() {
                             <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
                               <div className="flex items-center gap-2 mb-2">
                                 <CheckCircle className="h-5 w-5 text-emerald-600" />
-                                <span className="font-semibold text-emerald-900">Authorization Approved</span>
+                                <span className="text-sm text-emerald-900">Authorization Approved</span>
                               </div>
                               <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
@@ -311,7 +311,7 @@ export default function PriorAuthPage() {
                             <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                               <div className="flex items-center gap-2 mb-2">
                                 <XCircle className="h-5 w-5 text-red-600" />
-                                <span className="font-semibold text-red-900">Authorization Denied</span>
+                                <span className="text-sm text-red-900">Authorization Denied</span>
                               </div>
                               <p className="text-sm text-red-800 mb-2">{selectedPA.denialReason}</p>
                               <Badge variant="outline" className="text-[10px] bg-red-100 text-red-700 border-red-200">
@@ -324,7 +324,7 @@ export default function PriorAuthPage() {
                             <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                               <div className="flex items-center gap-2 mb-2">
                                 <AlertTriangle className="h-5 w-5 text-amber-600" />
-                                <span className="font-semibold text-amber-900">Additional Information Required</span>
+                                <span className="text-sm text-amber-900">Additional Information Required</span>
                               </div>
                               <p className="text-sm text-amber-800 mb-2">{selectedPA.requestedInfo}</p>
                               <div className="flex items-center gap-2 text-xs text-amber-700">
@@ -347,7 +347,7 @@ export default function PriorAuthPage() {
                             </div>
                             <div className="flex items-center gap-3">
                               <Progress value={selectedPA.aiPrediction.approval} className="h-2 flex-1" />
-                              <span className="text-sm font-semibold text-blue-700">{selectedPA.aiPrediction.approval}%</span>
+                              <span className="text-sm font-mono text-blue-700">{selectedPA.aiPrediction.approval}%</span>
                             </div>
                           </div>
 
@@ -542,15 +542,15 @@ Inpatient admission is medically necessary due to:
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-center">
                           <div>
-                            <p className="text-2xl font-bold text-blue-700">92%</p>
+                            <p className="text-2xl font-mono text-blue-700">92%</p>
                             <p className="text-xs text-blue-600">Confidence</p>
                           </div>
                           <div>
-                            <p className="text-2xl font-bold text-emerald-700">High</p>
+                            <p className="text-2xl font-mono text-emerald-700">High</p>
                             <p className="text-xs text-emerald-600">Approval Likelihood</p>
                           </div>
                           <div>
-                            <p className="text-2xl font-bold text-blue-700">4/4</p>
+                            <p className="text-2xl font-mono text-blue-700">4/4</p>
                             <p className="text-xs text-blue-600">Payer Rules Met</p>
                           </div>
                         </div>

@@ -210,7 +210,7 @@ export function NotificationCenter() {
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
             <span className={cn(
-              "absolute -right-0.5 -top-0.5 h-4 min-w-4 px-1 rounded-full text-[9px] font-semibold flex items-center justify-center text-white",
+              "absolute -right-0.5 -top-0.5 h-4 min-w-4 px-1 rounded-full text-[9px] flex items-center justify-center text-white",
               urgentCount > 0 ? "bg-red-500" : "bg-blue-500"
             )}>
               {unreadCount}
@@ -221,7 +221,7 @@ export function NotificationCenter() {
       <PopoverContent align="end" className="w-[360px] p-0" sideOffset={8}>
         <div className="flex items-center justify-between p-3 border-b">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Notifications</h3>
+            <h3 className="text-sm text-slate-900">Notifications</h3>
             <p className="text-[10px] text-slate-500">{unreadCount} unread</p>
           </div>
           <div className="flex items-center gap-1">
@@ -285,7 +285,7 @@ export function NotificationCenter() {
                               <div className="flex items-center gap-2">
                                 <p className={cn(
                                   "text-xs",
-                                  !notification.read ? "font-semibold text-slate-900" : "font-medium text-slate-700"
+                                  !notification.read ? "text-slate-900" : "text-slate-600"
                                 )}>
                                   {notification.title}
                                 </p>

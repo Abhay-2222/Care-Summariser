@@ -37,7 +37,7 @@ function CaseManagerEmptyState() {
             <div className="mx-auto mb-3 md:mb-4 h-11 w-11 md:h-12 md:w-12 rounded-full bg-blue-100 flex items-center justify-center">
               <Users className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
             </div>
-            <h2 className="text-[13px] md:text-[14px] font-semibold text-slate-800 mb-1">Select a patient to begin</h2>
+            <h2 className="text-[13px] md:text-[14px] text-slate-800 mb-1">Select a patient to begin</h2>
             <p className="text-[11px] md:text-[12px] text-slate-500 mb-3 md:mb-4">
               Choose a patient from the queue to access their clinical summary and AI-assisted review.
             </p>
