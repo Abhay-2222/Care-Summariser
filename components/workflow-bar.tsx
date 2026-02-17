@@ -36,7 +36,7 @@ export function WorkflowBar({
   onGeneratePA, 
   onSubmit 
 }: WorkflowBarProps) {
-  const { selectedPatient, currentRole, claimCase, currentUser } = useApp()
+  const { selectedPatient, currentRole, hasPermission, claimCase, currentUser } = useApp()
 
   if (!selectedPatient) return null
 

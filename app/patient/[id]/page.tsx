@@ -33,7 +33,7 @@ export const useCareLensContext = () => useContext(CareLensContext)
 export default function PatientDetailPage() {
   const params = useParams()
   const id = params.id as string
-  const { setSelectedPatientId, selectedPatient, currentRole, careLensOpen, setCareLensOpen } = useApp()
+  const { setSelectedPatientId, selectedPatient, currentRole, hasPermission, careLensOpen, setCareLensOpen } = useApp()
   const [activeTab, setActiveTab] = useState("clinical-summary")
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export default function PatientDetailPage() {
             <CareLensDrawer 
               isOpen={careLensOpen} 
               onClose={() => setCareLensOpen(false)}
-              mode={currentRole === "case_manager" ? "full" : "readonly"}
+              mode={hasPermission("edit_summary") ? "full" : "readonly"}
             />
           </div>
         </div>

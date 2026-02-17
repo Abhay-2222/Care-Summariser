@@ -79,12 +79,13 @@ export function PatientListPanel() {
     setSelectedFilter, 
     statusFilter,
     setStatusFilter,
-    currentRole,
-    currentUser,
-    claimCase,
-    patientListOpen,
-    setPatientListOpen,
-  } = useApp()
+  currentRole,
+  currentUser,
+  hasPermission,
+  claimCase,
+  patientListOpen,
+  setPatientListOpen,
+} = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [bulkMode, setBulkMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -335,7 +336,7 @@ export function PatientListPanel() {
               const workflow = patient.workflow
               const statusInfo = statusConfig[workflow.status]
               const isNew = workflow.status === "new"
-              const canClaim = isNew && currentRole === "case_manager"
+              const canClaim = isNew && hasPermission("claim_case")
 
               return (
                 <div
@@ -510,7 +511,7 @@ export function PatientListPanel() {
           ) : (
             <span className="tabular-nums">{patients.length} cases</span>
           )}
-          {currentRole === "case_manager" && !bulkMode && (
+          {hasPermission("claim_case") && !bulkMode && (
             <button
               type="button"
               className="text-slate-500 hover:text-slate-700"

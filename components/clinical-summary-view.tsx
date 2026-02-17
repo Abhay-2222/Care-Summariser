@@ -78,9 +78,10 @@ export function ClinicalSummaryView() {
     selectedPatient, 
     regenerateSummary, 
     requestDocumentation, 
-    currentRole,
-    currentUser,
-    claimCase,
+  currentRole,
+  currentUser,
+  hasPermission,
+  claimCase,
     sendToPhysician,
     physicianApprove,
     physicianDefer,
@@ -206,11 +207,11 @@ export function ClinicalSummaryView() {
   const isAuditor = currentRole === "auditor"
   const isCaseManager = currentRole === "case_manager"
 
-  // Determine available actions based on status and role
-  const canClaim = workflow.status === "new" && isCaseManager
-  const canSendToPhysician = workflow.status === "in_progress" && isCaseManager
-  const canPhysicianReview = workflow.status === "needs_physician" && isPhysician
-  const canSubmit = workflow.status === "ready" && (isCaseManager || isPhysician)
+  // Determine available actions based on status and permissions
+  const canClaim = workflow.status === "new" && hasPermission("claim_case")
+  const canSendToPhysician = workflow.status === "in_progress" && hasPermission("send_to_physician")
+  const canPhysicianReview = workflow.status === "needs_physician" && hasPermission("approve_pa")
+  const canSubmit = workflow.status === "ready" && hasPermission("submit_pa")
   const isAssignedToMe = workflow.assignment?.assignedTo === currentUser.name
 
   // Dismiss the hint

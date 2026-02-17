@@ -1,7 +1,8 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
-import type { Patient, RecommendationStatus, RiskFactorStatus, PolicyGapStatus, CaseStatus, UserRole } from "./types"
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import type { Patient, RecommendationStatus, RiskFactorStatus, PolicyGapStatus, CaseStatus, UserRole, Permission, AuditEntry } from "./types"
+import { ROLE_PERMISSIONS } from "./types"
 import { allPatients } from "./patient-data"
 import { edgeCasePatients } from "./edge-case-patients"
 import { generateWorkflow, calculateProgress, isReadyForPA } from "./workflow-utils"
@@ -458,6 +459,10 @@ interface AppContextType {
   updateRiskFactorStatus: (riskFactorId: string, status: RiskFactorStatus, notes?: string) => void
   executeRiskFactorAction: (riskFactorId: string, actionId: string) => Promise<{ success: boolean; message: string }>
   updatePolicyGapStatus: (policyGapId: string, status: PolicyGapStatus, notes?: string) => void
+  // Permission & audit system
+  hasPermission: (permission: Permission) => boolean
+  logAction: (action: string, patientId?: string) => void
+  auditLog: AuditEntry[]
   // Audit stats
   getAuditStats: () => AuditStats
 }
@@ -506,6 +511,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [hasSeenSwipeHint, setHasSeenSwipeHint] = useState(false)
   
   const currentUser = mockUsers[currentRole]
+
+  // Permission system
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([])
+
+  const hasPermission = useCallback(
+    (permission: Permission): boolean => {
+      return ROLE_PERMISSIONS[currentRole].includes(permission)
+    },
+    [currentRole]
+  )
+
+  const logAction = useCallback(
+    (action: string, patientId?: string) => {
+      const entry: AuditEntry = {
+        id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        timestamp: new Date().toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        action,
+        user: currentUser.name,
+        role: currentRole,
+        patientId,
+      }
+      setAuditLog((prev) => [entry, ...prev])
+    },
+    [currentUser.name, currentRole]
+  )
 
   const selectedPatient = patients.find((p) => p.id === selectedPatientId) || null
 
@@ -692,6 +728,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Workflow Actions
   const claimCase = (patientId: string) => {
+    logAction("Case claimed", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -781,10 +818,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const sendToPhysician = (patientId: string, notes?: string) => {
+    logAction("Sent to physician for review", patientId)
     updateCaseStatus(patientId, "needs_physician", notes || "Sent to physician for review and approval")
   }
 
   const physicianApprove = (patientId: string, notes?: string) => {
+    logAction("Physician approved PA", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -818,6 +857,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const physicianDefer = (patientId: string, notes?: string) => {
+    logAction("Physician deferred - additional documentation needed", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -851,6 +891,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const physicianEscalate = (patientId: string, notes?: string) => {
+    logAction("Physician escalated to medical director", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -884,6 +925,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const submitPA = (patientId: string) => {
+    logAction("PA submitted to payer", patientId)
     updateCaseStatus(patientId, "submitted", "PA submitted to payer")
   }
 
@@ -930,6 +972,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setStatusFilter,
         setActiveView,
         setCurrentRole,
+        hasPermission,
+        logAction,
+        auditLog,
         claimCase,
         unclaimCase,
         updateCaseStatus,

@@ -178,7 +178,7 @@ interface CoachMessage {
 }
 
 export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
-  const { selectedPatient, currentRole, currentUser, updateRiskFactorStatus, updateRecommendationStatus } = useApp()
+  const { selectedPatient, currentRole, currentUser, hasPermission, updateRiskFactorStatus, updateRecommendationStatus } = useApp()
   const [confidenceOpen, setConfidenceOpen] = useState(true)
   const [risksOpen, setRisksOpen] = useState(true)
   const [gapsOpen, setGapsOpen] = useState(true)
@@ -393,7 +393,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                 <div className="flex items-center gap-2">
                   <SheetTitle className="text-[12px] font-semibold text-slate-800">CareLens</SheetTitle>
                   <Badge variant="outline" className="text-[7px] h-4 px-1.5 border-blue-200 text-blue-600 bg-blue-50 flex-shrink-0">
-                    {currentRole === "case_manager" ? "Interactive" : currentRole === "physician" ? "Review" : "Audit"}
+                    {hasPermission("edit_summary") ? "Interactive" : hasPermission("approve_pa") ? "Review" : "Audit"}
                   </Badge>
                 </div>
                 <p className="text-[9px] text-slate-500 truncate">{selectedPatient.name} - {selectedPatient.insurance}</p>
@@ -740,7 +740,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
               </div>
             </div>
 
-            {currentRole === "auditor" && (
+            {hasPermission("view_audit_log") && (
               <Button variant="outline" className="w-full h-8 text-[10px] gap-1.5 bg-transparent">
                 <Download className="h-3 w-3" />
                 Export Analysis Report

@@ -89,7 +89,7 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
 }
 
 export default function AuditPage() {
-  const { patients, getAuditStats, currentRole } = useApp()
+  const { patients, getAuditStats, currentRole, hasPermission } = useApp()
   const stats = getAuditStats()
 
   const recentActivity = useMemo(() => {
@@ -128,7 +128,7 @@ export default function AuditPage() {
     return Object.entries(workload)
   }, [patients])
 
-  if (currentRole !== "auditor") {
+  if (!hasPermission("view_audit_log")) {
     return (
       <div className="flex h-screen flex-col bg-slate-100">
         <AppHeader />
