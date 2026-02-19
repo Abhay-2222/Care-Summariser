@@ -62,12 +62,12 @@ const urgencyOptions = [
 ]
 
 const statusOptions: { label: string; value: CaseStatus | "ALL"; color: string }[] = [
-  { label: "All", value: "ALL", color: "bg-slate-100 text-slate-600" },
-  { label: "New", value: "new", color: "bg-blue-100 text-blue-700" },
-  { label: "In Progress", value: "in_progress", color: "bg-amber-100 text-amber-700" },
-  { label: "Needs MD", value: "needs_physician", color: "bg-amber-100 text-amber-700" },
-  { label: "Ready", value: "ready", color: "bg-emerald-100 text-emerald-700" },
-  { label: "Submitted", value: "submitted", color: "bg-sky-100 text-sky-700" },
+  { label: "All", value: "ALL", color: "bg-[var(--neutral-100)] text-[var(--neutral-600)]" },
+  { label: "New", value: "new", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
+  { label: "In Progress", value: "in_progress", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
+  { label: "Needs MD", value: "needs_physician", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
+  { label: "Ready", value: "ready", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)]" },
+  { label: "Submitted", value: "submitted", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
 ]
 
 export function PatientListPanel() {
@@ -214,10 +214,10 @@ export function PatientListPanel() {
     <div className="flex flex-col h-full">
       {/* Mobile header with close */}
       {showClose && (
-        <div className="px-3 py-2.5 border-b border-slate-200 bg-white flex items-center justify-between">
+        <div className="px-3 py-2.5 border-b border-border bg-card flex items-center justify-between">
           <div>
-            <h2 className="text-[13px] text-slate-800">Patient Queue</h2>
-            <p className="text-[10px] text-slate-500">{sortedPatients.length} patients</p>
+            <h2 className="text-heading-sm text-foreground">Patient Queue</h2>
+            <p className="text-caption text-[var(--neutral-500)]">{sortedPatients.length} patients</p>
           </div>
           <Button 
             variant="ghost" 
@@ -225,22 +225,22 @@ export function PatientListPanel() {
             className="h-8 w-8 p-0"
             onClick={() => setMobileOpen(false)}
           >
-            <X className="h-4 w-4 text-slate-500" />
+            <X className="h-4 w-4 text-[var(--neutral-500)]" />
           </Button>
         </div>
       )}
       
       {/* Header - Optimized minimal design */}
-      <div className="px-3 py-2.5 border-b border-slate-100">
+      <div className="px-3 py-2.5 border-b border-border">
         {/* Search + Filters in one row */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-300" />
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--neutral-300)]" />
             <input
               id="patient-search"
               type="text"
               placeholder="Search..."
-              className="w-full h-8 pl-8 pr-8 rounded-lg text-[12px] bg-slate-50 border border-slate-100 text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-transparent"
+              className="w-full h-8 pl-8 pr-8 rounded-lg text-body-sm bg-[var(--neutral-50)] border border-border text-foreground placeholder:text-[var(--neutral-400)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-100)] focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -248,7 +248,7 @@ export function PatientListPanel() {
               <button 
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--neutral-300)] hover:text-[var(--neutral-500)]"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -261,11 +261,11 @@ export function PatientListPanel() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-8 px-2.5 text-[11px] gap-1.5 bg-white border-slate-200"
+                className="h-8 px-2.5 text-label-sm gap-1.5 bg-card border-border"
               >
-                <Filter className="h-3 w-3 text-slate-400" />
+                <Filter className="h-3 w-3 text-[var(--neutral-400)]" />
                 {statusFilter === "ALL" ? "All" : statusOptions.find(s => s.value === statusFilter)?.label}
-                <ChevronDown className="h-3 w-3 text-slate-400" />
+                <ChevronDown className="h-3 w-3 text-[var(--neutral-400)]" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
@@ -277,12 +277,12 @@ export function PatientListPanel() {
                     key={status.value}
                     onClick={() => setStatusFilter(status.value)}
                     className={cn(
-                      "flex items-center justify-between text-[11px] cursor-pointer",
-                      isActive && "bg-slate-100"
+                      "flex items-center justify-between text-body-sm cursor-pointer",
+                      isActive && "bg-[var(--neutral-100)]"
                     )}
                   >
                     <span>{status.label}</span>
-                    <span className="text-slate-400 tabular-nums">{count}</span>
+                    <span className="text-[var(--neutral-400)] tabular-nums">{count}</span>
                   </DropdownMenuItem>
                 )
               })}
@@ -302,17 +302,17 @@ export function PatientListPanel() {
                 key={filter.value}
                 type="button"
                 className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded text-[10px] transition-all",
+                  "flex items-center gap-1 px-2 py-1 rounded text-caption transition-all",
                   isActive 
-                    ? "bg-slate-800 text-white font-medium" 
-                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-50",
+                    ? "bg-[var(--neutral-800)] text-white" 
+                    : "text-[var(--neutral-400)] hover:text-foreground hover:bg-[var(--neutral-50)]",
                 )}
                 onClick={() => setSelectedFilter(filter.value)}
               >
                 <Icon className={cn(
                   "h-3 w-3",
-                  !isActive && filter.value === "STAT" && "text-red-400",
-                  !isActive && filter.value === "URGENT" && "text-amber-400",
+                  !isActive && filter.value === "STAT" && "text-[var(--destructive)]",
+                  !isActive && filter.value === "URGENT" && "text-[var(--warning)]",
                 )} />
                 {filter.value !== "ALL" && <span className="tabular-nums">{count}</span>}
                 {filter.value === "ALL" && <span>All</span>}
@@ -325,9 +325,9 @@ export function PatientListPanel() {
       {/* Patient List */}
       <div className="flex-1 overflow-y-auto">
         {sortedPatients.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-40 text-slate-400">
+          <div className="flex flex-col items-center justify-center h-40 text-[var(--neutral-400)]">
             <Search className="h-5 w-5 mb-2" />
-            <span className="text-[11px]">No patients found</span>
+            <span className="text-caption">No patients found</span>
           </div>
         ) : (
           <div className="py-1">
@@ -344,8 +344,8 @@ export function PatientListPanel() {
                   className={cn(
                     "relative px-2 py-2 transition-colors cursor-pointer group",
                     isSelected
-                      ? "bg-blue-50 border-l-2 border-l-blue-500"
-                      : "hover:bg-slate-50 border-l-2 border-l-transparent",
+                      ? "bg-[var(--brand-50)] border-l-2 border-l-[var(--brand-500)]"
+                      : "hover:bg-[var(--neutral-50)] border-l-2 border-l-transparent",
                   )}
                   onClick={() => {
                     setSelectedPatientId(patient.id)
@@ -360,16 +360,16 @@ export function PatientListPanel() {
                         onClick={(e) => togglePatientSelection(patient.id, e)}
                       >
                         {selectedIds.has(patient.id) ? (
-                          <CheckSquare className="h-4 w-4 text-blue-600" />
+                          <CheckSquare className="h-4 w-4 text-[var(--brand-500)]" />
                         ) : (
-                          <Square className="h-4 w-4 text-slate-300 hover:text-slate-400" />
+                          <Square className="h-4 w-4 text-[var(--neutral-300)] hover:text-[var(--neutral-400)]" />
                         )}
                       </button>
                     ) : (
                       <div className={cn(
                         "mt-1.5 h-2 w-2 rounded-full flex-shrink-0",
-                        patient.urgency === "STAT" ? "bg-red-500" :
-                        patient.urgency === "URGENT" ? "bg-amber-500" : "bg-slate-300"
+                        patient.urgency === "STAT" ? "bg-[var(--destructive)]" :
+                        patient.urgency === "URGENT" ? "bg-[var(--warning)]" : "bg-[var(--neutral-300)]"
                       )} />
                     )}
                     
@@ -377,14 +377,14 @@ export function PatientListPanel() {
                       {/* Name row */}
                       <div className="flex items-center justify-between gap-1">
                         <span className={cn(
-                          "text-[12px] font-medium truncate",
-                          isSelected ? "text-blue-700" : "text-slate-800"
+                          "text-patient-name truncate",
+                          isSelected ? "text-[var(--brand-600)]" : "text-foreground"
                         )}>
                           {patient.name}
                         </span>
                         {/* Status badge - consistent styling everywhere */}
                         <span className={cn(
-                          "flex-shrink-0 text-[9px] font-medium px-1.5 py-0.5 rounded",
+                          "flex-shrink-0 text-ds-badge px-1.5 py-0.5 rounded",
                           statusInfo.badgeClass
                         )}>
                           {statusInfo.label}
@@ -393,33 +393,33 @@ export function PatientListPanel() {
                       
                       {/* Meta info */}
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[10px] text-slate-500">{patient.mrn}</span>
-                        <span className="text-[10px] text-slate-300">|</span>
-                        <span className="text-[10px] text-slate-500">{patient.age}yo {patient.gender}</span>
-                        <span className="text-[10px] text-slate-300">|</span>
-                        <span className="text-[10px] text-slate-400 truncate">{patient.insurance}</span>
+                        <span className="text-caption text-[var(--neutral-500)]">{patient.mrn}</span>
+                        <span className="text-caption text-[var(--neutral-300)]">|</span>
+                        <span className="text-caption text-[var(--neutral-500)]">{patient.age}yo {patient.gender}</span>
+                        <span className="text-caption text-[var(--neutral-300)]">|</span>
+                        <span className="text-caption text-[var(--neutral-400)] truncate">{patient.insurance}</span>
                       </div>
                       
                       {/* Progress & Assignment */}
                       <div className="flex items-center gap-2 mt-1.5">
                         {/* Progress bar */}
-                        <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-1 bg-[var(--neutral-150)] rounded-full overflow-hidden">
                           <div 
                             className={cn(
                               "h-full rounded-full transition-all",
-                              workflow.progressPercent >= 80 ? "bg-emerald-500" :
-                              workflow.progressPercent >= 50 ? "bg-amber-500" : "bg-slate-300"
+                              workflow.progressPercent >= 80 ? "bg-[var(--success)]" :
+                              workflow.progressPercent >= 50 ? "bg-[var(--warning)]" : "bg-[var(--neutral-300)]"
                             )}
                             style={{ width: `${workflow.progressPercent}%` }}
                           />
                         </div>
-                        <span className="text-[9px] text-slate-400 tabular-nums w-7">{workflow.progressPercent}%</span>
+                        <span className="text-caption font-mono text-[var(--neutral-400)] tabular-nums w-7">{workflow.progressPercent}%</span>
                       </div>
 
                       {/* Assignment info or Claim action */}
                       <div className="flex items-center justify-between mt-1.5">
                         {workflow.assignment ? (
-                          <div className="flex items-center gap-1 text-[9px] text-slate-400">
+                          <div className="flex items-center gap-1 text-caption text-[var(--neutral-400)]">
                             <User className="h-2.5 w-2.5" />
                             <span className="truncate max-w-[100px]">{workflow.assignment.assignedTo}</span>
                           </div>
@@ -428,10 +428,10 @@ export function PatientListPanel() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <button
-                                  className="flex items-center gap-1 text-[9px] text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                                  className="flex items-center gap-1 text-caption text-[var(--brand-500)] hover:text-[var(--brand-600)] transition-colors"
                                   onClick={(e) => handleClaimCase(patient.id, e)}
                                 >
-                                  <span className="h-4 w-4 rounded bg-blue-100 flex items-center justify-center">
+                                  <span className="h-4 w-4 rounded bg-[var(--brand-50)] flex items-center justify-center">
                                     <ArrowRight className="h-2.5 w-2.5" />
                                   </span>
                                   Start Review
@@ -443,7 +443,7 @@ export function PatientListPanel() {
                             </Tooltip>
                           </TooltipProvider>
                         ) : (
-                          <span className="text-[9px] text-slate-300 italic">Awaiting assignment</span>
+                          <span className="text-caption text-[var(--neutral-300)] italic">Awaiting assignment</span>
                         )}
                         
                         {/* Risk indicator */}
