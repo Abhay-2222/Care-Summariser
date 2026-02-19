@@ -208,7 +208,7 @@ Sincerely,
   const inProgressCount = deniedCases.filter(c => c.status === "appeal_in_progress" || c.status === "p2p_scheduled").length
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <div className="flex-1 overflow-hidden">
         <div className="h-full p-4 md:p-6">
@@ -216,14 +216,14 @@ Sincerely,
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-lg md:text-xl text-slate-900">Appeals Management</h1>
-                <p className="text-sm text-slate-500">Manage denied authorizations and generate appeal documentation</p>
+                <h1 className="text-heading-lg text-foreground">Appeals Management</h1>
+                <p className="text-body-md text-[var(--neutral-500)]">Manage denied authorizations and generate appeal documentation</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                <Badge variant="outline" className="bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]">
                   {pendingCount} Pending
                 </Badge>
-                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                <Badge variant="outline" className="bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]">
                   {inProgressCount} In Progress
                 </Badge>
               </div>
@@ -231,7 +231,7 @@ Sincerely,
 
             {/* Main Content */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="w-full justify-start bg-white border">
+              <TabsList className="w-full justify-start bg-card border">
                 <TabsTrigger value="queue" className="text-xs sm:text-sm">
                   <XCircle className="h-4 w-4 mr-1.5" />
                   Denied Cases
@@ -262,24 +262,24 @@ Sincerely,
                               className={cn(
                                 "p-3 rounded-lg border cursor-pointer transition-all",
                                 selectedCase?.id === caseItem.id
-                                  ? "border-red-300 bg-red-50"
-                                  : "border-slate-200 bg-white hover:border-slate-300"
+                                  ? "border-[var(--status-error-border)] bg-[var(--status-error-bg)]"
+                                  : "border-border bg-card hover:border-[var(--neutral-300)]"
                               )}
                               onClick={() => setSelectedCase(caseItem)}
                             >
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="text-sm text-slate-900">{caseItem.patientName}</p>
-                                  <p className="text-xs text-slate-500">{caseItem.paNumber}</p>
+                                  <p className="text-body-md text-foreground">{caseItem.patientName}</p>
+                                  <p className="text-body-sm text-[var(--neutral-500)]">{caseItem.paNumber}</p>
                                 </div>
-                                <Badge variant="outline" className="text-[10px] bg-red-50 text-red-700 border-red-200">
+                                <Badge variant="outline" className="text-ds-badge bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]">
                                   {caseItem.daysRemaining}d left
                                 </Badge>
                               </div>
-                              <p className="text-xs text-slate-600 mt-1">{caseItem.diagnosis}</p>
+                              <p className="text-body-sm text-[var(--neutral-600)] mt-1">{caseItem.diagnosis}</p>
                               <div className="mt-2 flex items-center gap-2">
-                                <Badge variant="outline" className="text-[10px]">{caseItem.payer}</Badge>
-                                <span className="text-[10px] text-slate-400">Denied: {caseItem.deniedAt}</span>
+                                <Badge variant="outline" className="text-ds-badge">{caseItem.payer}</Badge>
+                                <span className="text-caption text-[var(--neutral-400)]">Denied: {caseItem.deniedAt}</span>
                               </div>
                             </div>
                           ))}
@@ -312,13 +312,13 @@ Sincerely,
                         </CardHeader>
                         <CardContent className="flex-1 overflow-auto space-y-4">
                           {/* Denial Info */}
-                          <div className="p-3 bg-red-50 rounded-lg border border-red-100">
+                          <div className="p-3 bg-[var(--status-error-bg)] rounded-xl border border-[var(--status-error-border)]">
                             <div className="flex items-center gap-2 mb-2">
-                              <XCircle className="h-4 w-4 text-red-600" />
-                              <span className="text-xs text-red-900">Denial Reason</span>
-                              <Badge variant="outline" className="text-[10px] ml-auto">{selectedCase.denialCode}</Badge>
+                              <XCircle className="h-4 w-4 text-[var(--destructive)]" />
+                              <span className="text-body-sm text-[var(--status-error-text)]">Denial Reason</span>
+                              <Badge variant="outline" className="text-ds-badge ml-auto">{selectedCase.denialCode}</Badge>
                             </div>
-                            <p className="text-sm text-red-800">{selectedCase.denialReason}</p>
+                            <p className="text-body-md text-[var(--status-error-text)]">{selectedCase.denialReason}</p>
                           </div>
 
                           {/* Appeal Deadline */}

@@ -321,17 +321,17 @@ export function ClinicalSummaryView() {
                   {selectedPatient.problemList.filter(p => p.type === "secondary").map(problem => (
                     <div key={problem.id} className="flex items-center justify-between py-1.5 px-2.5">
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                        <span className="text-[11px] text-slate-600">{problem.name}</span>
+                        <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-400)]" />
+                        <span className="text-body-sm text-[var(--neutral-600)]">{problem.name}</span>
                       </div>
-                      <span className="text-[9px] font-mono text-slate-500">{problem.icdCode}</span>
+                      <span className="text-caption font-mono text-[var(--neutral-500)]">{problem.icdCode}</span>
                     </div>
                   ))}
                   {/* Comorbidities */}
                   {selectedPatient.problemList.filter(p => p.type === "comorbidity").length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100">
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border">
                       {selectedPatient.problemList.filter(p => p.type === "comorbidity").map(problem => (
-                        <span key={problem.id} className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">
+                        <span key={problem.id} className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--neutral-100)] text-[var(--neutral-500)]">
                           {problem.name}
                         </span>
                       ))}
@@ -344,12 +344,12 @@ export function ClinicalSummaryView() {
 
           {/* Payer Requirements with Evidence Links - Smart defaults: unmet first */}
           <Collapsible open={payerRulesOpen} onOpenChange={setPayerRulesOpen}>
-            <div className="bg-white rounded-lg border border-slate-100">
-              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div className="bg-card rounded-xl border border-border shadow-ds-xs">
+              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
                 <div className="flex items-center gap-2">
-                  {payerRulesOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className={cn(typography.sectionHeader, "text-slate-700")}>PAYER REQUIREMENTS</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-medium">
+                  {payerRulesOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
+                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-700)]")}>PAYER REQUIREMENTS</span>
+                  <span className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]">
                     {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length} met
                   </span>
                 </div>
@@ -386,7 +386,7 @@ export function ClinicalSummaryView() {
                               <AlertCircle className={cn("h-3.5 w-3.5 mt-0.5 flex-shrink-0", styles.icon)} />
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className={cn(typography.body, "text-slate-700")}>{rule.rule}</p>
+                              <p className={cn(typography.body, "text-foreground")}>{rule.rule}</p>
                               
                               {/* Evidence Links - Click to navigate to Evidence tab */}
                               {rule.status === "satisfied" && linkedDocs && (
@@ -396,7 +396,7 @@ export function ClinicalSummaryView() {
                                     <button
                                       key={doc}
                                       type="button"
-                                      className="text-[9px] text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                      className="text-caption text-[var(--brand-500)] hover:text-[var(--brand-700)] hover:underline cursor-pointer"
                                       onClick={() => setActiveTab("evidence")}
                                     >
                                       {doc}{i < linkedDocs.length - 1 ? "," : ""}
@@ -411,21 +411,21 @@ export function ClinicalSummaryView() {
                                   {requestedItems.has(rule.id) ? (
                                     // Requested state - show confirmation
                                     <>
-                                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200 font-medium flex items-center gap-1">
+                                      <span className="text-ds-badge px-2 py-0.5 rounded-full bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)] flex items-center gap-1">
                                         <Clock className="h-2.5 w-2.5" />
                                         Requested
                                       </span>
-                                      <span className="text-[9px] text-slate-400">Sent to clinical team</span>
+                                      <span className="text-caption text-[var(--neutral-400)]">Sent to clinical team</span>
                                     </>
                                   ) : (
                                     // Show request button
                                     <>
-                                      <span className={cn(typography.label, "text-red-500")}>Need:</span>
-                                      <span className="text-[9px] text-red-600">{rule.evidence || "Clinical documentation"}</span>
+                                      <span className={cn(typography.label, "text-[var(--destructive)]")}>Need:</span>
+                                      <span className="text-caption text-[var(--status-error-text)]">{rule.evidence || "Clinical documentation"}</span>
                                       <Button 
                                         size="sm" 
                                         variant="ghost"
-                                        className="h-5 px-1.5 text-[9px] text-red-600 hover:bg-red-100 ml-auto bg-transparent"
+                                        className="h-5 px-1.5 text-caption text-[var(--destructive)] hover:bg-[var(--status-error-bg)] ml-auto bg-transparent"
                                         onClick={() => handleRequestDoc(rule.id)}
                                       >
                                         Request
@@ -437,7 +437,7 @@ export function ClinicalSummaryView() {
                               
                               {/* Unclear - show what's needed */}
                               {rule.status === "unclear" && rule.evidence && (
-                                <p className={cn(typography.label, "text-amber-600 mt-1")}>{rule.evidence}</p>
+                                <p className={cn(typography.label, "text-[var(--warning)] mt-1")}>{rule.evidence}</p>
                               )}
                             </div>
                           </div>
@@ -451,16 +451,16 @@ export function ClinicalSummaryView() {
 
           {/* AI Summary - Collapsible with design system typography */}
           <Collapsible open={summaryOpen} onOpenChange={setSummaryOpen}>
-            <div className="bg-white rounded-lg border border-slate-100">
-              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div className="bg-card rounded-xl border border-border shadow-ds-xs">
+              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
                 <div className="flex items-center gap-2">
-                  {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className={cn(typography.sectionHeader, "text-slate-700")}>AI CLINICAL SUMMARY</span>
+                  {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
+                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-700)]")}>AI CLINICAL SUMMARY</span>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-6 px-2 text-[10px] text-slate-500 bg-transparent"
+                  className="h-6 px-2 text-caption text-[var(--neutral-500)] bg-transparent"
                   onClick={(e) => { e.stopPropagation(); handleRegenerate() }}
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
@@ -487,24 +487,24 @@ export function ClinicalSummaryView() {
           </Collapsible>
 
           {/* Timeline - Compact with design system typography */}
-          <div className="bg-white rounded-lg border border-slate-100 p-3">
-            <h3 className={cn(typography.sectionHeader, "text-slate-700 mb-3 flex items-center gap-2")}>
-              <Clock className="h-3.5 w-3.5 text-slate-400" />
+          <div className="bg-card rounded-xl border border-border p-3 shadow-ds-xs">
+            <h3 className={cn(typography.sectionHeader, "text-[var(--neutral-700)] mb-3 flex items-center gap-2")}>
+              <Clock className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
               TIMELINE
             </h3>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               {selectedPatient.timeline.slice(0, 3).map((event, index) => (
                 <div key={event.id} className="flex gap-2">
                   <div className="flex flex-col items-center">
                     <div className={cn(
                       "h-2 w-2 rounded-full",
-                      index === 0 ? "bg-blue-500" : "bg-slate-300"
+                      index === 0 ? "bg-[var(--brand-500)]" : "bg-[var(--neutral-300)]"
                     )} />
-                    {index < 2 && <div className="w-px h-full bg-slate-200 my-1" />}
+                    {index < 2 && <div className="w-px h-full bg-[var(--neutral-200)] my-1" />}
                   </div>
                   <div className="flex-1 min-w-0 pb-2">
-                    <p className="text-[11px] font-medium text-slate-700">{event.title}</p>
-                    <p className="text-[9px] text-slate-400">{event.timestamp}</p>
+                    <p className="text-label-md text-foreground">{event.title}</p>
+                    <p className="text-caption text-[var(--neutral-400)]">{event.timestamp}</p>
                   </div>
                 </div>
               ))}
@@ -514,7 +514,7 @@ export function ClinicalSummaryView() {
       </div>
 
       {/* Minimal Footer Bar - primary actions are in WorkflowBar */}
-      <div className="flex-shrink-0 px-4 py-2 border-t border-slate-100 bg-slate-50/50">
+      <div className="flex-shrink-0 px-4 py-2 border-t border-border bg-[var(--neutral-50)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TooltipProvider delayDuration={0}>
