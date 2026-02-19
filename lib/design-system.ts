@@ -7,17 +7,17 @@
 // =============================================================================
 
 export const typography = {
-  // Labels/Field Names: 10px, slate-400, uppercase, tracked
-  label: "text-[10px] text-slate-400 uppercase tracking-wide",
+  // Labels/Field Names: overline style - mono 9px, 500, tracked, uppercase
+  label: "text-overline text-[var(--neutral-500)]",
   
-  // Body Text/Values: 11px, slate-600, normal weight  
-  body: "text-[11px] text-slate-600",
+  // Body Text/Values: body-sm - 13px, 400
+  body: "text-body-sm text-[var(--neutral-600)]",
   
-  // Titles/Names/Key Info: 12px, slate-800, medium weight
-  title: "text-[12px] text-slate-800 font-medium",
+  // Titles/Names/Key Info: label-md - 13px, 500
+  title: "text-label-md text-[var(--neutral-900)]",
   
-  // Section Headers: 11px, slate-400, uppercase, tracked, NOT bold
-  sectionHeader: "text-[11px] text-slate-400 uppercase tracking-wide",
+  // Section Headers: overline style - mono 9px, 500, tracked, uppercase
+  sectionHeader: "text-overline text-[var(--neutral-400)]",
 } as const
 
 // Alias for guidelines compatibility - both names reference the same styles
@@ -28,27 +28,27 @@ export const textStyles = typography
 // =============================================================================
 
 export const statusBadgeStyles = {
-  // Urgency Badges
-  STAT: "bg-red-50 text-red-600 border border-red-200",
-  URGENT: "bg-amber-50 text-amber-600 border border-amber-200", 
-  ROUTINE: "bg-slate-50 text-slate-500 border border-slate-200",
+  // Urgency Badges - using design system status tokens
+  STAT: "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]",
+  URGENT: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]", 
+  ROUTINE: "bg-[var(--neutral-100)] text-[var(--neutral-600)] border border-[var(--neutral-200)]",
   
   // Workflow Status Badges
-  new: "bg-blue-50 text-blue-600 border border-blue-200",
-  in_progress: "bg-slate-100 text-slate-600 border border-slate-200",
-  needs_physician: "bg-amber-50 text-amber-600 border border-amber-200",
-  ready: "bg-emerald-50 text-emerald-600 border border-emerald-200",
-  submitted: "bg-blue-50 text-blue-600 border border-blue-200",
-  approved: "bg-green-50 text-green-600 border border-green-200",
-  denied: "bg-red-50 text-red-600 border border-red-200",
-  appealing: "bg-amber-50 text-amber-600 border border-amber-200",
+  new: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]",
+  in_progress: "bg-[var(--neutral-100)] text-[var(--neutral-600)] border border-[var(--neutral-200)]",
+  needs_physician: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]",
+  ready: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]",
+  submitted: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]",
+  approved: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]",
+  denied: "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]",
+  appealing: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]",
   
   // Uppercase aliases for calibration test and template compatibility
-  PENDING_REVIEW: "bg-amber-50 text-amber-600 border border-amber-200",
-  IN_REVIEW: "bg-blue-50 text-blue-600 border border-blue-200",
-  APPROVED: "bg-green-50 text-green-600 border border-green-200",
-  DENIED: "bg-red-50 text-red-600 border border-red-200",
-  MORE_INFO_NEEDED: "bg-amber-50 text-amber-600 border border-amber-200",
+  PENDING_REVIEW: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]",
+  IN_REVIEW: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]",
+  APPROVED: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]",
+  DENIED: "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]",
+  MORE_INFO_NEEDED: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]",
 } as const
 
 export const statusLabels = {
@@ -67,23 +67,23 @@ export const statusLabels = {
 // =============================================================================
 
 export const containerStyles = {
-  // Primary card - white with subtle border
-  card: "bg-white rounded-lg border border-slate-100",
+  // Primary card - white with border, 12px radius per design system
+  card: "bg-card rounded-xl border border-border shadow-ds-xs",
   
   // Section background tint
-  sectionBg: "bg-slate-50",
+  sectionBg: "bg-[var(--neutral-50)]",
   
   // Interactive card (clickable)
-  interactiveCard: "bg-white rounded-lg border border-slate-100 hover:border-slate-200 transition-colors cursor-pointer",
+  interactiveCard: "bg-card rounded-xl border border-border shadow-ds-xs hover:shadow-ds-sm transition-all cursor-pointer",
   
   // Alert/warning container
-  alertContainer: "bg-amber-50 border border-amber-200 rounded-lg",
+  alertContainer: "bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)] rounded-xl",
   
   // Success container
-  successContainer: "bg-emerald-50 border border-emerald-200 rounded-lg",
+  successContainer: "bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)] rounded-xl",
   
   // Error container  
-  errorContainer: "bg-red-50 border border-red-200 rounded-lg",
+  errorContainer: "bg-[var(--status-error-bg)] border border-[var(--status-error-border)] rounded-xl",
 } as const
 
 // =============================================================================
@@ -109,19 +109,19 @@ export const spacing = {
 // =============================================================================
 
 export const confidenceStyles = {
-  High: "text-emerald-600 bg-emerald-50 border border-emerald-200",
-  Medium: "text-amber-600 bg-amber-50 border border-amber-200",
-  Low: "text-red-600 bg-red-50 border border-red-200",
+  High: "text-[var(--status-ok-text)] bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]",
+  Medium: "text-[var(--status-warn-text)] bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]",
+  Low: "text-[var(--status-error-text)] bg-[var(--status-error-bg)] border border-[var(--status-error-border)]",
   // Lowercase aliases for calibration test compatibility
-  high: "text-blue-600 bg-blue-50 border border-blue-200",
-  medium: "text-amber-600 bg-amber-50 border border-amber-200",
-  low: "text-slate-600 bg-slate-50 border border-slate-200",
+  high: "text-[var(--status-info-text)] bg-[var(--status-info-bg)] border border-[var(--status-info-border)]",
+  medium: "text-[var(--status-warn-text)] bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]",
+  low: "text-[var(--neutral-600)] bg-[var(--neutral-100)] border border-[var(--neutral-200)]",
 } as const
 
 export const riskStyles = {
-  High: "text-red-600 bg-red-50 border border-red-200",
-  Medium: "text-amber-600 bg-amber-50 border border-amber-200",
-  Low: "text-emerald-600 bg-emerald-50 border border-emerald-200",
+  High: "text-[var(--status-error-text)] bg-[var(--status-error-bg)] border border-[var(--status-error-border)]",
+  Medium: "text-[var(--status-warn-text)] bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]",
+  Low: "text-[var(--status-ok-text)] bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]",
 } as const
 
 // Alias for guidelines compatibility
@@ -132,11 +132,11 @@ export const riskColors = riskStyles
 // =============================================================================
 
 export const progressBarStyles = {
-  track: "h-1 bg-slate-100 rounded-full overflow-hidden",
+  track: "h-1 bg-[var(--neutral-150)] rounded-full overflow-hidden",
   indicator: {
-    high: "bg-emerald-500", // >= 80%
-    medium: "bg-amber-500", // >= 50%
-    low: "bg-slate-400",    // < 50%
+    high: "bg-[var(--success)]", // >= 80%
+    medium: "bg-[var(--warning)]", // >= 50%
+    low: "bg-[var(--neutral-400)]",    // < 50%
   },
 } as const
 
@@ -152,18 +152,18 @@ export function getProgressColor(percent: number): string {
 
 export const requirementStatusStyles = {
   satisfied: {
-    container: "bg-emerald-50 border-emerald-100",
-    icon: "text-emerald-600",
-    text: "text-emerald-700",
+    container: "bg-[var(--status-ok-bg)] border-[var(--status-ok-border)]",
+    icon: "text-[var(--success)]",
+    text: "text-[var(--status-ok-text)]",
   },
   missing: {
-    container: "bg-red-50 border-red-100", 
-    icon: "text-red-600",
-    text: "text-red-700",
+    container: "bg-[var(--status-error-bg)] border-[var(--status-error-border)]", 
+    icon: "text-[var(--destructive)]",
+    text: "text-[var(--status-error-text)]",
   },
   unclear: {
-    container: "bg-amber-50 border-amber-100",
-    icon: "text-amber-600", 
-    text: "text-amber-700",
+    container: "bg-[var(--status-warn-bg)] border-[var(--status-warn-border)]",
+    icon: "text-[var(--warning)]", 
+    text: "text-[var(--status-warn-text)]",
   },
 } as const

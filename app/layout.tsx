@@ -1,15 +1,15 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google"
+import { Plus_Jakarta_Sans, JetBrains_Mono, Fraunces } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { AppProvider } from "@/lib/app-context"
 import { Toaster } from "@/components/ui/toaster"
 import { KeyboardShortcutsDialog } from "@/components/keyboard-shortcuts-dialog"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
-const _instrumentSerif = Instrument_Serif({ weight: "400", style: ["normal", "italic"], subsets: ["latin"] })
+const _plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] })
+const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"] })
+const _fraunces = Fraunces({ subsets: ["latin"], weight: ["300", "400", "700"], style: ["normal", "italic"] })
 
 export const metadata: Metadata = {
   title: "CareSummarizer AI - Healthcare Prior Authorization Platform",

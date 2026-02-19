@@ -50,33 +50,33 @@ const roleConfig = {
     shortName: "CM",
     icon: User, 
     initials: "CM", 
-    color: "bg-blue-600",
-    headerBg: "bg-gradient-to-r from-blue-50/80 to-slate-50/80",
-    headerBorder: "border-blue-100/50",
-    accentColor: "text-blue-600",
-    activeBg: "bg-blue-100/80",
+    color: "bg-[var(--brand-500)]",
+    headerBg: "bg-card",
+    headerBorder: "border-border",
+    accentColor: "text-[var(--brand-600)]",
+    activeBg: "bg-[var(--brand-50)]",
   },
   physician: { 
     name: "Physician", 
     shortName: "MD",
     icon: Stethoscope, 
     initials: "MD", 
-    color: "bg-teal-600",
-    headerBg: "bg-gradient-to-r from-teal-50/80 to-slate-50/80",
-    headerBorder: "border-teal-100/50",
-    accentColor: "text-teal-600",
-    activeBg: "bg-teal-100/80",
+    color: "bg-[var(--brand-600)]",
+    headerBg: "bg-card",
+    headerBorder: "border-border",
+    accentColor: "text-[var(--brand-600)]",
+    activeBg: "bg-[var(--brand-50)]",
   },
   auditor: { 
     name: "Auditor", 
     shortName: "AU",
     icon: FileCheck, 
     initials: "AU", 
-    color: "bg-emerald-600",
-    headerBg: "bg-gradient-to-r from-emerald-50/80 to-slate-50/80",
-    headerBorder: "border-emerald-100/50",
-    accentColor: "text-emerald-600",
-    activeBg: "bg-emerald-100/80",
+    color: "bg-[var(--brand-700)]",
+    headerBg: "bg-card",
+    headerBorder: "border-border",
+    accentColor: "text-[var(--brand-600)]",
+    activeBg: "bg-[var(--brand-50)]",
   },
 }
 
@@ -95,7 +95,7 @@ export function AppHeader() {
       <div className="flex h-12 items-center px-3 md:px-4">
         {/* Left: Logo only - clean minimal branding */}
         <Link href="/" className="flex items-center mr-4 md:mr-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-500)] shadow-ds-xs">
             <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
@@ -112,10 +112,10 @@ export function AppHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-label-sm transition-all",
                   isActive
-                    ? cn("bg-white shadow-sm", currentRoleData.accentColor)
-                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                    ? cn("bg-card shadow-ds-xs", currentRoleData.accentColor)
+                    : "text-[var(--neutral-500)] hover:text-foreground hover:bg-card/50"
                 )}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -131,7 +131,7 @@ export function AppHeader() {
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-white/60 transition-colors">
+                <button className="h-8 w-8 rounded-full flex items-center justify-center text-[var(--neutral-400)] hover:text-foreground hover:bg-[var(--neutral-100)] transition-colors">
                   <Search className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
@@ -144,37 +144,37 @@ export function AppHeader() {
             <NotificationCenter />
 
             {/* Divider */}
-            <div className="h-5 w-px bg-slate-200/60 mx-1 hidden md:block" />
+            <div className="h-5 w-px bg-border mx-1 hidden md:block" />
 
             {/* Role Switcher - Compact */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
+                  <Button 
                   variant="ghost" 
-                  className="h-8 gap-1.5 px-2 rounded-full bg-white/60 hover:bg-white text-xs font-medium shadow-sm"
+                  className="h-8 gap-1.5 px-2 rounded-full bg-[var(--neutral-100)] hover:bg-[var(--neutral-150)] text-label-sm shadow-ds-xs"
                 >
                   <Avatar className="h-5 w-5">
                     <AvatarFallback className={cn("text-[9px] text-white", currentRoleData.color)}>
                       {currentRoleData.initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline text-slate-700">{currentRoleData.shortName}</span>
-                  <ChevronDown className="h-3 w-3 text-slate-400" />
+                  <span className="hidden md:inline text-foreground">{currentRoleData.shortName}</span>
+                  <ChevronDown className="h-3 w-3 text-[var(--neutral-400)]" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel className="text-xs font-normal text-slate-500">
-                  Signed in as <span className="font-medium text-slate-700">{currentUser.name}</span>
+                <DropdownMenuLabel className="text-body-sm text-[var(--neutral-500)]">
+                  Signed in as <span className="text-label-md text-foreground">{currentUser.name}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-[10px] text-slate-400 uppercase tracking-wide">Switch Role</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-overline text-[var(--neutral-400)]">Switch Role</DropdownMenuLabel>
                 {Object.entries(roleConfig).map(([id, role]) => (
                   <DropdownMenuItem 
                     key={id}
                     onClick={() => setCurrentRole(id as "case_manager" | "physician" | "auditor")}
                     className={cn(
-                      "text-xs gap-2 cursor-pointer",
-                      currentRole === id && "bg-slate-100"
+                      "text-body-sm gap-2 cursor-pointer",
+                      currentRole === id && "bg-[var(--neutral-100)]"
                     )}
                   >
                     <div className={cn("h-5 w-5 rounded-full flex items-center justify-center", role.color)}>
@@ -182,21 +182,21 @@ export function AppHeader() {
                     </div>
                     <span>{role.name}</span>
                     {currentRole === id && (
-                      <span className="ml-auto text-[10px] text-slate-400">Active</span>
+                      <span className="ml-auto text-caption text-[var(--neutral-400)]">Active</span>
                     )}
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-xs gap-2">
-                  <Settings className="h-3.5 w-3.5 text-slate-400" />
+                <DropdownMenuItem className="text-body-sm gap-2">
+                  <Settings className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-xs gap-2">
-                  <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
+                <DropdownMenuItem className="text-body-sm gap-2">
+                  <HelpCircle className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   Help Center
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-xs gap-2 text-red-600 focus:text-red-600">
+                <DropdownMenuItem className="text-body-sm gap-2 text-[var(--destructive)] focus:text-[var(--destructive)]">
                   <LogOut className="h-3.5 w-3.5" />
                   Sign out
                 </DropdownMenuItem>

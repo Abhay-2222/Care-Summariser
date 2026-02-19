@@ -3,43 +3,91 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.99 0.002 260);
-  --foreground: oklch(0.18 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 260);
-  --primary: oklch(0.45 0.12 240);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.965 0.006 260);
-  --secondary-foreground: oklch(0.30 0.02 260);
-  --muted: oklch(0.965 0.004 260);
-  --muted-foreground: oklch(0.45 0.015 260);
-  --accent: oklch(0.96 0.01 260);
-  --accent-foreground: oklch(0.18 0.02 260);
-  --success: oklch(0.52 0.12 160);
-  --success-foreground: oklch(0.99 0 0);
-  --warning: oklch(0.72 0.12 60);
-  --warning-foreground: oklch(0.25 0.04 60);
-  --destructive: oklch(0.55 0.18 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.92 0.004 260);
-  --input: oklch(0.92 0.004 260);
-  --ring: oklch(0.45 0.12 240);
-  --chart-1: oklch(0.45 0.12 240);
-  --chart-2: oklch(0.52 0.12 160);
-  --chart-3: oklch(0.72 0.12 60);
-  --chart-4: oklch(0.55 0.18 25);
-  --chart-5: oklch(0.55 0.12 300);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.985 0.003 260);
-  --sidebar-foreground: oklch(0.30 0.02 260);
-  --sidebar-primary: oklch(0.45 0.12 240);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.965 0.006 260);
-  --sidebar-accent-foreground: oklch(0.18 0.02 260);
-  --sidebar-border: oklch(0.92 0.004 260);
-  --sidebar-ring: oklch(0.45 0.12 240);
+  /* Brand color scale */
+  --brand-50: #e8f4fc;
+  --brand-100: #c5e2f7;
+  --brand-200: #9ecef1;
+  --brand-300: #72b5e8;
+  --brand-400: #4a9cdb;
+  --brand-500: #2d6a9f;
+  --brand-600: #245584;
+  --brand-700: #1b4168;
+  --brand-800: #132d4d;
+  --brand-900: #0a1a33;
+
+  /* Neutral scale */
+  --neutral-0: #ffffff;
+  --neutral-50: #fafafa;
+  --neutral-100: #f4f4f5;
+  --neutral-150: #ebebec;
+  --neutral-200: #e4e4e7;
+  --neutral-300: #d4d4d8;
+  --neutral-400: #a1a1aa;
+  --neutral-500: #71717a;
+  --neutral-600: #52525b;
+  --neutral-700: #3f3f46;
+  --neutral-800: #27272a;
+  --neutral-900: #18181b;
+
+  /* Semantic tokens */
+  --background: #fafafa;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #2d6a9f;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #27272a;
+  --muted: #ebebec;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --success: #16a34a;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #27272a;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --ring: #2d6a9f;
+  --chart-1: #2d6a9f;
+  --chart-2: #16a34a;
+  --chart-3: #d97706;
+  --chart-4: #dc2626;
+  --chart-5: #7c3aed;
+  --radius: 0.75rem;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #27272a;
+  --sidebar-primary: #2d6a9f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #2d6a9f;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04);
+  --shadow-focus: 0 0 0 3px rgba(45,106,159,0.15);
+
+  /* Status semantic tokens */
+  --status-error-bg: #fef2f2;
+  --status-error-text: #991b1b;
+  --status-error-border: #fecaca;
+  --status-warn-bg: #fffbeb;
+  --status-warn-text: #92400e;
+  --status-warn-border: #fde68a;
+  --status-ok-bg: #f0fdf4;
+  --status-ok-text: #166534;
+  --status-ok-border: #bbf7d0;
+  --status-info-bg: #e8f4fc;
+  --status-info-text: #1b4168;
+  --status-info-border: #c5e2f7;
 }
 
 .dark {
@@ -83,11 +131,23 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
-  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", monospace;
+  --font-serif: "Fraunces", "Fraunces Fallback", Georgia, serif;
   --font-size-2xs: 0.625rem;
   --font-size-2xs--line-height: 0.875rem;
+
+  /* Brand color utilities */
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -322,4 +382,111 @@
   .interactive {
     @apply transition-colors hover:bg-muted/50 active:bg-muted;
   }
+
+  /* Design System Typography Scale */
+  .text-display-2xl {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .text-display-xl {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .text-heading-lg {
+    font-family: var(--font-sans);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .text-heading-md {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .text-heading-sm {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .text-body-lg {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+  .text-body-md {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  .text-body-sm {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .text-label-md {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  .text-label-sm {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .text-caption {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .text-overline {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .text-clinical-val {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .text-patient-name {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .text-ds-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* Design System Shadows */
+  .shadow-ds-xs { box-shadow: var(--shadow-xs); }
+  .shadow-ds-sm { box-shadow: var(--shadow-sm); }
+  .shadow-ds-md { box-shadow: var(--shadow-md); }
+  .shadow-ds-lg { box-shadow: var(--shadow-lg); }
+  .shadow-ds-focus { box-shadow: var(--shadow-focus); }
 }
