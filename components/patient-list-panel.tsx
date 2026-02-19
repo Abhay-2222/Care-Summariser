@@ -448,7 +448,7 @@ export function PatientListPanel() {
                         
                         {/* Risk indicator */}
                         {patient.careLens?.denialRisk === "High" && (
-                          <span className="text-[8px] px-1.5 py-0.5 rounded bg-red-50 text-red-500 border border-red-200 uppercase tracking-wide">
+                          <span className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]">
                             High Risk
                           </span>
                         )}
@@ -464,16 +464,16 @@ export function PatientListPanel() {
 
       {/* Bulk Actions Bar */}
       {bulkMode && selectedIds.size > 0 && (
-        <div className="px-3 py-2 border-t border-blue-200 bg-blue-50">
+        <div className="px-3 py-2 border-t border-[var(--brand-100)] bg-[var(--brand-50)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-medium text-blue-700">
+              <span className="text-label-sm text-[var(--brand-700)]">
                 {selectedIds.size} selected
               </span>
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 px-2 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-100"
+                className="h-6 px-2 text-caption text-[var(--brand-500)] hover:text-[var(--brand-600)] hover:bg-[var(--brand-100)]"
                 onClick={selectAllVisible}
               >
                 Select all
@@ -483,7 +483,7 @@ export function PatientListPanel() {
               {canBulkClaim && (
                 <Button
                   size="sm"
-                  className="h-6 px-2 text-[10px] bg-blue-600 hover:bg-blue-700"
+                  className="h-6 px-2 text-caption bg-[var(--brand-500)] hover:bg-[var(--brand-600)]"
                   onClick={handleBulkClaim}
                 >
                   <Play className="h-3 w-3 mr-1" />
@@ -493,7 +493,7 @@ export function PatientListPanel() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 px-2 text-[10px] text-slate-500"
+                className="h-6 px-2 text-caption text-[var(--neutral-500)]"
                 onClick={clearSelection}
               >
                 <X className="h-3 w-3" />
@@ -504,8 +504,8 @@ export function PatientListPanel() {
       )}
 
       {/* Footer - minimal, only shows filtered count when different */}
-      <div className="px-3 py-1.5 border-t border-slate-100 bg-slate-50/50">
-        <div className="flex items-center justify-between text-[10px] text-slate-400">
+      <div className="px-3 py-1.5 border-t border-border bg-[var(--neutral-50)]">
+        <div className="flex items-center justify-between text-caption text-[var(--neutral-400)]">
           {sortedPatients.length !== patients.length ? (
             <span className="tabular-nums">{sortedPatients.length} shown</span>
           ) : (
@@ -514,7 +514,7 @@ export function PatientListPanel() {
           {hasPermission("claim_case") && !bulkMode && (
             <button
               type="button"
-              className="text-slate-500 hover:text-slate-700"
+              className="text-[var(--neutral-500)] hover:text-foreground"
               onClick={() => setBulkMode(true)}
             >
               Bulk
@@ -534,7 +534,7 @@ export function PatientListPanel() {
           <SheetTrigger asChild>
             <Button
               size="sm"
-              className="fixed bottom-4 left-4 z-50 h-12 w-12 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 md:hidden"
+              className="fixed bottom-4 left-4 z-50 h-12 w-12 rounded-full shadow-ds-lg bg-[var(--brand-500)] hover:bg-[var(--brand-600)] md:hidden"
             >
               <ClipboardList className="h-5 w-5" />
             </Button>
@@ -552,7 +552,7 @@ export function PatientListPanel() {
 
   // Desktop: Fixed sidebar
   return (
-    <aside className="hidden md:flex w-72 border-r border-slate-200 bg-white flex-col">
+    <aside className="hidden md:flex w-72 border-r border-border bg-card flex-col">
       {panelContent(false)}
     </aside>
   )

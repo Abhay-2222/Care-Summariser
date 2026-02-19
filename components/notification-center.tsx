@@ -159,15 +159,15 @@ const mockNotifications: Notification[] = [
 ]
 
 const notificationConfig: Record<NotificationType, { icon: typeof Bell; color: string; bgColor: string }> = {
-  pa_approved: { icon: CheckCircle, color: "text-emerald-600", bgColor: "bg-emerald-100" },
-  pa_denied: { icon: XCircle, color: "text-red-600", bgColor: "bg-red-100" },
-  pa_info_requested: { icon: AlertTriangle, color: "text-amber-600", bgColor: "bg-amber-100" },
-  deadline_warning: { icon: Clock, color: "text-red-600", bgColor: "bg-red-100" },
-  case_assigned: { icon: Users, color: "text-blue-600", bgColor: "bg-blue-100" },
-  escalation: { icon: AlertTriangle, color: "text-amber-600", bgColor: "bg-amber-100" },
-  p2p_scheduled: { icon: Phone, color: "text-blue-600", bgColor: "bg-blue-100" },
-  message: { icon: MessageSquare, color: "text-slate-600", bgColor: "bg-slate-100" },
-  case_update: { icon: FileText, color: "text-slate-600", bgColor: "bg-slate-100" },
+  pa_approved: { icon: CheckCircle, color: "text-[var(--success)]", bgColor: "bg-[var(--status-ok-bg)]" },
+  pa_denied: { icon: XCircle, color: "text-[var(--destructive)]", bgColor: "bg-[var(--status-error-bg)]" },
+  pa_info_requested: { icon: AlertTriangle, color: "text-[var(--warning)]", bgColor: "bg-[var(--status-warn-bg)]" },
+  deadline_warning: { icon: Clock, color: "text-[var(--destructive)]", bgColor: "bg-[var(--status-error-bg)]" },
+  case_assigned: { icon: Users, color: "text-[var(--brand-500)]", bgColor: "bg-[var(--brand-50)]" },
+  escalation: { icon: AlertTriangle, color: "text-[var(--warning)]", bgColor: "bg-[var(--status-warn-bg)]" },
+  p2p_scheduled: { icon: Phone, color: "text-[var(--brand-500)]", bgColor: "bg-[var(--brand-50)]" },
+  message: { icon: MessageSquare, color: "text-[var(--neutral-600)]", bgColor: "bg-[var(--neutral-100)]" },
+  case_update: { icon: FileText, color: "text-[var(--neutral-600)]", bgColor: "bg-[var(--neutral-100)]" },
 }
 
 export function NotificationCenter() {
@@ -206,12 +206,12 @@ export function NotificationCenter() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="relative h-7 w-7 rounded-md flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">
+        <button className="relative h-7 w-7 rounded-md flex items-center justify-center text-[var(--neutral-500)] hover:bg-[var(--neutral-100)] transition-colors">
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
             <span className={cn(
               "absolute -right-0.5 -top-0.5 h-4 min-w-4 px-1 rounded-full text-[9px] flex items-center justify-center text-white",
-              urgentCount > 0 ? "bg-red-500" : "bg-blue-500"
+              urgentCount > 0 ? "bg-[var(--destructive)]" : "bg-[var(--brand-500)]"
             )}>
               {unreadCount}
             </span>
@@ -221,15 +221,15 @@ export function NotificationCenter() {
       <PopoverContent align="end" className="w-[360px] p-0" sideOffset={8}>
         <div className="flex items-center justify-between p-3 border-b">
           <div>
-            <h3 className="text-sm text-slate-900">Notifications</h3>
-            <p className="text-[10px] text-slate-500">{unreadCount} unread</p>
+            <h3 className="text-heading-sm text-foreground">Notifications</h3>
+            <p className="text-caption text-[var(--neutral-500)]">{unreadCount} unread</p>
           </div>
           <div className="flex items-center gap-1">
             {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 text-[10px] px-2"
+                className="h-6 text-caption px-2"
                 onClick={markAllAsRead}
               >
                 <Check className="h-3 w-3 mr-1" />
@@ -243,14 +243,14 @@ export function NotificationCenter() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full justify-start gap-1 p-1 bg-slate-50 rounded-none border-b">
-            <TabsTrigger value="all" className="text-[10px] h-6 px-2 data-[state=active]:bg-white">
+          <TabsList className="w-full justify-start gap-1 p-1 bg-[var(--neutral-50)] rounded-none border-b">
+            <TabsTrigger value="all" className="text-caption h-6 px-2 data-[state=active]:bg-card">
               All
             </TabsTrigger>
-            <TabsTrigger value="unread" className="text-[10px] h-6 px-2 data-[state=active]:bg-white">
+            <TabsTrigger value="unread" className="text-caption h-6 px-2 data-[state=active]:bg-card">
               Unread {unreadCount > 0 && `(${unreadCount})`}
             </TabsTrigger>
-            <TabsTrigger value="urgent" className="text-[10px] h-6 px-2 data-[state=active]:bg-white">
+            <TabsTrigger value="urgent" className="text-caption h-6 px-2 data-[state=active]:bg-card">
               Urgent {urgentCount > 0 && `(${urgentCount})`}
             </TabsTrigger>
           </TabsList>
@@ -258,12 +258,12 @@ export function NotificationCenter() {
           <TabsContent value={activeTab} className="m-0">
             <ScrollArea className="h-[350px]">
               {filteredNotifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[200px] text-slate-400">
+                <div className="flex flex-col items-center justify-center h-[200px] text-[var(--neutral-400)]">
                   <Bell className="h-8 w-8 mb-2 opacity-50" />
-                  <p className="text-xs">No notifications</p>
+                  <p className="text-body-sm">No notifications</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-border">
                   {filteredNotifications.map((notification) => {
                     const config = notificationConfig[notification.type]
                     const Icon = config.icon
@@ -271,8 +271,8 @@ export function NotificationCenter() {
                       <div
                         key={notification.id}
                         className={cn(
-                          "p-3 hover:bg-slate-50 transition-colors cursor-pointer relative group",
-                          !notification.read && "bg-blue-50/50"
+                          "p-3 hover:bg-[var(--neutral-50)] transition-colors cursor-pointer relative group",
+                          !notification.read && "bg-[var(--brand-50)]/50"
                         )}
                         onClick={() => markAsRead(notification.id)}
                       >
@@ -284,13 +284,13 @@ export function NotificationCenter() {
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-center gap-2">
                                 <p className={cn(
-                                  "text-xs",
-                                  !notification.read ? "text-slate-900" : "text-slate-600"
+                                  "text-label-md",
+                                  !notification.read ? "text-foreground" : "text-[var(--neutral-600)]"
                                 )}>
                                   {notification.title}
                                 </p>
                                 {notification.urgent && (
-                                  <Badge variant="outline" className="text-[8px] h-4 px-1 bg-red-50 text-red-700 border-red-200">
+                                  <Badge variant="outline" className="text-ds-badge h-4 px-1 bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]">
                                     Urgent
                                   </Badge>
                                 )}
@@ -300,21 +300,21 @@ export function NotificationCenter() {
                                   e.stopPropagation()
                                   dismissNotification(notification.id)
                                 }}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity h-5 w-5 rounded flex items-center justify-center hover:bg-slate-200"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity h-5 w-5 rounded flex items-center justify-center hover:bg-[var(--neutral-200)]"
                               >
-                                <X className="h-3 w-3 text-slate-400" />
+                                <X className="h-3 w-3 text-[var(--neutral-400)]" />
                               </button>
                             </div>
-                            <p className="text-[11px] text-slate-600 mt-0.5 line-clamp-2">
+                            <p className="text-caption text-[var(--neutral-500)] mt-0.5 line-clamp-2">
                               {notification.message}
                             </p>
                             <div className="flex items-center justify-between mt-2">
-                              <span className="text-[10px] text-slate-400">{notification.timestamp}</span>
+                              <span className="text-caption text-[var(--neutral-400)]">{notification.timestamp}</span>
                               {notification.actionUrl && (
                                 <a
                                   href={notification.actionUrl}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="text-[10px] text-blue-600 hover:text-blue-700 font-medium flex items-center gap-0.5"
+                                  className="text-caption text-[var(--brand-500)] hover:text-[var(--brand-600)] flex items-center gap-0.5"
                                 >
                                   {notification.actionLabel}
                                   <ChevronRight className="h-3 w-3" />
@@ -324,7 +324,7 @@ export function NotificationCenter() {
                           </div>
                         </div>
                         {!notification.read && (
-                          <div className="absolute left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-blue-500" />
+                          <div className="absolute left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[var(--brand-500)]" />
                         )}
                       </div>
                     )
@@ -335,12 +335,12 @@ export function NotificationCenter() {
           </TabsContent>
         </Tabs>
 
-        <div className="p-2 border-t bg-slate-50 flex items-center justify-between">
-          <Button variant="ghost" size="sm" className="text-[10px] h-7 text-slate-500">
+        <div className="p-2 border-t bg-[var(--neutral-50)] flex items-center justify-between">
+          <Button variant="ghost" size="sm" className="text-caption h-7 text-[var(--neutral-500)]">
             <Trash2 className="h-3 w-3 mr-1" />
             Clear all
           </Button>
-          <Button variant="ghost" size="sm" className="text-[10px] h-7 text-blue-600">
+          <Button variant="ghost" size="sm" className="text-caption h-7 text-[var(--brand-500)]">
             View all notifications
             <ChevronRight className="h-3 w-3 ml-0.5" />
           </Button>

@@ -60,13 +60,13 @@ try {
 
 function ConfidenceIndicator({ level }: { level: ConfidenceLevel }) {
   const config = {
-    High: { className: "text-emerald-700 bg-emerald-50", icon: CheckCircle2 },
-    Medium: { className: "text-amber-700 bg-amber-50", icon: AlertCircle },
-    Low: { className: "text-red-700 bg-red-50", icon: AlertTriangle },
+    High: { className: "text-[var(--status-ok-text)] bg-[var(--status-ok-bg)]", icon: CheckCircle2 },
+    Medium: { className: "text-[var(--status-warn-text)] bg-[var(--status-warn-bg)]", icon: AlertCircle },
+    Low: { className: "text-[var(--status-error-text)] bg-[var(--status-error-bg)]", icon: AlertTriangle },
   }
   const { className, icon: Icon } = config[level]
   return (
-    <div className={cn("flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium", className)}>
+    <div className={cn("flex items-center gap-1 px-2 py-1 rounded text-ds-badge", className)}>
       <Icon className="h-3 w-3" />
       {level}
     </div>
@@ -114,9 +114,9 @@ export function ClinicalSummaryView() {
   if (!selectedPatient) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center text-slate-400">
+        <div className="text-center text-[var(--neutral-400)]">
           <FileText className="h-8 w-8 mx-auto mb-2" />
-          <p className="text-sm">No patient selected</p>
+          <p className="text-body-md">No patient selected</p>
         </div>
       </div>
     )
@@ -224,14 +224,14 @@ export function ClinicalSummaryView() {
     <div className="flex flex-col h-full">
       {/* Mobile CareLens Hint - shown once on first patient view */}
       {showCareLensHint && (
-        <div className="md:hidden bg-blue-50 border-b border-blue-200 px-3 py-2 flex items-center justify-between">
-          <p className="text-[10px] text-blue-700 flex-1">
+        <div className="md:hidden bg-[var(--status-info-bg)] border-b border-[var(--status-info-border)] px-3 py-2 flex items-center justify-between">
+          <p className="text-caption text-[var(--status-info-text)] flex-1">
             <strong>Tip:</strong> Swipe left or tap the brain icon to open CareLens AI analysis
           </p>
           <button 
             type="button"
             onClick={dismissCareLensHint}
-            className="text-blue-400 hover:text-blue-600 ml-2 p-1"
+            className="text-[var(--brand-300)] hover:text-[var(--brand-500)] ml-2 p-1"
           >
             <span className="sr-only">Dismiss</span>
             <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -265,19 +265,19 @@ export function ClinicalSummaryView() {
           {/* Alerts - Patient-impact language to reduce cognitive load */}
           {selectedPatient.alerts.length > 0 && (
             <div className="space-y-2">
-              <p className="text-[9px] text-slate-500 px-1">
+              <p className="text-overline text-[var(--neutral-500)] px-1">
                 Missing items needed to authorize {selectedPatient.name.split(" ")[0]}'s care:
               </p>
               {selectedPatient.alerts.map((alert) => (
                 <div 
                   key={alert.id}
-                  className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200"
+                  className="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]"
                 >
                   <div className="flex items-start gap-2 min-w-0 flex-1">
-                    <AlertTriangle className="h-3.5 w-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-3.5 w-3.5 text-[var(--warning)] flex-shrink-0 mt-0.5" />
                     <div className="min-w-0">
-                      <span className="text-[11px] text-amber-800 block">{alert.message}</span>
-                      <span className="text-[9px] text-amber-600 block mt-0.5">
+                      <span className="text-body-sm text-[var(--status-warn-text)] block">{alert.message}</span>
+                      <span className="text-caption text-[var(--warning)] block mt-0.5">
                         Needed to meet {selectedPatient.insurance} criteria and avoid treatment delay
                       </span>
                     </div>
@@ -285,7 +285,7 @@ export function ClinicalSummaryView() {
                   <Button 
                     size="sm" 
                     variant="ghost"
-                    className="h-6 px-2 text-[10px] text-amber-700 hover:bg-amber-100 flex-shrink-0"
+                    className="h-6 px-2 text-caption text-[var(--status-warn-text)] hover:bg-[var(--status-warn-border)] flex-shrink-0"
                     onClick={() => handleRequestDoc(alert.id)}
                   >
                     Request
@@ -297,11 +297,11 @@ export function ClinicalSummaryView() {
 
           {/* Problem List - Collapsible with design system typography */}
           <Collapsible open={problemListOpen} onOpenChange={setProblemListOpen}>
-            <div className="bg-white rounded-lg border border-slate-100">
-              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div className="bg-card rounded-xl border border-border shadow-ds-xs">
+              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
                 <div className="flex items-center gap-2">
-                  {problemListOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-                  <span className={cn(typography.sectionHeader, "text-slate-700")}>PROBLEM LIST</span>
+                  {problemListOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
+                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-700)]")}>PROBLEM LIST</span>
                   <span className={typography.label}>({selectedPatient.problemList.length})</span>
                 </div>
               </CollapsibleTrigger>
@@ -309,12 +309,12 @@ export function ClinicalSummaryView() {
                 <div className="px-3 pb-3 space-y-3">
                   {/* Primary */}
                   {selectedPatient.problemList.filter(p => p.type === "primary").map(problem => (
-                    <div key={problem.id} className="flex items-center justify-between py-2 px-2.5 rounded bg-blue-50 border border-blue-100">
+                    <div key={problem.id} className="flex items-center justify-between py-2 px-2.5 rounded-lg bg-[var(--brand-50)] border border-[var(--brand-100)]">
                       <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-blue-500" />
-                        <span className="text-[11px] font-medium text-slate-700">{problem.name}</span>
+                        <div className="h-2 w-2 rounded-full bg-[var(--brand-500)]" />
+                        <span className="text-label-md text-foreground">{problem.name}</span>
                       </div>
-                      <span className="text-[9px] font-mono text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded">{problem.icdCode}</span>
+                      <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-100)] px-1.5 py-0.5 rounded">{problem.icdCode}</span>
                     </div>
                   ))}
                   {/* Secondary */}
