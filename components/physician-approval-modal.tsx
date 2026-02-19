@@ -95,8 +95,8 @@ export function PhysicianApprovalModal({
               </div>
               <div className={cn(
                 "px-2 py-1 rounded-md text-[11px] font-medium",
-                patient.urgency === "STAT" ? "bg-red-100 text-red-700" :
-                patient.urgency === "URGENT" ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-[var(--neutral-600)]"
+                patient.urgency === "STAT" ? "bg-red-100 text-[var(--status-error-text)]" :
+                patient.urgency === "URGENT" ? "bg-amber-100 text-[var(--status-warn-text)]" : "bg-slate-200 text-[var(--neutral-600)]"
               )}>
                 {patient.urgency}
               </div>
@@ -173,21 +173,21 @@ export function PhysicianApprovalModal({
 
           {/* Issues Section - Why Approval is Blocked */}
           {(highRisks.length > 0 || openGaps.length > 0) && (
-            <div className="rounded-lg border border-red-200 bg-[var(--status-error-bg)] p-4">
+            <div className="rounded-lg border border-[var(--status-error-border)] bg-[var(--status-error-bg)] p-4">
               <div className="flex items-center gap-2 mb-3">
                 <XCircle className="h-4 w-4 text-[var(--destructive)]" />
-                <h4 className="text-[13px] font-medium text-red-800">Blocking Approval</h4>
+                <h4 className="text-[13px] font-medium text-[var(--status-error-text)]">Blocking Approval</h4>
               </div>
-              <p className="text-[11px] text-red-700 mb-3">
+              <p className="text-[11px] text-[var(--status-error-text)] mb-3">
                 The following issues must be resolved before this case can be approved:
               </p>
 
               {highRisks.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-[10px] font-medium text-red-700 uppercase mb-2">High Risk Factors ({highRisks.length})</p>
+                  <p className="text-[10px] font-medium text-[var(--status-error-text)] uppercase mb-2">High Risk Factors ({highRisks.length})</p>
                   <ul className="space-y-1.5">
                     {highRisks.map(risk => (
-                      <li key={risk.id} className="text-[11px] text-red-800 flex items-start gap-2 bg-red-100/50 rounded px-2 py-1.5">
+                      <li key={risk.id} className="text-[11px] text-[var(--status-error-text)] flex items-start gap-2 bg-red-100/50 rounded px-2 py-1.5">
                         <AlertTriangle className="h-3 w-3 text-[var(--destructive)] mt-0.5 flex-shrink-0" />
                         <div>
                           <span className="font-medium">{risk.factor}</span>
@@ -203,10 +203,10 @@ export function PhysicianApprovalModal({
 
               {openGaps.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-medium text-amber-700 uppercase mb-2">Policy Gaps ({openGaps.length})</p>
+                  <p className="text-[10px] font-medium text-[var(--status-warn-text)] uppercase mb-2">Policy Gaps ({openGaps.length})</p>
                   <ul className="space-y-1.5">
                     {openGaps.map(gap => (
-                      <li key={gap.id} className="text-[11px] text-amber-800 flex items-start gap-2 bg-amber-100/50 rounded px-2 py-1.5">
+                      <li key={gap.id} className="text-[11px] text-[var(--status-warn-text)] flex items-start gap-2 bg-amber-100/50 rounded px-2 py-1.5">
                         <FileText className="h-3 w-3 text-[var(--warning)] mt-0.5 flex-shrink-0" />
                         <div>
                           <span className="font-medium">{gap.gap}</span>
@@ -218,7 +218,7 @@ export function PhysicianApprovalModal({
                 </div>
               )}
 
-              <div className="mt-3 pt-3 border-t border-red-200">
+              <div className="mt-3 pt-3 border-t border-[var(--status-error-border)]">
                 <p className="text-[10px] text-[var(--destructive)]">
                   <strong>Options:</strong> Defer this case back to the Case Manager for documentation updates, or escalate to Medical Director for complex clinical decisions.
                 </p>
@@ -227,7 +227,7 @@ export function PhysicianApprovalModal({
           )}
 
           {/* Physician Responsibilities */}
-          <div className="rounded-lg border border-blue-200 bg-[var(--status-info-bg)] p-4">
+          <div className="rounded-lg border border-[var(--status-info-border)] bg-[var(--status-info-bg)] p-4">
             <div className="flex items-center gap-2 mb-3">
               <Stethoscope className="h-4 w-4 text-[var(--brand-500)]" />
               <h4 className="text-[13px] font-medium text-blue-800">Your Review Validates</h4>
@@ -265,7 +265,7 @@ export function PhysicianApprovalModal({
                   <CheckCircle2 className="h-6 w-6 text-[var(--success)]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[14px] font-medium text-emerald-800">Everything needed for safe approval is documented</p>
+                  <p className="text-[14px] font-medium text-[var(--status-ok-text)]">Everything needed for safe approval is documented</p>
                   <p className="text-[11px] text-[var(--success)] mt-1">
                     CareLens confidence is high, all {totalRules} payer criteria are met, and no blocking risks remain.
                     Your clinical judgment is preserved in the full review below.
@@ -283,7 +283,7 @@ export function PhysicianApprovalModal({
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="text-[11px] h-9 text-emerald-700 border-emerald-300 hover:bg-[var(--status-ok-bg)] bg-transparent"
+                      className="text-[11px] h-9 text-[var(--status-ok-text)] border-emerald-300 hover:bg-[var(--status-ok-bg)] bg-transparent"
                       onClick={() => setSelectedAction("approve")}
                     >
                       Review details anyway
@@ -291,7 +291,7 @@ export function PhysicianApprovalModal({
                   </div>
                 </div>
               </div>
-              <p className="text-[9px] text-[var(--success)] mt-3 pt-3 border-t border-emerald-200">
+              <p className="text-[9px] text-[var(--success)] mt-3 pt-3 border-t border-[var(--status-ok-border)]">
                 Designed for your 2-minute review workflow. CareLens has verified documentation completeness so you can focus on clinical judgment.
               </p>
             </div>
@@ -299,11 +299,11 @@ export function PhysicianApprovalModal({
 
           {/* Standard Ready indicator for non-high-confidence */}
           {canApprove && careLens.overallConfidence !== "High" && (
-            <div className="rounded-lg border border-emerald-200 bg-[var(--status-ok-bg)] p-4">
+            <div className="rounded-lg border border-[var(--status-ok-border)] bg-[var(--status-ok-bg)] p-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-[var(--success)]" />
                 <div>
-                  <p className="text-[13px] font-medium text-emerald-800">Ready for Approval</p>
+                  <p className="text-[13px] font-medium text-[var(--status-ok-text)]">Ready for Approval</p>
                   <p className="text-[11px] text-[var(--success)]">All high-risk factors resolved and policy gaps closed. Confidence is {careLens.overallConfidence} - review recommended.</p>
                 </div>
               </div>

@@ -79,7 +79,7 @@ export function AICalibrationTestSheet() {
             <code className="text-xs bg-muted px-2 py-1 rounded">text-[11px] uppercase tracking-wide</code>
           </div>
 
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+          <div className="mt-4 p-3 bg-[var(--status-warn-bg)] border border-amber-200 rounded">
             <p className="text-xs font-medium text-amber-900">⚠️ AI Test Question:</p>
             <p className="text-xs text-amber-800 mt-1">
               "What are the exact pixel sizes of each text style above? (provide numbers, not Tailwind classes)"
@@ -147,7 +147,7 @@ export function AICalibrationTestSheet() {
             </div>
           </div>
 
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+          <div className="mt-4 p-3 bg-[var(--status-warn-bg)] border border-amber-200 rounded">
             <p className="text-xs font-medium text-amber-900">⚠️ AI Test Question:</p>
             <p className="text-xs text-amber-800 mt-1">
               "What color is the STAT badge? What about URGENT? Should PENDING_REVIEW be purple?"
@@ -194,7 +194,7 @@ export function AICalibrationTestSheet() {
             </div>
           </div>
 
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+          <div className="mt-4 p-3 bg-[var(--status-warn-bg)] border border-amber-200 rounded">
             <p className="text-xs font-medium text-amber-900">⚠️ AI Test Question:</p>
             <p className="text-xs text-amber-800 mt-1">
               "Which padding value is standard for PatientObjectCard components?"
@@ -240,7 +240,7 @@ export function AICalibrationTestSheet() {
             </div>
           </Card>
 
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+          <div className="mt-4 p-3 bg-[var(--status-warn-bg)] border border-amber-200 rounded">
             <p className="text-xs font-medium text-amber-900">⚠️ AI Test Questions:</p>
             <ul className="text-xs text-amber-800 mt-1 space-y-1 ml-4 list-disc">
               <li>What is the padding on this card?</li>
@@ -307,7 +307,7 @@ export function AICalibrationTestSheet() {
             </p>
           </div>
 
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+          <div className="mt-4 p-3 bg-[var(--status-warn-bg)] border border-amber-200 rounded">
             <p className="text-xs font-medium text-amber-900">⚠️ AI Test Question:</p>
             <p className="text-xs text-amber-800 mt-1">
               "Should a physician be able to see the 'Claim Case' button?"
@@ -327,13 +327,13 @@ export function AICalibrationTestSheet() {
         <div className="space-y-4">
           
           {/* Hallucination 1: Font size normalization */}
-          <div className="p-3 bg-red-50 rounded">
+          <div className="p-3 bg-[var(--status-error-bg)] rounded">
             <p className="text-sm font-semibold text-red-900 mb-2">Mistake #1: Font Size Normalization</p>
             <div className="flex gap-4 items-baseline">
               <div>
                 <p className="text-xs text-red-700 mb-1">❌ AI often generates:</p>
                 <code className="text-xs bg-red-100 px-2 py-1 rounded">text-sm</code>
-                <span className="text-xs text-red-600 ml-2">(14px - too large)</span>
+                <span className="text-xs text-[var(--destructive)] ml-2">(14px - too large)</span>
               </div>
               <div>
                 <p className="text-xs text-green-700 mb-1">✅ Should be:</p>
@@ -344,7 +344,7 @@ export function AICalibrationTestSheet() {
           </div>
 
           {/* Hallucination 2: Purple badges */}
-          <div className="p-3 bg-red-50 rounded">
+          <div className="p-3 bg-[var(--status-error-bg)] rounded">
             <p className="text-sm font-semibold text-red-900 mb-2">Mistake #2: Adding Purple/Violet Status Colors</p>
             <div className="flex gap-4 items-center">
               <div>
@@ -360,18 +360,18 @@ export function AICalibrationTestSheet() {
           </div>
 
           {/* Hallucination 3: Duplicate actions */}
-          <div className="p-3 bg-red-50 rounded">
+          <div className="p-3 bg-[var(--status-error-bg)] rounded">
             <p className="text-sm font-semibold text-red-900 mb-2">Mistake #3: Duplicate Action Buttons</p>
             <div className="space-y-2">
               <div>
                 <p className="text-xs text-red-700 mb-1">❌ AI often adds:</p>
                 <div className="flex gap-2">
                   <Button size="sm">Claim Case</Button>
-                  <span className="text-xs text-red-600 self-center">← In card</span>
+                  <span className="text-xs text-[var(--destructive)] self-center">← In card</span>
                 </div>
                 <div className="flex gap-2 mt-2">
                   <Button size="sm">Claim Case</Button>
-                  <span className="text-xs text-red-600 self-center">← In WorkflowBar</span>
+                  <span className="text-xs text-[var(--destructive)] self-center">← In WorkflowBar</span>
                 </div>
               </div>
               <div>
@@ -383,7 +383,7 @@ export function AICalibrationTestSheet() {
           </div>
 
           {/* Hallucination 4: Excessive padding */}
-          <div className="p-3 bg-red-50 rounded">
+          <div className="p-3 bg-[var(--status-error-bg)] rounded">
             <p className="text-sm font-semibold text-red-900 mb-2">Mistake #4: Adding Excessive Whitespace</p>
             <div className="flex gap-4">
               <div>
@@ -400,7 +400,7 @@ export function AICalibrationTestSheet() {
       </Card>
 
       {/* Final instructions */}
-      <Card className="p-6 bg-blue-50 border-blue-200">
+      <Card className="p-6 bg-[var(--status-info-bg)] border-blue-200">
         <h2 className="text-lg font-semibold mb-3">📸 How to Use This Calibration Sheet</h2>
         <ol className="space-y-2 text-sm ml-4 list-decimal">
           <li>Take a screenshot of this entire page</li>

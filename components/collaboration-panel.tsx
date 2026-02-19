@@ -485,7 +485,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                         </Avatar>
                         <div>
                           <span className="text-sm">{member.name}</span>
-                          <span className="text-xs text-slate-400 ml-2">{member.role}</span>
+                          <span className="text-xs text-[var(--neutral-400)] ml-2">{member.role}</span>
                         </div>
                       </div>
                     </SelectItem>
@@ -494,7 +494,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-700">Handoff Reason</label>
+              <label className="text-xs font-medium text-foreground">Handoff Reason</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select reason..." />
@@ -509,7 +509,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-700">Handoff Notes</label>
+              <label className="text-xs font-medium text-foreground">Handoff Notes</label>
               <Textarea
                 placeholder="Provide context about the current state of the case, pending items, and any urgent concerns..."
                 className="mt-1"
@@ -517,7 +517,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               />
             </div>
             <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
-              <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
+              <AlertTriangle className="h-4 w-4 text-[var(--warning)] flex-shrink-0" />
               <p className="text-xs text-amber-800">
                 The recipient will be notified immediately and will have full access to case history and notes.
               </p>

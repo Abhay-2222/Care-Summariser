@@ -97,12 +97,12 @@ export default function PatientDetailPage() {
                         <TabsTrigger 
                           key={tab.value}
                           value={tab.value} 
-                          className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-slate-400 hover:text-slate-700 data-[state=active]:bg-transparent data-[state=active]:text-slate-800 data-[state=active]:shadow-none data-[state=active]:border-0"
+                          className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-[var(--neutral-400)] hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-0"
                         >
                           <Icon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">{tab.label}</span>
                           {isActive && (
-                            <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-slate-800 rounded-full" />
+                            <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
                           )}
                         </TabsTrigger>
                       )
@@ -112,7 +112,7 @@ export default function PatientDetailPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-blue-700 bg-blue-50" : "text-slate-500 hover:text-blue-600 hover:bg-blue-50"}`}
+                    className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-[var(--brand-700)] bg-[var(--brand-50)]" : "text-[var(--neutral-500)] hover:text-[var(--brand-500)] hover:bg-[var(--brand-50)]"}`}
                     onClick={() => setCareLensOpen(!careLensOpen)}
                   >
                     <careLensButton.icon className="h-4 w-4" />
@@ -129,16 +129,16 @@ export default function PatientDetailPage() {
               <TabsContent value="clinical-summary" className="m-0 flex-1 overflow-hidden">
                 <ClinicalSummaryView />
               </TabsContent>
-              <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-slate-50">
+              <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-background">
                 <PriorAuthComposer />
               </TabsContent>
-              <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-slate-50">
+              <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-background">
                 <EvidencePanel />
               </TabsContent>
-              <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-slate-50">
+              <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-background">
                 <AppealsPanel />
               </TabsContent>
-              <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+              <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-background p-4">
                 <CollaborationPanel patientId={id} patientName={selectedPatient.name} />
               </TabsContent>
             </Tabs>
@@ -155,7 +155,7 @@ export default function PatientDetailPage() {
   )
 
   return (
-    <div className="flex h-screen flex-col bg-slate-100">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <RoleAwareLayout
         nurseView={nurseView}

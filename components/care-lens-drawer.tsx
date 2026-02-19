@@ -353,7 +353,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     case_manager: {
       title: "CareLens Coach",
       subtitle: `Hey ${userFirstName}`,
-      badgeColor: "bg-[var(--status-info-bg)] text-[var(--brand-500)] border-blue-200",
+      badgeColor: "bg-[var(--status-info-bg)] text-[var(--brand-500)] border-[var(--status-info-border)]",
       showChat: true,
       showActions: true,
       showExport: false,
@@ -361,7 +361,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     physician: {
       title: "Clinical Review",
       subtitle: "Read-Only Analysis",
-      badgeColor: "bg-[var(--status-info-bg)] text-[var(--brand-500)] border-blue-200",
+      badgeColor: "bg-[var(--status-info-bg)] text-[var(--brand-500)] border-[var(--status-info-border)]",
       showChat: false,
       showActions: false,
       showExport: false,
@@ -369,7 +369,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     auditor: {
       title: "Compliance Report",
       subtitle: "Audit & Export",
-      badgeColor: "bg-[var(--status-ok-bg)] text-[var(--success)] border-emerald-200",
+      badgeColor: "bg-[var(--status-ok-bg)] text-[var(--success)] border-[var(--status-ok-border)]",
       showChat: false,
       showActions: false,
       showExport: true,
@@ -504,8 +504,8 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                       key={risk.id} 
                       className={cn(
                         "rounded-lg border text-[10px] overflow-hidden transition-all",
-                        isOpen ? "bg-[var(--status-error-bg)]/50 border-red-200" : 
-                        isAddressed ? "bg-[var(--status-ok-bg)]/50 border-emerald-200" :
+                        isOpen ? "bg-[var(--status-error-bg)]/50 border-[var(--status-error-border)]" : 
+                        isAddressed ? "bg-[var(--status-ok-bg)]/50 border-[var(--status-ok-border)]" :
                         isDismissed ? "bg-[var(--neutral-50)] border-border opacity-50" :
                         "bg-[var(--neutral-50)] border-border"
                       )}
@@ -606,7 +606,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     className={cn(
                       "p-2 rounded-md border text-[10px]",
                       gap.status === "open" 
-                        ? "bg-[var(--status-warn-bg)]/50 border-amber-200" 
+                        ? "bg-[var(--status-warn-bg)]/50 border-[var(--status-warn-border)]" 
                         : "bg-[var(--neutral-50)] border-border opacity-60"
                     )}
                   >
@@ -644,8 +644,8 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                       key={rec.id} 
                       className={cn(
                         "rounded-lg border text-[10px] overflow-hidden transition-all",
-                        isPending || isInProgress ? "bg-[var(--status-info-bg)]/50 border-blue-200" : 
-                        isCompleted ? "bg-[var(--status-ok-bg)]/50 border-emerald-200" :
+                        isPending || isInProgress ? "bg-[var(--status-info-bg)]/50 border-[var(--status-info-border)]" : 
+                        isCompleted ? "bg-[var(--status-ok-bg)]/50 border-[var(--status-ok-border)]" :
                         isDismissed ? "bg-[var(--neutral-50)] border-border opacity-50" :
                         "bg-[var(--neutral-50)] border-border"
                       )}
@@ -680,7 +680,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                         
                         {/* Action buttons for pending recommendations */}
                         {isPending && roleView.showActions && (
-                          <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-blue-100">
+                          <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-[var(--status-info-border)]">
                             <Button 
                               variant="ghost" 
                               size="sm" 
