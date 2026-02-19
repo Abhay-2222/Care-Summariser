@@ -135,17 +135,17 @@ const teamMembers: TeamMember[] = [
 ]
 
 const statusColors = {
-  online: "bg-emerald-500",
-  busy: "bg-red-500",
-  away: "bg-amber-500",
-  offline: "bg-slate-300",
+  online: "bg-[var(--success)]",
+  busy: "bg-[var(--destructive)]",
+  away: "bg-[var(--warning)]",
+  offline: "bg-[var(--neutral-300)]",
 }
 
 const categoryConfig = {
-  clinical: { label: "Clinical", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  administrative: { label: "Admin", color: "bg-slate-100 text-slate-700 border-slate-200" },
-  pa: { label: "PA", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  urgent: { label: "Urgent", color: "bg-red-100 text-red-700 border-red-200" },
+  clinical: { label: "Clinical", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]" },
+  administrative: { label: "Admin", color: "bg-[var(--neutral-100)] text-[var(--neutral-700)] border-[var(--neutral-200)]" },
+  pa: { label: "PA", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border-[var(--status-info-border)]" },
+  urgent: { label: "Urgent", color: "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]" },
 }
 
 interface CollaborationPanelProps {
@@ -203,16 +203,16 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
   return (
     <div className="flex flex-col h-full">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start gap-1 p-1 bg-slate-100 rounded-lg mx-3 mt-3" style={{ width: "calc(100% - 24px)" }}>
-          <TabsTrigger value="notes" className="text-[10px] h-7 px-3 data-[state=active]:bg-white flex-1">
+        <TabsList className="w-full justify-start gap-1 p-1 bg-[var(--neutral-100)] rounded-lg mx-3 mt-3" style={{ width: "calc(100% - 24px)" }}>
+          <TabsTrigger value="notes" className="text-caption h-7 px-3 data-[state=active]:bg-card flex-1">
             <MessageSquare className="h-3 w-3 mr-1" />
             Notes
           </TabsTrigger>
-          <TabsTrigger value="team" className="text-[10px] h-7 px-3 data-[state=active]:bg-white flex-1">
+          <TabsTrigger value="team" className="text-caption h-7 px-3 data-[state=active]:bg-card flex-1">
             <Users className="h-3 w-3 mr-1" />
             Team
           </TabsTrigger>
-          <TabsTrigger value="history" className="text-[10px] h-7 px-3 data-[state=active]:bg-white flex-1">
+          <TabsTrigger value="history" className="text-caption h-7 px-3 data-[state=active]:bg-card flex-1">
             <History className="h-3 w-3 mr-1" />
             History
           </TabsTrigger>
@@ -227,37 +227,37 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                   key={note.id}
                   className={cn(
                     "p-3 rounded-lg border",
-                    note.pinned && "border-amber-200 bg-amber-50",
-                    note.type === "system" && "bg-slate-50 border-slate-200",
-                    !note.pinned && note.type !== "system" && "bg-white border-slate-200"
+                    note.pinned && "border-[var(--status-warn-border)] bg-[var(--status-warn-bg)]",
+                    note.type === "system" && "bg-[var(--neutral-50)] border-[var(--neutral-200)]",
+                    !note.pinned && note.type !== "system" && "bg-card border-border"
                   )}
                 >
                   {note.type === "system" ? (
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-500)]">
                       <Clock className="h-3 w-3" />
                       <span>{note.content}</span>
-                      <span className="text-slate-400 ml-auto">{note.timestamp}</span>
+                      <span className="text-[var(--neutral-400)] ml-auto">{note.timestamp}</span>
                     </div>
                   ) : (
                     <>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className={cn("text-[9px] font-semibold text-white", note.author.color)}>
+                            <AvatarFallback className={cn("text-[9px] text-white", note.author.color)}>
                               {note.author.initials}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="flex items-center gap-1">
-                              <span className="text-xs font-medium text-slate-900">{note.author.name}</span>
-                              {note.pinned && <Pin className="h-3 w-3 text-amber-500" />}
+                              <span className="text-label-md text-foreground">{note.author.name}</span>
+                              {note.pinned && <Pin className="h-3 w-3 text-[var(--warning)]" />}
                             </div>
-                            <span className="text-[10px] text-slate-400">{note.author.role}</span>
+                            <span className="text-caption text-[var(--neutral-400)]">{note.author.role}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
                           {note.category && (
-                            <Badge variant="outline" className={cn("text-[8px] h-4", categoryConfig[note.category].color)}>
+                            <Badge variant="outline" className={cn("text-ds-badge h-4", categoryConfig[note.category].color)}>
                               {categoryConfig[note.category].label}
                             </Badge>
                           )}
@@ -268,15 +268,15 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent align="end" className="w-32 p-1">
-                              <Button variant="ghost" size="sm" className="w-full justify-start text-[11px] h-7">
+                              <Button variant="ghost" size="sm" className="w-full justify-start text-body-sm h-7">
                                 <Reply className="h-3 w-3 mr-2" />
                                 Reply
                               </Button>
-                              <Button variant="ghost" size="sm" className="w-full justify-start text-[11px] h-7">
+                              <Button variant="ghost" size="sm" className="w-full justify-start text-body-sm h-7">
                                 <Pin className="h-3 w-3 mr-2" />
                                 Pin
                               </Button>
-                              <Button variant="ghost" size="sm" className="w-full justify-start text-[11px] h-7 text-red-600">
+                              <Button variant="ghost" size="sm" className="w-full justify-start text-body-sm h-7 text-[var(--destructive)]">
                                 <Trash2 className="h-3 w-3 mr-2" />
                                 Delete
                               </Button>
@@ -284,21 +284,21 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                           </Popover>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-700 mt-2 leading-relaxed">
+                      <p className="text-body-sm text-foreground mt-2">
                         {note.content.split(/(@[\w\s.]+)/).map((part, i) =>
                           part.startsWith("@") ? (
-                            <span key={i} className="text-blue-600 font-medium">{part}</span>
+                            <span key={i} className="text-[var(--brand-500)]">{part}</span>
                           ) : (
                             part
                           )
                         )}
                       </p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-[10px] text-slate-400">{note.timestamp}</span>
+                        <span className="text-caption text-[var(--neutral-400)]">{note.timestamp}</span>
                         {note.mentions && note.mentions.length > 0 && (
                           <div className="flex items-center gap-1">
-                            <AtSign className="h-3 w-3 text-slate-400" />
-                            <span className="text-[10px] text-slate-400">{note.mentions.join(", ")}</span>
+                            <AtSign className="h-3 w-3 text-[var(--neutral-400)]" />
+                            <span className="text-caption text-[var(--neutral-400)]">{note.mentions.join(", ")}</span>
                           </div>
                         )}
                       </div>
@@ -310,7 +310,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
           </ScrollArea>
 
           {/* Compose Note */}
-          <div className="border-t pt-3 -mx-3 px-3 bg-white">
+          <div className="border-t pt-3 -mx-3 px-3 bg-card">
             <div className="relative">
               <Textarea
                 ref={textareaRef}
@@ -322,22 +322,22 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                 rows={2}
               />
               {showMentions && (
-                <div className="absolute bottom-full left-0 mb-1 w-64 bg-white rounded-lg border shadow-lg p-1 max-h-48 overflow-auto z-50">
-                  <div className="px-2 py-1 text-[10px] font-medium text-slate-500">Mention someone</div>
+                <div className="absolute bottom-full left-0 mb-1 w-64 bg-card rounded-xl border shadow-ds-lg p-1 max-h-48 overflow-auto z-50">
+                  <div className="px-2 py-1 text-overline text-[var(--neutral-500)]">Mention someone</div>
                   {filteredMembers.map((member) => (
                     <button
                       key={member.id}
                       onClick={() => handleMention(member)}
-                      className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-slate-100 rounded"
+                      className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[var(--neutral-100)] rounded"
                     >
                       <Avatar className="h-5 w-5">
-                        <AvatarFallback className={cn("text-[8px] font-semibold text-white", member.color)}>
+                        <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-[11px] font-medium">{member.name}</p>
-                        <p className="text-[9px] text-slate-400">{member.role}</p>
+                        <p className="text-label-md">{member.name}</p>
+                        <p className="text-caption text-[var(--neutral-400)]">{member.role}</p>
                       </div>
                     </button>
                   ))}
@@ -347,13 +347,13 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="h-7 w-24 text-[10px]">
+                  <SelectTrigger className="h-7 w-24 text-caption">
                     <Tag className="h-3 w-3 mr-1" />
                     <SelectValue placeholder="Label" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(categoryConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key} className="text-[11px]">
+                      <SelectItem key={key} value={key} className="text-body-sm">
                         {config.label}
                       </SelectItem>
                     ))}
@@ -362,14 +362,14 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 text-[10px] bg-transparent"
+                  className="h-7 text-caption bg-transparent"
                   onClick={() => setShowMentions(true)}
                 >
                   <AtSign className="h-3 w-3 mr-1" />
                   Mention
                 </Button>
               </div>
-              <Button size="sm" className="h-7 text-[10px]" onClick={handleSendNote} disabled={!newNote.trim()}>
+              <Button size="sm" className="h-7 text-caption" onClick={handleSendNote} disabled={!newNote.trim()}>
                 <Send className="h-3 w-3 mr-1" />
                 Send
               </Button>
@@ -380,8 +380,8 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
         {/* Team Tab */}
         <TabsContent value="team" className="flex-1 flex flex-col m-0 p-3">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-slate-700">Care Team</span>
-            <Button variant="outline" size="sm" className="h-6 text-[10px] bg-transparent" onClick={() => setHandoffDialogOpen(true)}>
+            <span className="text-label-md text-foreground">Care Team</span>
+            <Button variant="outline" size="sm" className="h-6 text-caption bg-transparent" onClick={() => setHandoffDialogOpen(true)}>
               <ArrowRight className="h-3 w-3 mr-1" />
               Handoff
             </Button>
@@ -391,12 +391,12 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               {teamMembers.map((member) => (
                 <div
                   key={member.id}
-                  className="p-2 bg-white rounded-lg border border-slate-200 flex items-center justify-between"
+                  className="p-2 bg-card rounded-xl border border-border flex items-center justify-between"
                 >
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className={cn("text-[10px] font-semibold text-white", member.color)}>
+                        <AvatarFallback className={cn("text-[10px] text-white", member.color)}>
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -406,8 +406,8 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       )} />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-900">{member.name}</p>
-                      <p className="text-[10px] text-slate-400">{member.role}</p>
+                      <p className="text-label-md text-foreground">{member.name}</p>
+                      <p className="text-caption text-[var(--neutral-400)]">{member.role}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -438,17 +438,17 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               ].map((item, index) => (
                 <div key={index} className="flex gap-3 py-2">
                   <div className="flex flex-col items-center">
-                    <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center">
-                      <item.icon className="h-3 w-3 text-slate-500" />
+                    <div className="h-6 w-6 rounded-full bg-[var(--neutral-100)] flex items-center justify-center">
+                      <item.icon className="h-3 w-3 text-[var(--neutral-500)]" />
                     </div>
-                    {index < 5 && <div className="w-0.5 flex-1 bg-slate-200 my-1" />}
+                    {index < 5 && <div className="w-0.5 flex-1 bg-[var(--neutral-200)] my-1" />}
                   </div>
                   <div className="flex-1 pb-2">
-                    <p className="text-xs font-medium text-slate-700">{item.action}</p>
+                    <p className="text-label-md text-foreground">{item.action}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-slate-500">{item.user}</span>
-                      <span className="text-[10px] text-slate-300">|</span>
-                      <span className="text-[10px] text-slate-400">{item.time}</span>
+                      <span className="text-caption text-[var(--neutral-500)]">{item.user}</span>
+                      <span className="text-caption text-[var(--neutral-300)]">|</span>
+                      <span className="text-caption text-[var(--neutral-400)]">{item.time}</span>
                     </div>
                   </div>
                 </div>
@@ -469,7 +469,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-xs font-medium text-slate-700">Handoff To</label>
+              <label className="text-label-md text-foreground">Handoff To</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select team member..." />
@@ -479,13 +479,13 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <SelectItem key={member.id} value={member.id}>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-5 w-5">
-                          <AvatarFallback className={cn("text-[8px] font-semibold text-white", member.color)}>
+                          <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
                             {member.initials}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <span className="text-sm">{member.name}</span>
-                          <span className="text-xs text-slate-400 ml-2">{member.role}</span>
+                          <span className="text-xs text-[var(--neutral-400)] ml-2">{member.role}</span>
                         </div>
                       </div>
                     </SelectItem>
@@ -494,7 +494,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-700">Handoff Reason</label>
+              <label className="text-xs font-medium text-foreground">Handoff Reason</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select reason..." />
@@ -509,7 +509,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-700">Handoff Notes</label>
+              <label className="text-xs font-medium text-foreground">Handoff Notes</label>
               <Textarea
                 placeholder="Provide context about the current state of the case, pending items, and any urgent concerns..."
                 className="mt-1"
@@ -517,7 +517,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               />
             </div>
             <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
-              <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
+              <AlertTriangle className="h-4 w-4 text-[var(--warning)] flex-shrink-0" />
               <p className="text-xs text-amber-800">
                 The recipient will be notified immediately and will have full access to case history and notes.
               </p>

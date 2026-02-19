@@ -208,7 +208,7 @@ Sincerely,
   const inProgressCount = deniedCases.filter(c => c.status === "appeal_in_progress" || c.status === "p2p_scheduled").length
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <div className="flex-1 overflow-hidden">
         <div className="h-full p-4 md:p-6">
@@ -216,14 +216,14 @@ Sincerely,
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Appeals Management</h1>
-                <p className="text-sm text-slate-500">Manage denied authorizations and generate appeal documentation</p>
+                <h1 className="text-heading-lg text-foreground">Appeals Management</h1>
+                <p className="text-body-md text-[var(--neutral-500)]">Manage denied authorizations and generate appeal documentation</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                <Badge variant="outline" className="bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]">
                   {pendingCount} Pending
                 </Badge>
-                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                <Badge variant="outline" className="bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]">
                   {inProgressCount} In Progress
                 </Badge>
               </div>
@@ -231,7 +231,7 @@ Sincerely,
 
             {/* Main Content */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="w-full justify-start bg-white border">
+              <TabsList className="w-full justify-start bg-card border">
                 <TabsTrigger value="queue" className="text-xs sm:text-sm">
                   <XCircle className="h-4 w-4 mr-1.5" />
                   Denied Cases
@@ -262,24 +262,24 @@ Sincerely,
                               className={cn(
                                 "p-3 rounded-lg border cursor-pointer transition-all",
                                 selectedCase?.id === caseItem.id
-                                  ? "border-red-300 bg-red-50"
-                                  : "border-slate-200 bg-white hover:border-slate-300"
+                                  ? "border-[var(--status-error-border)] bg-[var(--status-error-bg)]"
+                                  : "border-border bg-card hover:border-[var(--neutral-300)]"
                               )}
                               onClick={() => setSelectedCase(caseItem)}
                             >
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="font-medium text-sm text-slate-900">{caseItem.patientName}</p>
-                                  <p className="text-xs text-slate-500">{caseItem.paNumber}</p>
+                                  <p className="text-body-md text-foreground">{caseItem.patientName}</p>
+                                  <p className="text-body-sm text-[var(--neutral-500)]">{caseItem.paNumber}</p>
                                 </div>
-                                <Badge variant="outline" className="text-[10px] bg-red-50 text-red-700 border-red-200">
+                                <Badge variant="outline" className="text-ds-badge bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]">
                                   {caseItem.daysRemaining}d left
                                 </Badge>
                               </div>
-                              <p className="text-xs text-slate-600 mt-1">{caseItem.diagnosis}</p>
+                              <p className="text-body-sm text-[var(--neutral-600)] mt-1">{caseItem.diagnosis}</p>
                               <div className="mt-2 flex items-center gap-2">
-                                <Badge variant="outline" className="text-[10px]">{caseItem.payer}</Badge>
-                                <span className="text-[10px] text-slate-400">Denied: {caseItem.deniedAt}</span>
+                                <Badge variant="outline" className="text-ds-badge">{caseItem.payer}</Badge>
+                                <span className="text-caption text-[var(--neutral-400)]">Denied: {caseItem.deniedAt}</span>
                               </div>
                             </div>
                           ))}
@@ -312,59 +312,59 @@ Sincerely,
                         </CardHeader>
                         <CardContent className="flex-1 overflow-auto space-y-4">
                           {/* Denial Info */}
-                          <div className="p-3 bg-red-50 rounded-lg border border-red-100">
+                          <div className="p-3 bg-[var(--status-error-bg)] rounded-xl border border-[var(--status-error-border)]">
                             <div className="flex items-center gap-2 mb-2">
-                              <XCircle className="h-4 w-4 text-red-600" />
-                              <span className="text-sm font-medium text-red-900">Denial Reason</span>
-                              <Badge variant="outline" className="text-[10px] ml-auto">{selectedCase.denialCode}</Badge>
+                              <XCircle className="h-4 w-4 text-[var(--destructive)]" />
+                              <span className="text-body-sm text-[var(--status-error-text)]">Denial Reason</span>
+                              <Badge variant="outline" className="text-ds-badge ml-auto">{selectedCase.denialCode}</Badge>
                             </div>
-                            <p className="text-sm text-red-800">{selectedCase.denialReason}</p>
+                            <p className="text-body-md text-[var(--status-error-text)]">{selectedCase.denialReason}</p>
                           </div>
 
                           {/* Appeal Deadline */}
-                          <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                          <div className="p-3 bg-[var(--status-warn-bg)] rounded-xl border border-[var(--status-warn-border)]">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4 text-amber-600" />
-                                <span className="text-sm font-medium text-amber-900">Appeal Deadline</span>
+                                <Clock className="h-4 w-4 text-[var(--warning)]" />
+                                <span className="text-body-sm text-[var(--status-warn-text)]">Appeal Deadline</span>
                               </div>
-                              <span className="text-sm font-semibold text-amber-700">{selectedCase.appealDeadline}</span>
+                              <span className="text-body-sm text-[var(--status-warn-text)]">{selectedCase.appealDeadline}</span>
                             </div>
                             <Progress value={(30 - selectedCase.daysRemaining) / 30 * 100} className="h-2" />
-                            <p className="text-xs text-amber-700 mt-1">{selectedCase.daysRemaining} days remaining to file appeal</p>
+                            <p className="text-body-sm text-[var(--status-warn-text)] mt-1">{selectedCase.daysRemaining} days remaining to file appeal</p>
                           </div>
 
                           {/* AI Strategy */}
-                          <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                          <div className="p-3 bg-[var(--status-info-bg)] rounded-xl border border-[var(--status-info-border)]">
                             <div className="flex items-center gap-2 mb-2">
-                              <Brain className="h-4 w-4 text-purple-600" />
-                              <span className="text-sm font-medium text-purple-900">AI-Suggested Strategy</span>
-                              <Badge variant="outline" className="text-[10px] bg-purple-100 text-purple-700 border-purple-200 ml-auto">
+                              <Brain className="h-4 w-4 text-[var(--brand-500)]" />
+                              <span className="text-body-sm text-[var(--status-info-text)]">AI-Suggested Strategy</span>
+                              <Badge variant="outline" className="text-ds-badge bg-[var(--brand-100)] text-[var(--brand-700)] border-[var(--brand-200)] ml-auto">
                                 {selectedCase.similarCaseSuccessRate}% success rate
                               </Badge>
                             </div>
-                            <p className="text-sm text-purple-800">{selectedCase.aiSuggestedStrategy}</p>
+                            <p className="text-body-md text-[var(--status-info-text)]">{selectedCase.aiSuggestedStrategy}</p>
                           </div>
 
                           {/* Literature Support */}
                           <div>
                             <div className="flex items-center gap-2 mb-2">
-                              <BookOpen className="h-4 w-4 text-slate-500" />
-                              <span className="text-sm font-medium text-slate-700">Supporting Literature</span>
+                              <BookOpen className="h-4 w-4 text-[var(--neutral-500)]" />
+                              <span className="text-body-sm text-foreground">Supporting Literature</span>
                             </div>
-                            <div className="space-y-2">
+                            <div className="flex flex-col gap-2">
                               {literatureReferences.map((ref) => (
-                                <div key={ref.id} className="p-2 bg-white rounded border border-slate-200 flex items-start justify-between">
+                                <div key={ref.id} className="p-2 bg-card rounded-lg border border-border flex items-start justify-between">
                                   <div>
-                                    <p className="text-xs font-medium text-slate-800">{ref.title}</p>
-                                    <p className="text-[10px] text-slate-500">{ref.citation}</p>
+                                    <p className="text-body-sm text-foreground">{ref.title}</p>
+                                    <p className="text-caption text-[var(--neutral-500)]">{ref.citation}</p>
                                   </div>
                                   <Badge 
                                     variant="outline" 
                                     className={cn(
-                                      "text-[10px]",
-                                      ref.relevance === "Critical" && "bg-red-50 text-red-700 border-red-200",
-                                      ref.relevance === "High" && "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                      "text-ds-badge",
+                                      ref.relevance === "Critical" && "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]",
+                                      ref.relevance === "High" && "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]"
                                     )}
                                   >
                                     {ref.relevance}
@@ -389,9 +389,9 @@ Sincerely,
                       </>
                     ) : (
                       <CardContent className="flex-1 flex items-center justify-center">
-                        <div className="text-center text-slate-400">
+                        <div className="text-center text-[var(--neutral-400)]">
                           <XCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                          <p className="text-sm">Select a denied case to view details and start the appeal process</p>
+                          <p className="text-body-md">Select a denied case to view details and start the appeal process</p>
                         </div>
                       </CardContent>
                     )}
@@ -408,9 +408,9 @@ Sincerely,
                           <div>
                             <CardTitle className="text-base flex items-center gap-2">
                               {caseItem.status === "p2p_scheduled" ? (
-                                <Phone className="h-5 w-5 text-blue-500" />
+                                <Phone className="h-5 w-5 text-[var(--brand-500)]" />
                               ) : (
-                                <Clock className="h-5 w-5 text-amber-500" />
+                                <Clock className="h-5 w-5 text-[var(--warning)]" />
                               )}
                               {caseItem.paNumber} - {caseItem.patientName}
                             </CardTitle>
@@ -420,8 +420,8 @@ Sincerely,
                             variant="outline" 
                             className={cn(
                               caseItem.status === "p2p_scheduled" 
-                                ? "bg-blue-50 text-blue-700 border-blue-200"
-                                : "bg-amber-50 text-amber-700 border-amber-200"
+                                ? "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border-[var(--status-info-border)]"
+                                : "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]"
                             )}
                           >
                             {caseItem.status === "p2p_scheduled" ? "P2P Scheduled" : "Under Review"}
@@ -430,14 +430,14 @@ Sincerely,
                       </CardHeader>
                       <CardContent>
                         {caseItem.p2pScheduled && (
-                          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 mb-3">
+                          <div className="p-3 bg-[var(--status-info-bg)] rounded-xl border border-[var(--status-info-border)] mb-3">
                             <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-blue-600" />
-                              <span className="text-sm font-medium text-blue-900">P2P Scheduled: {caseItem.p2pScheduled}</span>
+                              <Calendar className="h-4 w-4 text-[var(--brand-500)]" />
+                              <span className="text-body-sm text-[var(--status-info-text)]">P2P Scheduled: {caseItem.p2pScheduled}</span>
                             </div>
                           </div>
                         )}
-                        <p className="text-sm text-slate-600">{caseItem.denialReason}</p>
+                        <p className="text-body-md text-[var(--neutral-600)]">{caseItem.denialReason}</p>
                         <div className="mt-3 flex gap-2">
                           <Button size="sm" variant="outline">View Appeal Letter</Button>
                           <Button size="sm" variant="outline">Add Documentation</Button>
@@ -454,22 +454,22 @@ Sincerely,
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-base flex items-center gap-2">
-                          <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                          PA-2026-44123 - James Wilson
-                        </CardTitle>
-                        <CardDescription>Cardiac Catheterization | Aetna</CardDescription>
-                      </div>
-                      <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                      <CheckCircle2 className="h-5 w-5 text-[var(--success)]" />
+                      PA-2026-44123 - James Wilson
+                    </CardTitle>
+                    <CardDescription>Cardiac Catheterization | Aetna</CardDescription>
+                  </div>
+                  <Badge variant="outline" className="bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]">
                         Approved on Appeal
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-body-md text-[var(--neutral-600)]">
                       Appeal successful after peer-to-peer review. Authorization approved with additional clinical documentation supporting medical necessity.
                     </p>
-                    <div className="mt-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                      <p className="text-xs text-emerald-800">
+                    <div className="mt-3 p-3 bg-[var(--status-ok-bg)] rounded-xl border border-[var(--status-ok-border)]">
+                      <p className="text-body-sm text-[var(--status-ok-text)]">
                         <strong>Resolution:</strong> P2P completed on Jan 20, 2026. Payer agreed documentation met criteria after review of updated functional assessment.
                       </p>
                     </div>
@@ -494,7 +494,7 @@ Sincerely,
             {!generatedLetter ? (
               <>
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Select Template</label>
+                  <label className="text-label-md text-foreground">Select Template</label>
                   <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Choose appeal type..." />
@@ -503,8 +503,8 @@ Sincerely,
                       {letterTemplates.map((template) => (
                         <SelectItem key={template.id} value={template.id}>
                           <div>
-                            <p className="font-medium">{template.name}</p>
-                            <p className="text-xs text-slate-500">{template.description}</p>
+                            <p className="text-sm">{template.name}</p>
+                            <p className="text-body-sm text-[var(--neutral-500)]">{template.description}</p>
                           </div>
                         </SelectItem>
                       ))}
@@ -512,7 +512,7 @@ Sincerely,
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Additional Context (Optional)</label>
+                  <label className="text-label-md text-foreground">Additional Context (Optional)</label>
                   <Textarea 
                     placeholder="Add any specific points you want emphasized in the appeal..."
                     className="mt-1"
@@ -539,8 +539,8 @@ Sincerely,
               </>
             ) : (
               <>
-                <div className="p-4 bg-slate-50 rounded-lg border max-h-[400px] overflow-auto">
-                  <pre className="text-xs whitespace-pre-wrap font-mono text-slate-700">{generatedLetter}</pre>
+                <div className="p-4 bg-[var(--neutral-50)] rounded-xl border max-h-[400px] overflow-auto">
+                  <pre className="text-body-sm whitespace-pre-wrap font-mono text-foreground">{generatedLetter}</pre>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" className="flex-1 bg-transparent" onClick={() => navigator.clipboard.writeText(generatedLetter)}>
@@ -584,11 +584,11 @@ Sincerely,
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-slate-700">Preferred Date</label>
+              <label className="text-label-md text-foreground">Preferred Date</label>
               <Input type="date" className="mt-1" />
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Preferred Time</label>
+              <label className="text-label-md text-foreground">Preferred Time</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select time slot..." />
@@ -603,7 +603,7 @@ Sincerely,
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Attending Physician</label>
+              <label className="text-label-md text-foreground">Attending Physician</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select physician..." />
@@ -616,7 +616,7 @@ Sincerely,
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-slate-700">Key Discussion Points</label>
+              <label className="text-label-md text-foreground">Key Discussion Points</label>
               <Textarea 
                 placeholder="What specific points need to be discussed during the P2P?"
                 className="mt-1"

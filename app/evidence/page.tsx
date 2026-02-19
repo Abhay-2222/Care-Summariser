@@ -65,13 +65,13 @@ import { cn } from "@/lib/utils"
 
 // Document types with icons
 const documentTypes = {
-  progress_note: { icon: FileText, label: "Progress Note", color: "text-blue-600 bg-blue-100" },
-  lab_result: { icon: Activity, label: "Lab Result", color: "text-emerald-600 bg-emerald-100" },
-  imaging: { icon: ImageIcon, label: "Imaging Report", color: "text-purple-600 bg-purple-100" },
-  consultation: { icon: FileText, label: "Consultation", color: "text-amber-600 bg-amber-100" },
-  procedure: { icon: FileText, label: "Procedure Note", color: "text-red-600 bg-red-100" },
-  discharge: { icon: FileText, label: "Discharge Summary", color: "text-slate-600 bg-slate-100" },
-  external: { icon: FilePlus, label: "External Record", color: "text-indigo-600 bg-indigo-100" },
+  progress_note: { icon: FileText, label: "Progress Note", color: "text-[var(--brand-500)] bg-[var(--brand-50)]" },
+  lab_result: { icon: Activity, label: "Lab Result", color: "text-[var(--success)] bg-[var(--status-ok-bg)]" },
+  imaging: { icon: ImageIcon, label: "Imaging Report", color: "text-[var(--brand-600)] bg-[var(--brand-50)]" },
+  consultation: { icon: FileText, label: "Consultation", color: "text-[var(--warning)] bg-[var(--status-warn-bg)]" },
+  procedure: { icon: FileText, label: "Procedure Note", color: "text-[var(--destructive)] bg-[var(--status-error-bg)]" },
+  discharge: { icon: FileText, label: "Discharge Summary", color: "text-[var(--neutral-600)] bg-[var(--neutral-100)]" },
+  external: { icon: FilePlus, label: "External Record", color: "text-[var(--brand-600)] bg-[var(--brand-50)]" },
 }
 
 // Mock evidence documents
@@ -208,7 +208,7 @@ export default function EvidencePanelPage() {
 
   return (
     <div 
-      className="flex h-screen flex-col bg-slate-50"
+      className="flex h-screen flex-col bg-background"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -217,11 +217,11 @@ export default function EvidencePanelPage() {
       
       {/* Drag overlay */}
       {isDragging && (
-        <div className="fixed inset-0 z-50 bg-blue-500/20 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white rounded-lg p-8 shadow-xl border-2 border-dashed border-blue-400">
-            <Upload className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-            <p className="text-lg font-medium text-slate-900">Drop files to upload</p>
-            <p className="text-sm text-slate-500">Supports PDF, images, and document files</p>
+        <div className="fixed inset-0 z-50 bg-[var(--status-info-bg)]0/20 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-card rounded-lg p-8 shadow-xl border-2 border-dashed border-blue-400">
+            <Upload className="h-12 w-12 text-[var(--brand-500)] mx-auto mb-4" />
+            <p className="text-lg font-medium text-foreground">Drop files to upload</p>
+            <p className="text-sm text-[var(--neutral-500)]">Supports PDF, images, and document files</p>
           </div>
         </div>
       )}
@@ -232,8 +232,8 @@ export default function EvidencePanelPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Evidence Management</h1>
-                <p className="text-sm text-slate-500">Search, organize, and cite clinical documentation</p>
+                <h1 className="text-lg md:text-xl text-foreground">Evidence Management</h1>
+                <p className="text-sm text-[var(--neutral-500)]">Search, organize, and cite clinical documentation</p>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => setUploadDialogOpen(true)}>
@@ -252,16 +252,16 @@ export default function EvidencePanelPage() {
             {/* Search and Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--neutral-400)]" />
                 <Input
                   placeholder="Search by keyword, date, or document type..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 bg-white"
+                  className="pl-9 bg-card"
                 />
               </div>
               <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className="w-full sm:w-[200px] bg-white">
+                <SelectTrigger className="w-full sm:w-[200px] bg-card">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
@@ -275,11 +275,11 @@ export default function EvidencePanelPage() {
             </div>
 
             {/* AI Relevance Notice */}
-            <div className="p-3 bg-purple-50 rounded-lg border border-purple-100 flex items-start gap-3">
-              <Brain className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+            <div className="p-3 bg-[var(--status-info-bg)] rounded-lg border border-blue-100 flex items-start gap-3">
+              <Brain className="h-5 w-5 text-[var(--brand-500)] flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-purple-900">AI-Powered Relevance Scoring</p>
-                <p className="text-xs text-purple-700">Documents are automatically scored for relevance to the current PA case. Higher scores indicate stronger supporting evidence.</p>
+                <p className="text-sm font-medium text-[var(--status-info-text)]">AI-Powered Relevance Scoring</p>
+                <p className="text-xs text-[var(--status-info-text)]">Documents are automatically scored for relevance to the current PA case. Higher scores indicate stronger supporting evidence.</p>
               </div>
             </div>
 
@@ -292,11 +292,11 @@ export default function EvidencePanelPage() {
                     <CardTitle className="text-sm">{filteredDocs.length} Documents</CardTitle>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-[10px]">
-                        <CheckCircle className="h-3 w-3 mr-1 text-emerald-500" />
+                        <CheckCircle className="h-3 w-3 mr-1 text-[var(--success)]" />
                         {evidenceDocuments.filter(d => d.citedInPA).length} Cited
                       </Badge>
                       <Badge variant="outline" className="text-[10px]">
-                        <Star className="h-3 w-3 mr-1 text-amber-500" />
+                        <Star className="h-3 w-3 mr-1 text-[var(--warning)]" />
                         {evidenceDocuments.filter(d => d.starred).length} Starred
                       </Badge>
                     </div>
@@ -314,8 +314,8 @@ export default function EvidencePanelPage() {
                             className={cn(
                               "p-3 rounded-lg border transition-all cursor-pointer",
                               previewDoc?.id === doc.id
-                                ? "border-blue-300 bg-blue-50"
-                                : "border-slate-200 bg-white hover:border-slate-300"
+                                ? "border-blue-300 bg-[var(--status-info-bg)]"
+                                : "border-border bg-card hover:border-slate-300"
                             )}
                             onClick={() => setPreviewDoc(doc)}
                           >
@@ -331,25 +331,25 @@ export default function EvidencePanelPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start justify-between gap-2">
                                   <div>
-                                    <p className="font-medium text-sm text-slate-900 flex items-center gap-2">
+                                    <p className="font-medium text-sm text-foreground flex items-center gap-2">
                                       {doc.title}
-                                      {doc.starred && <Star className="h-3 w-3 text-amber-500 fill-amber-500" />}
+                                      {doc.starred && <Star className="h-3 w-3 text-[var(--warning)] fill-[var(--warning)]" />}
                                       {doc.citedInPA && (
-                                        <Badge variant="outline" className="text-[9px] bg-emerald-50 text-emerald-700 border-emerald-200">
+                                        <Badge variant="outline" className="text-[9px] bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]">
                                           Cited
                                         </Badge>
                                       )}
                                     </p>
-                                    <p className="text-xs text-slate-500">{doc.author} | {doc.date}</p>
+                                    <p className="text-xs text-[var(--neutral-500)]">{doc.author} | {doc.date}</p>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Badge 
                                       variant="outline" 
                                       className={cn(
                                         "text-[10px]",
-                                        doc.relevanceScore >= 90 && "bg-emerald-50 text-emerald-700 border-emerald-200",
-                                        doc.relevanceScore >= 70 && doc.relevanceScore < 90 && "bg-blue-50 text-blue-700 border-blue-200",
-                                        doc.relevanceScore < 70 && "bg-slate-50 text-slate-600 border-slate-200"
+                                        doc.relevanceScore >= 90 && "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]",
+                                        doc.relevanceScore >= 70 && doc.relevanceScore < 90 && "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border-[var(--status-info-border)]",
+                                        doc.relevanceScore < 70 && "bg-background text-[var(--neutral-600)] border-border"
                                       )}
                                     >
                                       {doc.relevanceScore}% relevant
@@ -395,15 +395,15 @@ export default function EvidencePanelPage() {
                                     </DropdownMenu>
                                   </div>
                                 </div>
-                                <p className="text-xs text-slate-600 mt-1 line-clamp-2">{doc.excerpt}</p>
+                                <p className="text-xs text-[var(--neutral-600)] mt-1 line-clamp-2">{doc.excerpt}</p>
                                 <div className="flex items-center gap-1 mt-2 flex-wrap">
                                   {doc.tags.slice(0, 3).map((tag) => (
-                                    <Badge key={tag} variant="outline" className="text-[9px] bg-slate-50">
+                                    <Badge key={tag} variant="outline" className="text-[9px] bg-background">
                                       {tag}
                                     </Badge>
                                   ))}
                                   {doc.tags.length > 3 && (
-                                    <span className="text-[9px] text-slate-400">+{doc.tags.length - 3} more</span>
+                                    <span className="text-[9px] text-[var(--neutral-400)]">+{doc.tags.length - 3} more</span>
                                   )}
                                 </div>
                               </div>
@@ -432,8 +432,8 @@ export default function EvidencePanelPage() {
                           variant="outline" 
                           className={cn(
                             "text-[10px]",
-                            previewDoc.status === "verified" && "bg-emerald-50 text-emerald-700 border-emerald-200",
-                            previewDoc.status === "pending_review" && "bg-amber-50 text-amber-700 border-amber-200"
+                            previewDoc.status === "verified" && "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]",
+                            previewDoc.status === "pending_review" && "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]"
                           )}
                         >
                           {previewDoc.status === "verified" ? "Verified" : "Pending Review"}
@@ -441,31 +441,31 @@ export default function EvidencePanelPage() {
                       </div>
                       
                       <div>
-                        <h3 className="font-semibold text-slate-900">{previewDoc.title}</h3>
-                        <p className="text-xs text-slate-500 mt-1">{previewDoc.author}</p>
-                        <p className="text-xs text-slate-400">{previewDoc.date} at {previewDoc.time}</p>
+                        <h3 className="text-sm text-foreground">{previewDoc.title}</h3>
+                        <p className="text-xs text-[var(--neutral-500)] mt-1">{previewDoc.author}</p>
+                        <p className="text-xs text-[var(--neutral-400)]">{previewDoc.date} at {previewDoc.time}</p>
                       </div>
 
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="p-3 bg-[var(--status-info-bg)] rounded-lg border border-blue-100">
                         <div className="flex items-center gap-2 mb-1">
-                          <Sparkles className="h-3.5 w-3.5 text-purple-600" />
-                          <span className="text-xs font-medium text-purple-900">AI Relevance Score</span>
+                          <Sparkles className="h-3.5 w-3.5 text-[var(--brand-500)]" />
+                          <span className="text-xs font-medium text-[var(--status-info-text)]">AI Relevance Score</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Progress value={previewDoc.relevanceScore} className="h-2 flex-1" />
-                          <span className="text-sm font-semibold text-purple-700">{previewDoc.relevanceScore}%</span>
+                          <span className="text-sm font-mono text-[var(--status-info-text)]">{previewDoc.relevanceScore}%</span>
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-xs font-medium text-slate-700 mb-2">Document Content</p>
-                        <div className="p-3 bg-slate-50 rounded-lg border text-xs text-slate-700 leading-relaxed">
+                        <p className="text-xs font-medium text-foreground mb-2">Document Content</p>
+                        <div className="p-3 bg-background rounded-lg border text-xs text-foreground leading-relaxed">
                           {previewDoc.excerpt}
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-xs font-medium text-slate-700 mb-2">Tags</p>
+                        <p className="text-xs font-medium text-foreground mb-2">Tags</p>
                         <div className="flex flex-wrap gap-1">
                           {previewDoc.tags.map((tag) => (
                             <Badge key={tag} variant="outline" className="text-[10px]">
@@ -488,7 +488,7 @@ export default function EvidencePanelPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-center text-slate-400">
+                    <div className="h-full flex items-center justify-center text-center text-[var(--neutral-400)]">
                       <div>
                         <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
                         <p className="text-sm">Select a document to preview</p>
@@ -513,42 +513,42 @@ export default function EvidencePanelPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             {/* Upload Zone */}
-            <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer">
-              <Upload className="h-10 w-10 text-slate-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-700">Click to upload or drag and drop</p>
-              <p className="text-xs text-slate-500 mt-1">PDF, DOC, DOCX, JPG, PNG up to 25MB</p>
+            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-blue-400 hover:bg-[var(--status-info-bg)] transition-colors cursor-pointer">
+              <Upload className="h-10 w-10 text-[var(--neutral-400)] mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">Click to upload or drag and drop</p>
+              <p className="text-xs text-[var(--neutral-500)] mt-1">PDF, DOC, DOCX, JPG, PNG up to 25MB</p>
             </div>
 
             {/* Upload Queue */}
             {uploadQueue.length > 0 && (
               <div>
-                <p className="text-xs font-medium text-slate-700 mb-2">Upload Queue</p>
+                <p className="text-xs font-medium text-foreground mb-2">Upload Queue</p>
                 <div className="space-y-2">
                   {uploadQueue.map((file) => (
-                    <div key={file.id} className="p-2 bg-slate-50 rounded-lg border flex items-center gap-3">
-                      <FileText className="h-4 w-4 text-slate-400" />
+                    <div key={file.id} className="p-2 bg-background rounded-lg border flex items-center gap-3">
+                      <FileText className="h-4 w-4 text-[var(--neutral-400)]" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-slate-700 truncate">{file.name}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{file.name}</p>
                         <div className="flex items-center gap-2 mt-1">
                           {file.status === "uploading" ? (
                             <>
                               <Progress value={file.progress} className="h-1 flex-1" />
-                              <span className="text-[10px] text-slate-500">{file.progress}%</span>
+                              <span className="text-[10px] text-[var(--neutral-500)]">{file.progress}%</span>
                             </>
                           ) : file.status === "complete" ? (
-                            <span className="text-[10px] text-emerald-600 flex items-center gap-1">
+                            <span className="text-[10px] text-[var(--success)] flex items-center gap-1">
                               <CheckCircle className="h-3 w-3" />
                               Uploaded
                             </span>
                           ) : (
-                            <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                            <span className="text-[10px] text-[var(--neutral-400)] flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               Queued
                             </span>
                           )}
                         </div>
                       </div>
-                      <span className="text-[10px] text-slate-400">{file.size}</span>
+                      <span className="text-[10px] text-[var(--neutral-400)]">{file.size}</span>
                       <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                         <X className="h-3.5 w-3.5" />
                       </Button>
@@ -560,7 +560,7 @@ export default function EvidencePanelPage() {
 
             {/* Document Type Selection */}
             <div>
-              <label className="text-xs font-medium text-slate-700">Document Type</label>
+              <label className="text-xs font-medium text-foreground">Document Type</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select document type..." />
@@ -575,7 +575,7 @@ export default function EvidencePanelPage() {
 
             {/* Patient Selection */}
             <div>
-              <label className="text-xs font-medium text-slate-700">Link to Patient</label>
+              <label className="text-xs font-medium text-foreground">Link to Patient</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select patient..." />

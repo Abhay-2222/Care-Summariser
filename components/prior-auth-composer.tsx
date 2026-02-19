@@ -52,7 +52,7 @@ export function PriorAuthComposer() {
       <div className="bg-white rounded-lg border border-slate-100">
         {/* Header */}
         <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <p className={cn(typography.sectionHeader, "text-slate-500")}>PRIOR AUTHORIZATION</p>
+          <p className={cn(typography.sectionHeader, "text-[var(--neutral-500)]")}>PRIOR AUTHORIZATION</p>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">
             {selectedPatient.insurance}
           </span>
@@ -82,7 +82,7 @@ export function PriorAuthComposer() {
           {!generatedText ? (
             <div className="flex flex-col items-center justify-center py-10 border-t border-slate-100 mt-4">
               <Wand2 className="mb-3 h-8 w-8 text-slate-300" />
-              <h3 className="text-[13px] font-medium text-slate-700 mb-1">Generate Prior Authorization</h3>
+              <h3 className="text-[13px] font-medium text-foreground mb-1">Generate Prior Authorization</h3>
               <p className="text-[11px] text-slate-400 text-center mb-4 max-w-sm">
                 AI will compose a prior authorization letter based on clinical documentation
               </p>

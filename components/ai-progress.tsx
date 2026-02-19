@@ -81,7 +81,7 @@ export function AIProgress({ isActive, currentStep, steps = defaultSteps, classN
             {progress < 100 ? (
               <Loader2 className="h-5 w-5 text-primary animate-spin" />
             ) : (
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <CheckCircle2 className="h-5 w-5 text-[var(--success)]" />
             )}
           </div>
         </div>
@@ -115,7 +115,7 @@ export function AIProgress({ isActive, currentStep, steps = defaultSteps, classN
             >
               <div className={cn(
                 "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
-                isComplete && "bg-emerald-100 text-emerald-600",
+                isComplete && "bg-emerald-100 text-[var(--success)]",
                 isActive && "bg-primary/10 text-primary",
                 !isComplete && !isActive && "bg-muted text-muted-foreground"
               )}>
@@ -130,7 +130,7 @@ export function AIProgress({ isActive, currentStep, steps = defaultSteps, classN
               <span className={cn(
                 "text-2xs text-center max-w-[60px]",
                 isActive && "text-primary font-medium",
-                isComplete && "text-emerald-600",
+                isComplete && "text-[var(--success)]",
                 !isActive && !isComplete && "text-muted-foreground"
               )}>
                 {step.label.split(" ")[0]}

@@ -15,6 +15,44 @@ export type CaseStatus =
 
 export type UserRole = "case_manager" | "physician" | "auditor"
 
+// =============================================================================
+// PERMISSIONS - Declared, not scattered
+// =============================================================================
+export type Permission =
+  | "view_queue"           // See the patient work queue
+  | "claim_case"           // Take ownership of a case
+  | "edit_summary"         // Modify clinical summary fields
+  | "resolve_gaps"         // Mark payer rule gaps as resolved
+  | "submit_pa"            // Submit prior auth to payer
+  | "send_to_physician"    // Route case to MD for review
+  | "review_case"          // Physician-level case review
+  | "approve_pa"           // Physician approve decision
+  | "defer_pa"             // Physician defer decision
+  | "escalate_pa"          // Physician escalate decision
+  | "view_audit_log"       // Access audit trail
+
+export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
+  case_manager: [
+    "view_queue",
+    "claim_case",
+    "edit_summary",
+    "resolve_gaps",
+    "submit_pa",
+    "send_to_physician",
+  ],
+  physician: [
+    "view_queue",
+    "review_case",
+    "approve_pa",
+    "defer_pa",
+    "escalate_pa",
+  ],
+  auditor: [
+    "view_queue",
+    "view_audit_log",
+  ],
+} as const
+
 export interface CaseAssignment {
   assignedTo: string
   assignedAt: string
@@ -206,6 +244,8 @@ export interface AuditEntry {
   timestamp: string
   action: string
   user: string
+  role?: UserRole
+  patientId?: string
 }
 
 export interface TimelineEvent {

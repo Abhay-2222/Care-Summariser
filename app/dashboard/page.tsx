@@ -29,21 +29,21 @@ export default function DashboardPage() {
             <Scorecard 
               title="Patients Helped Today"
               value={43}
-              icon={<CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
+              icon={<CheckCircle2 className="h-3.5 w-3.5 text-[var(--success)]" />}
               trend={{ value: "8 more ready for your review", direction: "neutral" }}
             />
             <Scorecard 
               title="Time Saved per Case"
               value="2.4"
               unit="h"
-              icon={<Clock className="h-3.5 w-3.5 text-amber-600" />}
+              icon={<Clock className="h-3.5 w-3.5 text-[var(--warning)]" />}
               trend={{ value: "vs manual process - that's more time for patients", direction: "up" }}
             />
             <Scorecard 
               title="Authorization Success"
               value="89.2"
               unit="%"
-              icon={<TrendingUp className="h-3.5 w-3.5 text-emerald-600" />}
+              icon={<TrendingUp className="h-3.5 w-3.5 text-[var(--success)]" />}
               trend={{ value: "Your facility outperforms 82% industry avg", direction: "neutral" }}
               variant="success"
             />
@@ -53,7 +53,7 @@ export default function DashboardPage() {
             {/* Data Visualization Section - Redwood Pattern */}
             <Section 
               title="Cases by Priority" 
-              icon={<BarChart3 className="h-4 w-4 text-purple-700" />}
+              icon={<BarChart3 className="h-4 w-4 text-foreground" />}
             >
               <div className="space-y-4">
                 <Gauge label="STAT" value={15} max={127} status="error" />

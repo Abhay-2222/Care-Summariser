@@ -36,7 +36,7 @@ export function WorkflowBar({
   onGeneratePA, 
   onSubmit 
 }: WorkflowBarProps) {
-  const { selectedPatient, currentRole, claimCase, currentUser } = useApp()
+  const { selectedPatient, currentRole, hasPermission, claimCase, currentUser } = useApp()
 
   if (!selectedPatient) return null
 
@@ -99,13 +99,13 @@ export function WorkflowBar({
   const totalIssues = openGaps + missingRules
 
   return (
-    <div className="sticky top-0 z-10 bg-white border-b border-slate-100 px-4 py-2">
+    <div className="sticky top-0 z-10 bg-card border-b border-border px-4 py-2">
       <div className="flex items-center justify-between gap-4">
         {/* Left: Status + Progress */}
         <div className="flex items-center gap-4 min-w-0">
           {/* Status badge */}
           <span className={cn(
-            "flex-shrink-0 text-[10px] font-semibold px-2.5 py-1 rounded-full",
+            "flex-shrink-0 text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wide",
             statusInfo.badgeClass
           )}>
             {statusInfo.label}
@@ -113,7 +113,7 @@ export function WorkflowBar({
 
           {/* Progress bar */}
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="w-20 h-1.5 bg-[var(--neutral-150)] rounded-full overflow-hidden">
               <div 
                 className={cn("h-full rounded-full transition-all", getProgressColor(progress))}
                 style={{ width: `${progress}%` }}
@@ -126,9 +126,9 @@ export function WorkflowBar({
 
           {/* Issues indicator */}
           {totalIssues > 0 && (
-            <div className="flex items-center gap-1.5 text-amber-600">
+            <div className="flex items-center gap-1.5 text-[var(--warning)]">
               <AlertTriangle className="h-3 w-3" />
-              <span className="text-[10px] font-medium">
+              <span className="text-caption">
                 {totalIssues} {totalIssues === 1 ? "issue" : "issues"}
               </span>
             </div>
@@ -149,7 +149,7 @@ export function WorkflowBar({
             <Button
               variant="outline"
               size="sm"
-              className="h-7 px-2.5 text-[11px] gap-1.5 text-amber-600 border-amber-200 hover:bg-amber-50 bg-transparent"
+              className="h-7 px-2.5 text-caption gap-1.5 text-[var(--status-warn-text)] border-[var(--status-warn-border)] hover:bg-[var(--status-warn-bg)] bg-transparent"
               onClick={onRequestDocs}
             >
               <AlertTriangle className="h-3 w-3" />
@@ -163,7 +163,7 @@ export function WorkflowBar({
             <Button
               variant={primaryAction.variant}
               size="sm"
-              className="h-7 px-3 text-[11px] gap-1.5 font-medium"
+              className="h-7 px-3 text-label-sm gap-1.5"
               onClick={primaryAction.onClick}
               disabled={primaryAction.disabled}
             >
@@ -178,26 +178,26 @@ export function WorkflowBar({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 text-slate-400 hover:text-slate-600"
+                className="h-7 w-7 p-0 text-[var(--neutral-400)] hover:text-foreground"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem className="text-[11px]" onClick={onSendToMD}>
+              <DropdownMenuItem className="text-body-sm" onClick={onSendToMD}>
                 <UserCheck className="h-3.5 w-3.5 mr-2" />
                 Send to MD Review
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-[11px]" onClick={onGeneratePA}>
+              <DropdownMenuItem className="text-body-sm" onClick={onGeneratePA}>
                 <FileText className="h-3.5 w-3.5 mr-2" />
                 Generate PA Letter
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-[11px] text-amber-600">
+              <DropdownMenuItem className="text-body-sm text-[var(--warning)]">
                 <Clock className="h-3.5 w-3.5 mr-2" />
                 Defer Case
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-[11px] text-red-600">
+              <DropdownMenuItem className="text-body-sm text-[var(--destructive)]">
                 <AlertTriangle className="h-3.5 w-3.5 mr-2" />
                 Escalate
               </DropdownMenuItem>

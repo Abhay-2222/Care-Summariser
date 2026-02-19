@@ -50,11 +50,11 @@ export function PatientObjectCard({
   const confidenceStyle = confidenceStyles[patient.careLens.overallConfidence]
 
   return (
-    <div className={cn("bg-white rounded-lg border border-slate-100 p-3", className)}>
+    <div className={cn("bg-card rounded-xl border border-border p-3 shadow-ds-xs", className)}>
       {/* Row 1: Name · Demographics · Insurance */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <h2 className={cn(typography.title, "text-[13px] truncate")}>
+          <h2 className={cn("text-patient-name truncate")}>
             {patient.name}
           </h2>
           <span className={typography.body}>·</span>
@@ -74,7 +74,7 @@ export function PatientObjectCard({
         {/* PHI Toggle + Confidence */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className={cn(
-            "px-2 py-0.5 rounded text-[9px] font-medium",
+            "text-ds-badge px-2 py-0.5 rounded",
             confidenceStyle
           )}>
             {patient.careLens.overallConfidence} Confidence
@@ -87,9 +87,9 @@ export function PatientObjectCard({
               onClick={onTogglePHI}
             >
               {showPHI ? (
-                <EyeOff className="h-3 w-3 text-slate-400" />
+                <EyeOff className="h-3 w-3 text-[var(--neutral-400)]" />
               ) : (
-                <Eye className="h-3 w-3 text-slate-400" />
+                <Eye className="h-3 w-3 text-[var(--neutral-400)]" />
               )}
             </Button>
           )}
@@ -117,7 +117,7 @@ export function PatientObjectCard({
         <div className="flex items-center gap-1">
           <span className={typography.label}>Risk</span>
           <span className={cn(
-            "px-1.5 py-0.5 rounded text-[9px] font-medium",
+            "text-ds-badge px-1.5 py-0.5 rounded",
             riskStyle
           )}>
             {patient.careLens.denialRisk}
@@ -126,9 +126,9 @@ export function PatientObjectCard({
       </div>
 
       {/* Row 3: Urgency Badge + Primary Diagnosis */}
-      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-slate-100">
+      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-border">
         <span className={cn(
-          "px-2 py-0.5 rounded text-[9px] font-semibold flex-shrink-0",
+          "text-ds-badge px-2 py-0.5 rounded flex-shrink-0",
           urgencyStyle
         )}>
           {patient.urgency}
@@ -138,7 +138,7 @@ export function PatientObjectCard({
             <span className={cn(typography.title, "truncate")}>
               {primaryDiagnosis.name}
             </span>
-            <span className="text-[9px] font-mono text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex-shrink-0">
+            <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded flex-shrink-0">
               {primaryDiagnosis.icdCode}
             </span>
           </div>
@@ -164,14 +164,14 @@ export function PatientObjectCardCompact({
   const riskStyle = riskStyles[patient.careLens.denialRisk]
 
   return (
-    <div className={cn("bg-white rounded-lg border border-slate-100 p-3", className)}>
+    <div className={cn("bg-card rounded-xl border border-border p-3 shadow-ds-xs", className)}>
       {/* Row 1: Name + Urgency */}
       <div className="flex items-center justify-between gap-2">
-        <h2 className={cn(typography.title, "text-[13px] truncate")}>
+        <h2 className="text-patient-name truncate">
           {patient.name}
         </h2>
         <span className={cn(
-          "px-2 py-0.5 rounded text-[9px] font-semibold flex-shrink-0",
+          "text-ds-badge px-2 py-0.5 rounded flex-shrink-0",
           urgencyStyle
         )}>
           {patient.urgency}
@@ -187,18 +187,18 @@ export function PatientObjectCardCompact({
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
         <span className={typography.body}>Room {patient.room}</span>
         <span className={typography.body}>LOS: {patient.lengthOfStay}</span>
-        <span className={cn("px-1.5 py-0.5 rounded text-[9px] font-medium", riskStyle)}>
+        <span className={cn("text-ds-badge px-1.5 py-0.5 rounded", riskStyle)}>
           {patient.careLens.denialRisk} Risk
         </span>
       </div>
 
       {/* Row 4: Primary Diagnosis */}
       {primaryDiagnosis && (
-        <div className="mt-2 pt-2 border-t border-slate-100">
+        <div className="mt-2 pt-2 border-t border-border">
           <span className={cn(typography.title, "text-[11px]")}>
             {primaryDiagnosis.name}
           </span>
-          <span className="ml-2 text-[9px] font-mono text-blue-600">
+          <span className="ml-2 text-ds-badge font-mono text-[var(--brand-600)]">
             {primaryDiagnosis.icdCode}
           </span>
         </div>

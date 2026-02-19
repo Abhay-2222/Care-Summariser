@@ -144,7 +144,7 @@ export default function MedicalDirectorPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <div className="flex-1 overflow-hidden">
         <div className="h-full p-4 md:p-6">
@@ -152,11 +152,11 @@ export default function MedicalDirectorPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900">Medical Director Dashboard</h1>
-                <p className="text-sm text-slate-500">Review escalated cases and manage peer-to-peer reviews</p>
+                <h1 className="text-heading-lg text-foreground">Medical Director Dashboard</h1>
+                <p className="text-body-md text-[var(--neutral-500)]">Review escalated cases and manage peer-to-peer reviews</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                <Badge variant="outline" className="bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]">
                   <Shield className="h-3 w-3 mr-1" />
                   Medical Director View
                 </Badge>
@@ -165,67 +165,67 @@ export default function MedicalDirectorPage() {
 
             {/* Metrics Cards */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-              <Card className="bg-white">
+              <Card className="bg-card">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-red-100 flex items-center justify-center">
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                    <div className="h-8 w-8 rounded-lg bg-[var(--status-error-bg)] flex items-center justify-center">
+                      <AlertTriangle className="h-4 w-4 text-[var(--destructive)]" />
                     </div>
                     <div>
-                      <p className="text-[10px] md:text-xs text-slate-500">Pending Escalations</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.pendingEscalations}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">Pending Escalations</p>
+                      <p className="text-heading-lg text-foreground">{metrics.pendingEscalations}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white">
+              <Card className="bg-card">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <Phone className="h-4 w-4 text-blue-600" />
+                    <div className="h-8 w-8 rounded-lg bg-[var(--brand-50)] flex items-center justify-center">
+                      <Phone className="h-4 w-4 text-[var(--brand-500)]" />
                     </div>
                     <div>
-                      <p className="text-[10px] md:text-xs text-slate-500">P2P Today</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.p2pToday}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">P2P Today</p>
+                      <p className="text-heading-lg text-foreground">{metrics.p2pToday}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white">
+              <Card className="bg-card">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <Clock className="h-4 w-4 text-emerald-600" />
+                    <div className="h-8 w-8 rounded-lg bg-[var(--status-ok-bg)] flex items-center justify-center">
+                      <Clock className="h-4 w-4 text-[var(--success)]" />
                     </div>
                     <div>
-                      <p className="text-[10px] md:text-xs text-slate-500">Avg Decision</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.avgDecisionTime}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">Avg Decision</p>
+                      <p className="text-heading-lg text-foreground">{metrics.avgDecisionTime}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white">
+              <Card className="bg-card">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                      <TrendingUp className="h-4 w-4 text-purple-600" />
+                  <div className="h-8 w-8 rounded-lg bg-[var(--status-ok-bg)] flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-[var(--success)]" />
                     </div>
                     <div>
-                      <p className="text-[10px] md:text-xs text-slate-500">Approval Rate</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.approvalRate}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">Approval Rate</p>
+                      <p className="text-heading-lg text-foreground">{metrics.approvalRate}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white col-span-2 md:col-span-1">
+              <Card className="bg-card col-span-2 md:col-span-1">
                 <CardContent className="p-3 md:p-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <Scale className="h-4 w-4 text-amber-600" />
+                    <div className="h-8 w-8 rounded-lg bg-[var(--status-warn-bg)] flex items-center justify-center">
+                      <Scale className="h-4 w-4 text-[var(--warning)]" />
                     </div>
                     <div>
-                      <p className="text-[10px] md:text-xs text-slate-500">Overturned</p>
-                      <p className="text-lg md:text-xl font-semibold text-slate-900">{metrics.overturnedDenials}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">Overturned</p>
+                      <p className="text-heading-lg text-foreground">{metrics.overturnedDenials}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -238,7 +238,7 @@ export default function MedicalDirectorPage() {
               <Card className="lg:col-span-2 flex flex-col">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                    <AlertTriangle className="h-4 w-4 text-[var(--warning)]" />
                     Escalated Cases
                   </CardTitle>
                   <CardDescription>Cases requiring Medical Director review</CardDescription>
@@ -252,38 +252,38 @@ export default function MedicalDirectorPage() {
                           className={cn(
                             "p-3 md:p-4 rounded-lg border cursor-pointer transition-all",
                             selectedCase?.id === caseItem.id
-                              ? "border-purple-300 bg-purple-50"
-                              : "border-slate-200 bg-white hover:border-slate-300"
+                              ? "border-[var(--brand-300)] bg-[var(--brand-50)]"
+                              : "border-border bg-card hover:border-[var(--neutral-300)]"
                           )}
                           onClick={() => setSelectedCase(caseItem)}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-medium text-slate-900 text-sm">{caseItem.patientName}</span>
+                                <span className="text-foreground text-body-md">{caseItem.patientName}</span>
                                 <Badge
                                   variant="outline"
                                   className={cn(
-                                    "text-[10px]",
-                                    caseItem.urgency === "STAT" && "bg-red-50 text-red-700 border-red-200",
-                                    caseItem.urgency === "URGENT" && "bg-amber-50 text-amber-700 border-amber-200",
-                                    caseItem.urgency === "ROUTINE" && "bg-slate-50 text-slate-600 border-slate-200"
+                                    "text-ds-badge",
+                                    caseItem.urgency === "STAT" && "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]",
+                                    caseItem.urgency === "URGENT" && "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]",
+                                    caseItem.urgency === "ROUTINE" && "bg-[var(--neutral-50)] text-[var(--neutral-600)] border-[var(--neutral-200)]"
                                   )}
                                 >
                                   {caseItem.urgency}
                                 </Badge>
                               </div>
-                              <p className="text-xs text-slate-500 mt-0.5">{caseItem.age}yo {caseItem.gender} | {caseItem.mrn}</p>
-                              <p className="text-xs text-slate-700 mt-1 line-clamp-1">{caseItem.diagnosis}</p>
+                              <p className="text-body-sm text-[var(--neutral-500)] mt-0.5">{caseItem.age}yo {caseItem.gender} | {caseItem.mrn}</p>
+                              <p className="text-body-sm text-foreground mt-1 line-clamp-1">{caseItem.diagnosis}</p>
                             </div>
-                            <ChevronRight className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                            <ChevronRight className="h-4 w-4 text-[var(--neutral-400)] flex-shrink-0" />
                           </div>
-                          <div className="mt-2 pt-2 border-t border-slate-100">
-                            <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                          <div className="mt-2 pt-2 border-t border-border">
+                            <div className="flex items-center gap-2 text-caption text-[var(--neutral-500)]">
                               <Stethoscope className="h-3 w-3" />
                               <span>Escalated by {caseItem.escalatedBy} - {caseItem.escalatedAt}</span>
                             </div>
-                            <p className="text-[11px] text-slate-600 mt-1 line-clamp-2">{caseItem.reason}</p>
+                            <p className="text-body-sm text-[var(--neutral-600)] mt-1 line-clamp-2">{caseItem.reason}</p>
                           </div>
                         </div>
                       ))}
@@ -302,39 +302,39 @@ export default function MedicalDirectorPage() {
                     </CardHeader>
                     <CardContent className="flex-1 overflow-auto space-y-4">
                       {/* Patient Info */}
-                      <div className="p-3 bg-slate-50 rounded-lg">
+                      <div className="p-3 bg-[var(--neutral-50)] rounded-xl">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-purple-100 text-purple-700 text-sm">
+                            <AvatarFallback className="bg-[var(--brand-50)] text-[var(--brand-700)] text-body-md">
                               {selectedCase.patientName.split(" ").map(n => n[0]).join("")}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium text-slate-900">{selectedCase.patientName}</p>
-                            <p className="text-xs text-slate-500">{selectedCase.age}yo {selectedCase.gender} | {selectedCase.mrn}</p>
+                            <p className="text-body-md text-foreground">{selectedCase.patientName}</p>
+                            <p className="text-body-sm text-[var(--neutral-500)]">{selectedCase.age}yo {selectedCase.gender} | {selectedCase.mrn}</p>
                           </div>
                         </div>
-                        <div className="mt-3 pt-3 border-t border-slate-200">
-                          <p className="text-xs font-medium text-slate-700">{selectedCase.diagnosis}</p>
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <p className="text-label-md text-foreground">{selectedCase.diagnosis}</p>
                         </div>
                       </div>
 
                       {/* AI Analysis */}
-                      <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="p-3 bg-[var(--status-info-bg)] rounded-xl border border-[var(--status-info-border)]">
                         <div className="flex items-center gap-2 mb-2">
-                          <Brain className="h-4 w-4 text-purple-600" />
-                          <span className="text-xs font-medium text-purple-900">CareLens Analysis</span>
+                          <Brain className="h-4 w-4 text-[var(--brand-500)]" />
+                          <span className="text-label-md text-[var(--status-info-text)]">CareLens Analysis</span>
                         </div>
-                        <p className="text-[11px] text-purple-800 leading-relaxed">{selectedCase.aiAnalysis}</p>
+                        <p className="text-body-sm text-[var(--status-info-text)]">{selectedCase.aiAnalysis}</p>
                         <div className="mt-2 flex items-center gap-3">
                           <Badge variant="outline" className={cn(
-                            "text-[10px]",
-                            selectedCase.careLensRisk === "High" && "bg-red-50 text-red-700 border-red-200",
-                            selectedCase.careLensRisk === "Medium" && "bg-amber-50 text-amber-700 border-amber-200"
+                            "text-ds-badge",
+                            selectedCase.careLensRisk === "High" && "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]",
+                            selectedCase.careLensRisk === "Medium" && "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]"
                           )}>
                             {selectedCase.careLensRisk} Risk
                           </Badge>
-                          <span className="text-[10px] text-slate-500">
+                          <span className="text-caption text-[var(--neutral-500)]">
                             Rules: {selectedCase.rulesMetCount}/{selectedCase.rulesTotalCount}
                           </span>
                         </div>
@@ -342,20 +342,20 @@ export default function MedicalDirectorPage() {
 
                       {/* Escalation Reason */}
                       <div>
-                        <p className="text-xs font-medium text-slate-700 mb-1">Escalation Reason</p>
-                        <p className="text-[11px] text-slate-600">{selectedCase.reason}</p>
+                        <p className="text-label-md text-foreground mb-1">Escalation Reason</p>
+                        <p className="text-body-sm text-[var(--neutral-600)]">{selectedCase.reason}</p>
                       </div>
 
                       {/* Recommended Action */}
-                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                        <p className="text-xs font-medium text-blue-900 mb-1">Recommended Action</p>
-                        <p className="text-[11px] text-blue-800">{selectedCase.recommendedAction}</p>
+                      <div className="p-3 bg-[var(--status-info-bg)] rounded-xl border border-[var(--status-info-border)]">
+                        <p className="text-label-md text-[var(--status-info-text)] mb-1">Recommended Action</p>
+                        <p className="text-body-sm text-[var(--status-info-text)]">{selectedCase.recommendedAction}</p>
                       </div>
 
                       {/* Decision Buttons */}
                       <div className="pt-2 space-y-2">
                         <Button
-                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                          className="w-full bg-[var(--success)] hover:bg-[var(--success)]/90 text-white"
                           onClick={() => handleMakeDecision("approve")}
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
@@ -364,7 +364,7 @@ export default function MedicalDirectorPage() {
                         <div className="grid grid-cols-2 gap-2">
                           <Button
                             variant="outline"
-                            className="border-amber-300 text-amber-700 hover:bg-amber-50 bg-transparent"
+                            className="border-[var(--status-warn-border)] text-[var(--status-warn-text)] hover:bg-[var(--status-warn-bg)] bg-transparent"
                             onClick={() => handleMakeDecision("p2p")}
                           >
                             <Phone className="h-4 w-4 mr-2" />
@@ -372,7 +372,7 @@ export default function MedicalDirectorPage() {
                           </Button>
                           <Button
                             variant="outline"
-                            className="border-red-300 text-red-700 hover:bg-red-50 bg-transparent"
+                            className="border-[var(--status-error-border)] text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)] bg-transparent"
                             onClick={() => handleMakeDecision("deny")}
                           >
                             <XCircle className="h-4 w-4 mr-2" />
@@ -387,38 +387,38 @@ export default function MedicalDirectorPage() {
                   <Card className="flex-1 flex flex-col">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-blue-500" />
+                        <Phone className="h-4 w-4 text-[var(--brand-500)]" />
                         Peer-to-Peer Schedule
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 overflow-auto">
-                      <div className="space-y-3">
+                      <div className="flex flex-col gap-3">
                         {p2pScheduled.map((p2p) => (
-                          <div key={p2p.id} className="p-3 bg-white rounded-lg border border-slate-200">
+                          <div key={p2p.id} className="p-3 bg-card rounded-xl border border-border">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-sm text-slate-900">{p2p.patientName}</span>
-                              <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
+                              <span className="text-label-md text-foreground">{p2p.patientName}</span>
+                              <Badge variant="outline" className="text-ds-badge bg-[var(--status-info-bg)] text-[var(--status-info-text)] border-[var(--status-info-border)]">
                                 {p2p.payer}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-600 mb-2">
+                            <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-600)] mb-2">
                               <Calendar className="h-3 w-3" />
                               <span>{p2p.scheduledTime}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-600 mb-2">
+                            <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-600)] mb-2">
                               <Users className="h-3 w-3" />
                               <span>{p2p.reviewerName} ({p2p.reviewerRole})</span>
                             </div>
-                            <p className="text-[11px] text-slate-500 mb-2">{p2p.topic}</p>
-                            <div className="p-2 bg-amber-50 rounded text-[10px] text-amber-800">
+                            <p className="text-body-sm text-[var(--neutral-500)] mb-2">{p2p.topic}</p>
+                            <div className="p-2 bg-[var(--status-warn-bg)] rounded-lg text-caption text-[var(--status-warn-text)]">
                               <strong>Prep:</strong> {p2p.prepNotes}
                             </div>
                             <div className="mt-2 flex gap-2">
-                              <Button size="sm" variant="outline" className="text-xs h-7 flex-1 bg-transparent">
+                              <Button size="sm" variant="outline" className="text-body-sm h-7 flex-1 bg-transparent">
                                 <MessageSquare className="h-3 w-3 mr-1" />
                                 Notes
                               </Button>
-                              <Button size="sm" className="text-xs h-7 flex-1 bg-blue-600 hover:bg-blue-700">
+                              <Button size="sm" className="text-body-sm h-7 flex-1">
                                 <Phone className="h-3 w-3 mr-1" />
                                 Join Call
                               </Button>
@@ -451,7 +451,7 @@ export default function MedicalDirectorPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <label className="text-sm font-medium text-slate-700">Decision Notes</label>
+            <label className="text-label-md text-foreground">Decision Notes</label>
             <Textarea
               placeholder={
                 selectedDecision === "approve" 
@@ -473,9 +473,9 @@ export default function MedicalDirectorPage() {
             <Button
               onClick={handleConfirmDecision}
               className={cn(
-                selectedDecision === "approve" && "bg-emerald-600 hover:bg-emerald-700",
-                selectedDecision === "deny" && "bg-red-600 hover:bg-red-700",
-                selectedDecision === "p2p" && "bg-blue-600 hover:bg-blue-700"
+                selectedDecision === "approve" && "bg-[var(--success)] hover:bg-[var(--success)]/90 text-white",
+                selectedDecision === "deny" && "bg-[var(--destructive)] hover:bg-[var(--destructive)]/90 text-white",
+                selectedDecision === "p2p" && "bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white"
               )}
             >
               {selectedDecision === "approve" && "Confirm Approval"}

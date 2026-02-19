@@ -4,6 +4,9 @@ import { useParams } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { PatientListPanel } from "@/components/patient-list-panel"
 import { CareLensDrawer } from "@/components/care-lens-drawer"
+import { RoleAwareLayout } from "@/components/role-aware-layout"
+import { PhysicianLayout } from "@/components/physician/physician-layout"
+import { AuditorLayout } from "@/components/auditor/auditor-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClinicalSummaryView } from "@/components/clinical-summary-view"
 import { PriorAuthComposer } from "@/components/prior-auth-composer"
@@ -33,7 +36,7 @@ export const useCareLensContext = () => useContext(CareLensContext)
 export default function PatientDetailPage() {
   const params = useParams()
   const id = params.id as string
-  const { setSelectedPatientId, selectedPatient, currentRole, careLensOpen, setCareLensOpen } = useApp()
+  const { setSelectedPatientId, selectedPatient, currentRole, hasPermission, careLensOpen, setCareLensOpen } = useApp()
   const [activeTab, setActiveTab] = useState("clinical-summary")
 
   useEffect(() => {
@@ -76,85 +79,97 @@ export default function PatientDetailPage() {
   }
   const careLensButton = careLensButtonConfig[currentRole]
 
-  return (
+  // Nurse/Case Manager view (full tabbed layout)
+  const nurseView = (
     <CareLensContext.Provider value={{ isOpen: careLensOpen, setIsOpen: setCareLensOpen }}>
       <TabContext.Provider value={{ activeTab, setActiveTab }}>
-        <div className="flex h-screen flex-col bg-slate-100">
-          <AppHeader />
-          <div className="flex flex-1 overflow-hidden">
-            <PatientListPanel />
-            <main className="flex-1 overflow-hidden flex flex-col bg-white">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                {/* Minimal tab bar - no box, just underline */}
-                <div className="border-b border-slate-100 bg-white px-4 flex-shrink-0">
-                  <div className="flex items-center justify-between">
-                    {/* Clean underline tabs - TabsList with no visual styling */}
-                    <TabsList className="h-auto bg-transparent p-0 gap-1 border-0 shadow-none">
-                      {tabItems.map((tab) => {
-                        const Icon = tab.icon
-                        const isActive = activeTab === tab.value
-                        return (
-                          <TabsTrigger 
-                            key={tab.value}
-                            value={tab.value} 
-                            className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-slate-400 hover:text-slate-700 data-[state=active]:bg-transparent data-[state=active]:text-slate-800 data-[state=active]:shadow-none data-[state=active]:border-0"
-                          >
-                            <Icon className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline">{tab.label}</span>
-                            {/* Active underline indicator */}
-                            {isActive && (
-                              <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-slate-800 rounded-full" />
-                            )}
-                          </TabsTrigger>
-                        )
-                      })}
-                    </TabsList>
+        <div className="flex flex-1 overflow-hidden">
+          <PatientListPanel />
+          <main className="flex-1 overflow-hidden flex flex-col bg-white">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+              <div className="border-b border-slate-100 bg-white px-4 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <TabsList className="h-auto bg-transparent p-0 gap-1 border-0 shadow-none">
+                    {tabItems.map((tab) => {
+                      const Icon = tab.icon
+                      const isActive = activeTab === tab.value
+                      return (
+                        <TabsTrigger 
+                          key={tab.value}
+                          value={tab.value} 
+                          className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-[var(--neutral-400)] hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-0"
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">{tab.label}</span>
+                          {isActive && (
+                            <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-foreground rounded-full" />
+                          )}
+                        </TabsTrigger>
+                      )
+                    })}
+                  </TabsList>
 
-                    {/* CareLens Toggle Button - minimal style */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-purple-700 bg-purple-50" : "text-slate-500 hover:text-purple-600 hover:bg-purple-50"}`}
-                      onClick={() => setCareLensOpen(!careLensOpen)}
-                    >
-                      <careLensButton.icon className="h-4 w-4" />
-                      <span className="hidden sm:inline">{careLensButton.label}</span>
-                      {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
-                        <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-medium flex items-center justify-center">
-                          {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
-                        </span>
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-[var(--brand-700)] bg-[var(--brand-50)]" : "text-[var(--neutral-500)] hover:text-[var(--brand-500)] hover:bg-[var(--brand-50)]"}`}
+                    onClick={() => setCareLensOpen(!careLensOpen)}
+                  >
+                    <careLensButton.icon className="h-4 w-4" />
+                    <span className="hidden sm:inline">{careLensButton.label}</span>
+                    {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
+                      <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-medium flex items-center justify-center">
+                        {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
+                      </span>
+                    )}
+                  </Button>
                 </div>
+              </div>
 
-                <TabsContent value="clinical-summary" className="m-0 flex-1 overflow-hidden">
-                  <ClinicalSummaryView />
-                </TabsContent>
-                <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-slate-50">
-                  <PriorAuthComposer />
-                </TabsContent>
-                <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-slate-50">
-                  <EvidencePanel />
-                </TabsContent>
-                <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-slate-50">
-                  <AppealsPanel />
-                </TabsContent>
-                <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-                  <CollaborationPanel patientId={id} patientName={selectedPatient.name} />
-                </TabsContent>
-              </Tabs>
-            </main>
-            
-            {/* CareLens Drawer (opt-in) */}
-            <CareLensDrawer 
-              isOpen={careLensOpen} 
-              onClose={() => setCareLensOpen(false)}
-              mode={currentRole === "case_manager" ? "full" : "readonly"}
-            />
-          </div>
+              <TabsContent value="clinical-summary" className="m-0 flex-1 overflow-hidden">
+                <ClinicalSummaryView />
+              </TabsContent>
+              <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-background">
+                <PriorAuthComposer />
+              </TabsContent>
+              <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-background">
+                <EvidencePanel />
+              </TabsContent>
+              <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-background">
+                <AppealsPanel />
+              </TabsContent>
+              <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-background p-4">
+                <CollaborationPanel patientId={id} patientName={selectedPatient.name} />
+              </TabsContent>
+            </Tabs>
+          </main>
+          
+          <CareLensDrawer 
+            isOpen={careLensOpen} 
+            onClose={() => setCareLensOpen(false)}
+            mode={hasPermission("edit_summary") ? "full" : "readonly"}
+          />
         </div>
       </TabContext.Provider>
     </CareLensContext.Provider>
+  )
+
+  return (
+    <div className="flex h-screen flex-col bg-background">
+      <AppHeader />
+      <RoleAwareLayout
+        nurseView={nurseView}
+        physicianView={
+          <div className="flex-1 overflow-hidden bg-white">
+            <PhysicianLayout />
+          </div>
+        }
+        auditorView={
+          <div className="flex-1 overflow-hidden bg-white">
+            <AuditorLayout />
+          </div>
+        }
+      />
+    </div>
   )
 }

@@ -10,7 +10,7 @@ export default function CompliancePage() {
       <main className="flex-1 overflow-y-auto bg-background p-6">
         <div className="mx-auto max-w-6xl space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold text-foreground">Quality & Compliance</h1>
+            <h1 className="text-lg text-foreground">Quality & Compliance</h1>
             <p className="text-sm text-muted-foreground">Monitor quality metrics and regulatory compliance</p>
           </div>
 
@@ -23,7 +23,7 @@ export default function CompliancePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-success">98.5%</div>
+                <div className="text-2xl font-mono text-success">98.5%</div>
                 <p className="text-sm text-muted-foreground mt-1">Above industry standard</p>
               </CardContent>
             </Card>
@@ -36,7 +36,7 @@ export default function CompliancePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">94.2%</div>
+                <div className="text-2xl font-mono">94.2%</div>
                 <p className="text-sm text-muted-foreground mt-1">Patient satisfaction</p>
               </CardContent>
             </Card>
@@ -49,7 +49,7 @@ export default function CompliancePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-warning">3</div>
+                <div className="text-2xl font-mono text-warning">3</div>
                 <p className="text-sm text-muted-foreground mt-1">Require attention</p>
               </CardContent>
             </Card>
