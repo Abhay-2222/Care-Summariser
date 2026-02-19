@@ -72,7 +72,7 @@ export function PhysicianApprovalModal({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
-            <Stethoscope className="h-5 w-5 text-blue-600" />
+            <Stethoscope className="h-5 w-5 text-[var(--brand-500)]" />
             Physician Review: {patient.name}
           </DialogTitle>
           <DialogDescription className="text-[12px]">
@@ -82,29 +82,29 @@ export function PhysicianApprovalModal({
 
         <div className="space-y-4 py-4">
           {/* Patient Summary Card */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-lg border border-border bg-[var(--neutral-50)] p-4">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-[14px] font-medium text-slate-800">{patient.name}</h3>
-                <p className="text-[12px] text-slate-500 mt-0.5">
+                <p className="text-[12px] text-[var(--neutral-500)] mt-0.5">
                   {patient.age}yo {patient.gender === "F" ? "Female" : "Male"} | MRN: {patient.mrn} | {patient.insurance}
                 </p>
-                <p className="text-[12px] text-slate-500">
+                <p className="text-[12px] text-[var(--neutral-500)]">
                   Admitted: {patient.admissionDate} | LOS: {patient.lengthOfStay}
                 </p>
               </div>
               <div className={cn(
                 "px-2 py-1 rounded-md text-[11px] font-medium",
                 patient.urgency === "STAT" ? "bg-red-100 text-red-700" :
-                patient.urgency === "URGENT" ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-600"
+                patient.urgency === "URGENT" ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-[var(--neutral-600)]"
               )}>
                 {patient.urgency}
               </div>
             </div>
 
             {/* Primary Diagnosis */}
-            <div className="mt-3 pt-3 border-t border-slate-200">
-              <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Primary Diagnosis</p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-[10px] font-medium text-[var(--neutral-500)] uppercase tracking-wide">Primary Diagnosis</p>
               <p className="text-[13px] font-medium text-slate-800 mt-1">
                 {patient.problemList.find(p => p.type === "primary")?.name || patient.diagnoses[0]}
               </p>
@@ -112,41 +112,41 @@ export function PhysicianApprovalModal({
           </div>
 
           {/* CareLens Summary */}
-          <div className="rounded-lg border border-slate-200 p-4">
+          <div className="rounded-lg border border-border p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Shield className="h-4 w-4 text-blue-600" />
+              <Shield className="h-4 w-4 text-[var(--brand-500)]" />
               <h4 className="text-[13px] font-medium text-slate-800">CareLens Analysis</h4>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               {/* Confidence */}
-              <div className="text-center p-3 rounded-md bg-slate-50">
-                <p className="text-[10px] text-slate-500 uppercase">Confidence</p>
+              <div className="text-center p-3 rounded-md bg-[var(--neutral-50)]">
+                <p className="text-[10px] text-[var(--neutral-500)] uppercase">Confidence</p>
                 <p className={cn(
                   "text-[18px] font-mono mt-1",
-                  careLens.overallConfidence === "High" ? "text-emerald-600" :
-                  careLens.overallConfidence === "Medium" ? "text-amber-600" : "text-red-600"
+                  careLens.overallConfidence === "High" ? "text-[var(--success)]" :
+                  careLens.overallConfidence === "Medium" ? "text-[var(--warning)]" : "text-[var(--destructive)]"
                 )}>
                   {careLens.overallConfidence}
                 </p>
               </div>
 
               {/* Denial Risk */}
-              <div className="text-center p-3 rounded-md bg-slate-50">
-                <p className="text-[10px] text-slate-500 uppercase">Denial Risk</p>
+              <div className="text-center p-3 rounded-md bg-[var(--neutral-50)]">
+                <p className="text-[10px] text-[var(--neutral-500)] uppercase">Denial Risk</p>
                 <p className={cn(
                   "text-[18px] font-mono mt-1",
-                  careLens.denialRisk === "Low" ? "text-emerald-600" :
-                  careLens.denialRisk === "Medium" ? "text-amber-600" : "text-red-600"
+                  careLens.denialRisk === "Low" ? "text-[var(--success)]" :
+                  careLens.denialRisk === "Medium" ? "text-[var(--warning)]" : "text-[var(--destructive)]"
                 )}>
                   {careLens.denialRisk}
                 </p>
               </div>
 
               {/* Rules Satisfied */}
-              <div className="text-center p-3 rounded-md bg-slate-50">
-                <p className="text-[10px] text-slate-500 uppercase">Payer Rules</p>
-                <p className="text-[18px] font-mono mt-1 text-slate-700">
+              <div className="text-center p-3 rounded-md bg-[var(--neutral-50)]">
+                <p className="text-[10px] text-[var(--neutral-500)] uppercase">Payer Rules</p>
+                <p className="text-[18px] font-mono mt-1 text-foreground">
                   {satisfiedRules}/{totalRules}
                 </p>
               </div>
@@ -154,7 +154,7 @@ export function PhysicianApprovalModal({
 
             {/* Progress bar */}
             <div className="mt-4">
-              <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-[11px] text-[var(--neutral-500)] mb-1">
                 <span>Case Progress</span>
                 <span>{workflow.progressPercent}%</span>
               </div>
@@ -162,8 +162,8 @@ export function PhysicianApprovalModal({
                 <div 
                   className={cn(
                     "h-full rounded-full transition-all",
-                    workflow.progressPercent >= 80 ? "bg-emerald-500" :
-                    workflow.progressPercent >= 50 ? "bg-amber-500" : "bg-slate-400"
+                    workflow.progressPercent >= 80 ? "bg-[var(--status-ok-bg)]0" :
+                    workflow.progressPercent >= 50 ? "bg-[var(--status-warn-bg)]0" : "bg-slate-400"
                   )}
                   style={{ width: `${workflow.progressPercent}%` }}
                 />
@@ -173,9 +173,9 @@ export function PhysicianApprovalModal({
 
           {/* Issues Section - Why Approval is Blocked */}
           {(highRisks.length > 0 || openGaps.length > 0) && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="rounded-lg border border-red-200 bg-[var(--status-error-bg)] p-4">
               <div className="flex items-center gap-2 mb-3">
-                <XCircle className="h-4 w-4 text-red-600" />
+                <XCircle className="h-4 w-4 text-[var(--destructive)]" />
                 <h4 className="text-[13px] font-medium text-red-800">Blocking Approval</h4>
               </div>
               <p className="text-[11px] text-red-700 mb-3">
@@ -188,11 +188,11 @@ export function PhysicianApprovalModal({
                   <ul className="space-y-1.5">
                     {highRisks.map(risk => (
                       <li key={risk.id} className="text-[11px] text-red-800 flex items-start gap-2 bg-red-100/50 rounded px-2 py-1.5">
-                        <AlertTriangle className="h-3 w-3 text-red-600 mt-0.5 flex-shrink-0" />
+                        <AlertTriangle className="h-3 w-3 text-[var(--destructive)] mt-0.5 flex-shrink-0" />
                         <div>
                           <span className="font-medium">{risk.factor}</span>
                           {risk.mitigationSuggestion && (
-                            <p className="text-[10px] text-red-600 mt-0.5">Fix: {risk.mitigationSuggestion}</p>
+                            <p className="text-[10px] text-[var(--destructive)] mt-0.5">Fix: {risk.mitigationSuggestion}</p>
                           )}
                         </div>
                       </li>
@@ -207,10 +207,10 @@ export function PhysicianApprovalModal({
                   <ul className="space-y-1.5">
                     {openGaps.map(gap => (
                       <li key={gap.id} className="text-[11px] text-amber-800 flex items-start gap-2 bg-amber-100/50 rounded px-2 py-1.5">
-                        <FileText className="h-3 w-3 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <FileText className="h-3 w-3 text-[var(--warning)] mt-0.5 flex-shrink-0" />
                         <div>
                           <span className="font-medium">{gap.gap}</span>
-                          <p className="text-[10px] text-amber-600 mt-0.5">Required: {gap.requirement}</p>
+                          <p className="text-[10px] text-[var(--warning)] mt-0.5">Required: {gap.requirement}</p>
                         </div>
                       </li>
                     ))}
@@ -219,7 +219,7 @@ export function PhysicianApprovalModal({
               )}
 
               <div className="mt-3 pt-3 border-t border-red-200">
-                <p className="text-[10px] text-red-600">
+                <p className="text-[10px] text-[var(--destructive)]">
                   <strong>Options:</strong> Defer this case back to the Case Manager for documentation updates, or escalate to Medical Director for complex clinical decisions.
                 </p>
               </div>
@@ -227,9 +227,9 @@ export function PhysicianApprovalModal({
           )}
 
           {/* Physician Responsibilities */}
-          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <div className="rounded-lg border border-blue-200 bg-[var(--status-info-bg)] p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Stethoscope className="h-4 w-4 text-blue-600" />
+              <Stethoscope className="h-4 w-4 text-[var(--brand-500)]" />
               <h4 className="text-[13px] font-medium text-blue-800">Your Review Validates</h4>
             </div>
             <ul className="space-y-2">
@@ -237,21 +237,21 @@ export function PhysicianApprovalModal({
                 <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-[11px] font-medium text-blue-800">Medical Necessity</span>
-                  <p className="text-[10px] text-blue-600">Treatment is clinically appropriate and necessary for patient care</p>
+                  <p className="text-[10px] text-[var(--brand-500)]">Treatment is clinically appropriate and necessary for patient care</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-[11px] font-medium text-blue-800">Clinical Accuracy</span>
-                  <p className="text-[10px] text-blue-600">Documentation accurately reflects the patient's clinical condition</p>
+                  <p className="text-[10px] text-[var(--brand-500)]">Documentation accurately reflects the patient's clinical condition</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-[11px] font-medium text-blue-800">Treatment Appropriateness</span>
-                  <p className="text-[10px] text-blue-600">Care plan follows evidence-based guidelines and payer requirements</p>
+                  <p className="text-[10px] text-[var(--brand-500)]">Care plan follows evidence-based guidelines and payer requirements</p>
                 </div>
               </li>
             </ul>
@@ -262,11 +262,11 @@ export function PhysicianApprovalModal({
             <div className="rounded-lg border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-green-50 p-4">
               <div className="flex items-start gap-3">
                 <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                  <CheckCircle2 className="h-6 w-6 text-[var(--success)]" />
                 </div>
                 <div className="flex-1">
                   <p className="text-[14px] font-medium text-emerald-800">Everything needed for safe approval is documented</p>
-                  <p className="text-[11px] text-emerald-600 mt-1">
+                  <p className="text-[11px] text-[var(--success)] mt-1">
                     CareLens confidence is high, all {totalRules} payer criteria are met, and no blocking risks remain.
                     Your clinical judgment is preserved in the full review below.
                   </p>
@@ -283,7 +283,7 @@ export function PhysicianApprovalModal({
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="text-[11px] h-9 text-emerald-700 border-emerald-300 hover:bg-emerald-50 bg-transparent"
+                      className="text-[11px] h-9 text-emerald-700 border-emerald-300 hover:bg-[var(--status-ok-bg)] bg-transparent"
                       onClick={() => setSelectedAction("approve")}
                     >
                       Review details anyway
@@ -291,7 +291,7 @@ export function PhysicianApprovalModal({
                   </div>
                 </div>
               </div>
-              <p className="text-[9px] text-emerald-600 mt-3 pt-3 border-t border-emerald-200">
+              <p className="text-[9px] text-[var(--success)] mt-3 pt-3 border-t border-emerald-200">
                 Designed for your 2-minute review workflow. CareLens has verified documentation completeness so you can focus on clinical judgment.
               </p>
             </div>
@@ -299,12 +299,12 @@ export function PhysicianApprovalModal({
 
           {/* Standard Ready indicator for non-high-confidence */}
           {canApprove && careLens.overallConfidence !== "High" && (
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+            <div className="rounded-lg border border-emerald-200 bg-[var(--status-ok-bg)] p-4">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                <CheckCircle2 className="h-5 w-5 text-[var(--success)]" />
                 <div>
                   <p className="text-[13px] font-medium text-emerald-800">Ready for Approval</p>
-                  <p className="text-[11px] text-emerald-600">All high-risk factors resolved and policy gaps closed. Confidence is {careLens.overallConfidence} - review recommended.</p>
+                  <p className="text-[11px] text-[var(--success)]">All high-risk factors resolved and policy gaps closed. Confidence is {careLens.overallConfidence} - review recommended.</p>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export function PhysicianApprovalModal({
 
           {/* Decision Buttons */}
           <div className="space-y-3">
-            <p className="text-[11px] font-medium text-slate-500 uppercase">Select Your Decision</p>
+            <p className="text-[11px] font-medium text-[var(--neutral-500)] uppercase">Select Your Decision</p>
             
             <div className="grid grid-cols-3 gap-3">
               {/* Approve */}
@@ -320,8 +320,8 @@ export function PhysicianApprovalModal({
                 className={cn(
                   "p-4 rounded-lg border-2 transition-all text-center",
                   selectedAction === "approve"
-                    ? "border-emerald-500 bg-emerald-50"
-                    : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50",
+                    ? "border-emerald-500 bg-[var(--status-ok-bg)]"
+                    : "border-border hover:border-emerald-300 hover:bg-[var(--status-ok-bg)]/50",
                   !canApprove && "opacity-50 cursor-not-allowed"
                 )}
                 onClick={() => canApprove && setSelectedAction("approve")}
@@ -329,10 +329,10 @@ export function PhysicianApprovalModal({
               >
                 <CheckCircle2 className={cn(
                   "h-8 w-8 mx-auto mb-2",
-                  selectedAction === "approve" ? "text-emerald-600" : "text-slate-400"
+                  selectedAction === "approve" ? "text-[var(--success)]" : "text-[var(--neutral-400)]"
                 )} />
                 <p className="text-[13px] font-medium text-slate-800">Approve</p>
-                <p className="text-[10px] text-slate-500 mt-1">Ready for PA submission</p>
+                <p className="text-[10px] text-[var(--neutral-500)] mt-1">Ready for PA submission</p>
               </button>
 
               {/* Defer */}
@@ -340,17 +340,17 @@ export function PhysicianApprovalModal({
                 className={cn(
                   "p-4 rounded-lg border-2 transition-all text-center",
                   selectedAction === "defer"
-                    ? "border-amber-500 bg-amber-50"
-                    : "border-slate-200 hover:border-amber-300 hover:bg-amber-50/50"
+                    ? "border-amber-500 bg-[var(--status-warn-bg)]"
+                    : "border-border hover:border-amber-300 hover:bg-[var(--status-warn-bg)]/50"
                 )}
                 onClick={() => setSelectedAction("defer")}
               >
                 <Clock className={cn(
                   "h-8 w-8 mx-auto mb-2",
-                  selectedAction === "defer" ? "text-amber-600" : "text-slate-400"
+                  selectedAction === "defer" ? "text-[var(--warning)]" : "text-[var(--neutral-400)]"
                 )} />
                 <p className="text-[13px] font-medium text-slate-800">Defer</p>
-                <p className="text-[10px] text-slate-500 mt-1">Needs more documentation</p>
+                <p className="text-[10px] text-[var(--neutral-500)] mt-1">Needs more documentation</p>
               </button>
 
               {/* Escalate */}
@@ -358,17 +358,17 @@ export function PhysicianApprovalModal({
                 className={cn(
                   "p-4 rounded-lg border-2 transition-all text-center",
                   selectedAction === "escalate"
-                    ? "border-amber-500 bg-amber-50"
-                    : "border-slate-200 hover:border-amber-300 hover:bg-amber-50/50"
+                    ? "border-amber-500 bg-[var(--status-warn-bg)]"
+                    : "border-border hover:border-amber-300 hover:bg-[var(--status-warn-bg)]/50"
                 )}
                 onClick={() => setSelectedAction("escalate")}
               >
                 <ArrowUpCircle className={cn(
                   "h-8 w-8 mx-auto mb-2",
-                  selectedAction === "escalate" ? "text-amber-600" : "text-slate-400"
+                  selectedAction === "escalate" ? "text-[var(--warning)]" : "text-[var(--neutral-400)]"
                 )} />
                 <p className="text-[13px] font-medium text-slate-800">Escalate</p>
-                <p className="text-[10px] text-slate-500 mt-1">Send to Medical Director</p>
+                <p className="text-[10px] text-[var(--neutral-500)] mt-1">Send to Medical Director</p>
               </button>
             </div>
           </div>
@@ -376,7 +376,7 @@ export function PhysicianApprovalModal({
           {/* Notes */}
           {selectedAction && (
             <div className="space-y-2">
-              <Label htmlFor="notes" className="text-[12px] text-slate-600">
+              <Label htmlFor="notes" className="text-[12px] text-[var(--neutral-600)]">
                 {selectedAction === "approve" ? "Approval Notes (Optional)" :
                  selectedAction === "defer" ? "Reason for Deferral (Required)" :
                  "Reason for Escalation (Required)"}

@@ -57,10 +57,10 @@ export function AuditorLayout() {
   return (
     <div className="flex flex-col h-full">
       {/* Stats bar */}
-      <div className="px-4 py-3 border-b border-slate-100 bg-white">
+      <div className="px-4 py-3 border-b border-border bg-card">
         <div className="flex items-center gap-2 mb-3">
-          <BarChart3 className="h-4 w-4 text-slate-600" />
-          <span className={cn(textStyles.title, "text-slate-700")}>Audit Dashboard</span>
+          <BarChart3 className="h-4 w-4 text-[var(--neutral-600)]" />
+          <span className={cn(textStyles.title, "text-foreground")}>Audit Dashboard</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
           <StatCard label="Total cases" value={stats.totalCases} />
@@ -74,8 +74,8 @@ export function AuditorLayout() {
       </div>
 
       {/* Filter bar */}
-      <div className="px-4 py-2 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2 overflow-x-auto">
-        <Filter className="h-3 w-3 text-slate-400 flex-shrink-0" />
+      <div className="px-4 py-2 border-b border-border bg-[var(--neutral-50)]/50 flex items-center gap-2 overflow-x-auto">
+        <Filter className="h-3 w-3 text-[var(--neutral-400)] flex-shrink-0" />
         {statusFilters.map((status) => (
           <button
             key={status}
@@ -85,7 +85,7 @@ export function AuditorLayout() {
               "text-[10px] px-2 py-1 rounded-full border whitespace-nowrap transition-colors",
               statusFilter === status
                 ? "bg-slate-800 text-white border-slate-800"
-                : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"
+                : "bg-card text-[var(--neutral-500)] border-border hover:border-slate-300"
             )}
           >
             {status === "ALL" ? "All" : statusLabels[status] || status}
@@ -96,8 +96,8 @@ export function AuditorLayout() {
       {/* Case table */}
       <div className="flex-1 overflow-y-auto">
         <table className="w-full">
-          <thead className="sticky top-0 bg-slate-50 z-10">
-            <tr className="border-b border-slate-200">
+          <thead className="sticky top-0 bg-[var(--neutral-50)] z-10">
+            <tr className="border-b border-border">
               <th className={cn(textStyles.label, "text-left px-4 py-2")}>Patient</th>
               <th className={cn(textStyles.label, "text-left px-4 py-2")}>Status</th>
               <th className={cn(textStyles.label, "text-left px-4 py-2 hidden md:table-cell")}>Assigned to</th>
@@ -116,7 +116,7 @@ export function AuditorLayout() {
               return (
                 <tr
                   key={patient.id}
-                  className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
+                  className="border-b border-border hover:bg-[var(--neutral-50)]/50 transition-colors"
                 >
                   <td className="px-4 py-2">
                     <p className={textStyles.title}>{patient.name}</p>
@@ -139,7 +139,7 @@ export function AuditorLayout() {
                         "text-[9px] px-1.5 py-0",
                         patient.careLens.denialRisk === "High" && "bg-red-50 text-red-600 border-red-200",
                         patient.careLens.denialRisk === "Medium" && "bg-amber-50 text-amber-600 border-amber-200",
-                        patient.careLens.denialRisk === "Low" && "bg-emerald-50 text-emerald-600 border-emerald-200"
+                        patient.careLens.denialRisk === "Low" && "bg-emerald-50 text-[var(--success)] border-emerald-200"
                       )}
                     >
                       {patient.careLens.denialRisk}
@@ -169,7 +169,7 @@ export function AuditorLayout() {
                         </SheetHeader>
                         <div className="mt-4 space-y-2 overflow-y-auto max-h-[calc(100vh-120px)]">
                           {getCaseAuditEntries(patient.id).length === 0 ? (
-                            <p className={cn(textStyles.body, "text-center py-8 text-slate-400")}>
+                            <p className={cn(textStyles.body, "text-center py-8 text-[var(--neutral-400)]")}>
                               No audit entries yet.
                             </p>
                           ) : (
@@ -179,14 +179,14 @@ export function AuditorLayout() {
                                 className={cn(containerStyles.card, spacing.cardPaddingCompact, "flex items-start gap-2")}
                               >
                                 <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                  <FileText className="h-2.5 w-2.5 text-slate-500" />
+                                  <FileText className="h-2.5 w-2.5 text-[var(--neutral-500)]" />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <p className={cn(textStyles.body, "font-medium text-slate-700")}>{entry.action}</p>
+                                  <p className={cn(textStyles.body, "font-medium text-foreground")}>{entry.action}</p>
                                   <div className="flex items-center gap-2 mt-0.5">
                                     <span className={textStyles.label}>{entry.user}</span>
                                     {entry.role && (
-                                      <Badge variant="outline" className="text-[8px] px-1 py-0 border-slate-200 text-slate-500">
+                                      <Badge variant="outline" className="text-[8px] px-1 py-0 border-border text-[var(--neutral-500)]">
                                         {entry.role}
                                       </Badge>
                                     )}
@@ -209,7 +209,7 @@ export function AuditorLayout() {
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
               <Eye className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-              <p className={cn(textStyles.body, "text-slate-400")}>No cases match this filter.</p>
+              <p className={cn(textStyles.body, "text-[var(--neutral-400)]")}>No cases match this filter.</p>
             </div>
           </div>
         )}
@@ -233,10 +233,10 @@ function StatCard({
       <p
         className={cn(
           "text-[14px] font-mono tabular-nums",
-          color === "emerald" && "text-emerald-600",
+          color === "emerald" && "text-[var(--success)]",
           color === "red" && "text-red-600",
           color === "amber" && "text-amber-600",
-          color === "blue" && "text-blue-600",
+          color === "blue" && "text-[var(--brand-500)]",
           !color && "text-slate-800"
         )}
       >

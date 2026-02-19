@@ -355,7 +355,7 @@ export default function MedicalDirectorPage() {
                       {/* Decision Buttons */}
                       <div className="pt-2 space-y-2">
                         <Button
-                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                          className="w-full bg-[var(--success)] hover:bg-[var(--success)]/90 text-white"
                           onClick={() => handleMakeDecision("approve")}
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
@@ -364,7 +364,7 @@ export default function MedicalDirectorPage() {
                         <div className="grid grid-cols-2 gap-2">
                           <Button
                             variant="outline"
-                            className="border-amber-300 text-amber-700 hover:bg-amber-50 bg-transparent"
+                            className="border-[var(--status-warn-border)] text-[var(--status-warn-text)] hover:bg-[var(--status-warn-bg)] bg-transparent"
                             onClick={() => handleMakeDecision("p2p")}
                           >
                             <Phone className="h-4 w-4 mr-2" />
@@ -372,7 +372,7 @@ export default function MedicalDirectorPage() {
                           </Button>
                           <Button
                             variant="outline"
-                            className="border-red-300 text-red-700 hover:bg-red-50 bg-transparent"
+                            className="border-[var(--status-error-border)] text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)] bg-transparent"
                             onClick={() => handleMakeDecision("deny")}
                           >
                             <XCircle className="h-4 w-4 mr-2" />
@@ -387,38 +387,38 @@ export default function MedicalDirectorPage() {
                   <Card className="flex-1 flex flex-col">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-blue-500" />
+                        <Phone className="h-4 w-4 text-[var(--brand-500)]" />
                         Peer-to-Peer Schedule
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 overflow-auto">
-                      <div className="space-y-3">
+                      <div className="flex flex-col gap-3">
                         {p2pScheduled.map((p2p) => (
-                          <div key={p2p.id} className="p-3 bg-white rounded-lg border border-slate-200">
+                          <div key={p2p.id} className="p-3 bg-card rounded-xl border border-border">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-sm text-slate-900">{p2p.patientName}</span>
-                              <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
+                              <span className="text-label-md text-foreground">{p2p.patientName}</span>
+                              <Badge variant="outline" className="text-ds-badge bg-[var(--status-info-bg)] text-[var(--status-info-text)] border-[var(--status-info-border)]">
                                 {p2p.payer}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-600 mb-2">
+                            <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-600)] mb-2">
                               <Calendar className="h-3 w-3" />
                               <span>{p2p.scheduledTime}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-600 mb-2">
+                            <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-600)] mb-2">
                               <Users className="h-3 w-3" />
                               <span>{p2p.reviewerName} ({p2p.reviewerRole})</span>
                             </div>
-                            <p className="text-[11px] text-slate-500 mb-2">{p2p.topic}</p>
-                            <div className="p-2 bg-amber-50 rounded text-[10px] text-amber-800">
+                            <p className="text-body-sm text-[var(--neutral-500)] mb-2">{p2p.topic}</p>
+                            <div className="p-2 bg-[var(--status-warn-bg)] rounded-lg text-caption text-[var(--status-warn-text)]">
                               <strong>Prep:</strong> {p2p.prepNotes}
                             </div>
                             <div className="mt-2 flex gap-2">
-                              <Button size="sm" variant="outline" className="text-xs h-7 flex-1 bg-transparent">
+                              <Button size="sm" variant="outline" className="text-body-sm h-7 flex-1 bg-transparent">
                                 <MessageSquare className="h-3 w-3 mr-1" />
                                 Notes
                               </Button>
-                              <Button size="sm" className="text-xs h-7 flex-1 bg-blue-600 hover:bg-blue-700">
+                              <Button size="sm" className="text-body-sm h-7 flex-1">
                                 <Phone className="h-3 w-3 mr-1" />
                                 Join Call
                               </Button>
@@ -451,7 +451,7 @@ export default function MedicalDirectorPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <label className="text-sm font-medium text-slate-700">Decision Notes</label>
+            <label className="text-label-md text-foreground">Decision Notes</label>
             <Textarea
               placeholder={
                 selectedDecision === "approve" 
@@ -473,9 +473,9 @@ export default function MedicalDirectorPage() {
             <Button
               onClick={handleConfirmDecision}
               className={cn(
-                selectedDecision === "approve" && "bg-emerald-600 hover:bg-emerald-700",
-                selectedDecision === "deny" && "bg-red-600 hover:bg-red-700",
-                selectedDecision === "p2p" && "bg-blue-600 hover:bg-blue-700"
+                selectedDecision === "approve" && "bg-[var(--success)] hover:bg-[var(--success)]/90 text-white",
+                selectedDecision === "deny" && "bg-[var(--destructive)] hover:bg-[var(--destructive)]/90 text-white",
+                selectedDecision === "p2p" && "bg-[var(--brand-500)] hover:bg-[var(--brand-600)] text-white"
               )}
             >
               {selectedDecision === "approve" && "Confirm Approval"}

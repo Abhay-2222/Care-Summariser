@@ -94,15 +94,15 @@ export function SystemStatus({ className }: SystemStatusProps) {
         config.border,
         className
       )}>
-        <CloudOff className="h-5 w-5 text-amber-600" />
+        <CloudOff className="h-5 w-5 text-[var(--warning)]" />
         <div>
           <p className="text-sm font-medium text-amber-800">You're offline</p>
-          <p className="text-xs text-amber-600">Changes will sync when you reconnect</p>
+          <p className="text-xs text-[var(--warning)]">Changes will sync when you reconnect</p>
         </div>
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-7 w-7 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+          className="h-7 w-7 text-[var(--warning)] hover:text-amber-800 hover:bg-amber-100"
           onClick={() => setShowBanner(false)}
         >
           <X className="h-4 w-4" />

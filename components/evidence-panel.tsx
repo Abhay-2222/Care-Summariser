@@ -114,7 +114,7 @@ export function EvidencePanel() {
             <input
               type="text"
               placeholder="Search documentation..."
-              className="w-full h-7 pl-7 pr-3 rounded-md text-[11px] bg-slate-50 border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
+              className="w-full h-7 pl-7 pr-3 rounded-md text-[11px] bg-[var(--neutral-50)] border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -130,7 +130,7 @@ export function EvidencePanel() {
                   "h-6 px-2 rounded text-[11px] transition-all",
                   docTypeFilter === filter.value 
                     ? "bg-slate-700 text-white font-medium" 
-                    : "text-slate-400 hover:text-slate-500 hover:bg-slate-50",
+                    : "text-[var(--neutral-400)] hover:text-[var(--neutral-500)] hover:bg-[var(--neutral-50)]",
                   filter.value === "needed" && "border border-blue-200"
                 )}
                 onClick={() => setDocTypeFilter(filter.value)}
@@ -150,21 +150,21 @@ export function EvidencePanel() {
             <div
               key={doc.id}
               className={cn(
-                "p-3 cursor-pointer transition-colors hover:bg-slate-50",
-                selectedDoc === doc.id && "bg-blue-50 border-l-2 border-l-blue-500"
+                "p-3 cursor-pointer transition-colors hover:bg-[var(--neutral-50)]",
+                selectedDoc === doc.id && "bg-[var(--status-info-bg)] border-l-2 border-l-blue-500"
               )}
               onClick={() => setSelectedDoc(doc.id === selectedDoc ? null : doc.id)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                    <FileText className="h-3.5 w-3.5 text-[var(--neutral-400)] flex-shrink-0" />
                     <h4 className={cn(typography.title)}>{doc.type}</h4>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-border">
                       {doc.relevance}% match
                     </span>
                     {doc.isNeededForAuth && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--status-info-bg)] text-[var(--brand-500)] border border-blue-200">
                         Auth Doc
                       </span>
                     )}
@@ -189,12 +189,12 @@ export function EvidencePanel() {
                   {doc.satisfiesRequirements && doc.satisfiesRequirements.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-100">
                       <Link2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />
-                      <span className={cn(typography.label, "text-emerald-600")}>Satisfies:</span>
+                      <span className={cn(typography.label, "text-[var(--success)]")}>Satisfies:</span>
                       <div className="flex flex-wrap gap-1">
                         {doc.satisfiesRequirements.map((req) => (
                           <span 
                             key={req}
-                            className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 cursor-pointer hover:bg-emerald-100"
+                            className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-[var(--success)] border border-emerald-200 cursor-pointer hover:bg-emerald-100"
                           >
                             {req}
                           </span>
@@ -206,7 +206,7 @@ export function EvidencePanel() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-[10px] h-6 px-2 text-slate-400 hover:text-slate-600 bg-transparent"
+                  className="text-[10px] h-6 px-2 text-[var(--neutral-400)] hover:text-slate-600 bg-transparent"
                 >
                   View
                 </Button>
@@ -216,14 +216,14 @@ export function EvidencePanel() {
         </div>
         
         {/* Footer stats */}
-        <div className="px-4 py-2 border-t border-slate-100 bg-slate-50">
+        <div className="px-4 py-2 border-t border-slate-100 bg-[var(--neutral-50)]">
           <div className="flex items-center justify-between">
             <span className={typography.label}>
               {filteredDocs.length} documents · {neededForAuthCount} needed for authorization
             </span>
-            <div className="flex items-center gap-1 text-emerald-600">
+            <div className="flex items-center gap-1 text-[var(--success)]">
               <CheckCircle2 className="h-3 w-3" />
-              <span className={cn(typography.label, "text-emerald-600")}>
+              <span className={cn(typography.label, "text-[var(--success)]")}>
                 {mockDocuments.filter(d => d.satisfiesRequirements && d.satisfiesRequirements.length > 0).length} linked to requirements
               </span>
             </div>
