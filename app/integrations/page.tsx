@@ -64,9 +64,9 @@ const integrations: Integration[] = [
 
 function TrafficLightIndicator({ status }: { status: IntegrationStatus }) {
   const config = {
-    connected: { color: "bg-emerald-500", pulse: false, label: "Synced" },
-    partial: { color: "bg-amber-500", pulse: true, label: "Partial" },
-    failed: { color: "bg-red-500", pulse: true, label: "Failed" },
+    connected: { color: "bg-[var(--success)]", pulse: false, label: "Synced" },
+    partial: { color: "bg-[var(--warning)]", pulse: true, label: "Partial" },
+    failed: { color: "bg-[var(--destructive)]", pulse: true, label: "Failed" },
     disconnected: { color: "bg-gray-400", pulse: false, label: "Offline" },
   }
   const { color, pulse, label } = config[status]
@@ -86,9 +86,9 @@ function TrafficLightIndicator({ status }: { status: IntegrationStatus }) {
 
 function IntegrationCard({ integration }: { integration: Integration }) {
   const statusConfig = {
-    connected: { border: "border-emerald-500/30", bg: "bg-emerald-500/5" },
-    partial: { border: "border-amber-500/30", bg: "bg-amber-500/5" },
-    failed: { border: "border-red-500/30", bg: "bg-red-500/5" },
+    connected: { border: "border-[var(--status-ok-border)]", bg: "bg-[var(--status-ok-bg)]" },
+    partial: { border: "border-[var(--status-warn-border)]", bg: "bg-[var(--status-warn-bg)]" },
+    failed: { border: "border-[var(--status-error-border)]", bg: "bg-[var(--status-error-bg)]" },
     disconnected: { border: "border-border", bg: "bg-background" },
   }
   const { border, bg } = statusConfig[integration.status]
@@ -127,8 +127,8 @@ function IntegrationCard({ integration }: { integration: Integration }) {
                 className={cn(
                   "flex items-start gap-2 rounded-md p-2 text-xs",
                   integration.status === "failed"
-                    ? "bg-red-500/10 text-red-600"
-                    : "bg-amber-500/10 text-amber-600",
+                    ? "bg-[var(--status-error-bg)] text-[var(--destructive)]"
+                    : "bg-[var(--status-warn-bg)] text-[var(--warning)]",
                 )}
               >
                 {integration.status === "failed" ? (
@@ -162,9 +162,9 @@ function IntegrationCard({ integration }: { integration: Integration }) {
                     value={integration.syncHealth}
                     className={cn(
                       "h-1.5",
-                      integration.syncHealth === 100 && "[&>div]:bg-emerald-500",
-                      integration.syncHealth > 0 && integration.syncHealth < 100 && "[&>div]:bg-amber-500",
-                      integration.syncHealth === 0 && "[&>div]:bg-red-500",
+                      integration.syncHealth === 100 && "[&>div]:bg-[var(--success)]",
+                      integration.syncHealth > 0 && integration.syncHealth < 100 && "[&>div]:bg-[var(--warning)]",
+                      integration.syncHealth === 0 && "[&>div]:bg-[var(--destructive)]",
                     )}
                   />
                 </div>
@@ -210,19 +210,19 @@ export default function IntegrationsPage() {
             </div>
             {/* Summary badges */}
             <div className="flex gap-2">
-              <Badge variant="outline" className="gap-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+              <Badge variant="outline" className="gap-1.5 border-[var(--status-ok-border)] bg-[var(--status-ok-bg)] text-[var(--success)]">
+                <div className="h-2 w-2 rounded-full bg-[var(--success)]" />
                 {connectedCount} Connected
               </Badge>
               {partialCount > 0 && (
-                <Badge variant="outline" className="gap-1.5 border-amber-500/30 bg-amber-500/10 text-amber-600">
-                  <div className="h-2 w-2 rounded-full bg-amber-500" />
+                <Badge variant="outline" className="gap-1.5 border-[var(--status-warn-border)] bg-[var(--status-warn-bg)] text-[var(--warning)]">
+                  <div className="h-2 w-2 rounded-full bg-[var(--warning)]" />
                   {partialCount} Partial
                 </Badge>
               )}
               {failedCount > 0 && (
-                <Badge variant="outline" className="gap-1.5 border-red-500/30 bg-red-500/10 text-red-600">
-                  <div className="h-2 w-2 rounded-full bg-red-500" />
+                <Badge variant="outline" className="gap-1.5 border-[var(--status-error-border)] bg-[var(--status-error-bg)] text-[var(--destructive)]">
+                  <div className="h-2 w-2 rounded-full bg-[var(--destructive)]" />
                   {failedCount} Failed
                 </Badge>
               )}

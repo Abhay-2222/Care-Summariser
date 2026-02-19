@@ -43,24 +43,24 @@ function StatCard({
   color?: "blue" | "emerald" | "amber" | "red" | "teal"
 }) {
   const colorClasses = {
-    blue: "bg-blue-50 text-blue-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    amber: "bg-amber-50 text-amber-600",
-    red: "bg-red-50 text-red-600",
-    teal: "bg-teal-50 text-teal-600",
+    blue: "bg-[var(--brand-50)] text-[var(--brand-500)]",
+    emerald: "bg-[var(--status-ok-bg)] text-[var(--success)]",
+    amber: "bg-[var(--status-warn-bg)] text-[var(--warning)]",
+    red: "bg-[var(--status-error-bg)] text-[var(--destructive)]",
+    teal: "bg-[var(--status-ok-bg)] text-[var(--success)]",
   }
   
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4">
+    <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{title}</p>
-          <p className="text-2xl font-mono text-slate-800 mt-1">{value}</p>
-          {subtitle && <p className="text-[11px] text-slate-500 mt-0.5">{subtitle}</p>}
+          <p className="text-overline text-[var(--neutral-500)]">{title}</p>
+          <p className="text-clinical-val text-2xl text-foreground mt-1">{value}</p>
+          {subtitle && <p className="text-caption text-[var(--neutral-500)] mt-0.5">{subtitle}</p>}
           {trend && (
             <div className={cn(
-              "flex items-center gap-1 mt-2 text-[10px] font-medium",
-              trendUp ? "text-emerald-600" : "text-red-600"
+              "flex items-center gap-1 mt-2 text-ds-badge",
+              trendUp ? "text-[var(--success)]" : "text-[var(--destructive)]"
             )}>
               {trendUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
               {trend}
@@ -79,11 +79,11 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
   const percentage = total > 0 ? (count / total) * 100 : 0
   return (
     <div className="flex items-center gap-3">
-      <span className="text-[11px] text-slate-600 w-24">{label}</span>
-      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+      <span className="text-body-sm text-[var(--neutral-600)] w-24">{label}</span>
+      <div className="flex-1 h-2 bg-[var(--neutral-150)] rounded-full overflow-hidden">
         <div className={cn("h-full rounded-full", color)} style={{ width: `${percentage}%` }} />
       </div>
-      <span className="text-[11px] font-medium text-slate-700 w-8 text-right">{count}</span>
+      <span className="text-label-sm text-foreground w-8 text-right">{count}</span>
     </div>
   )
 }
@@ -130,14 +130,14 @@ export default function AuditPage() {
 
   if (!hasPermission("view_audit_log")) {
     return (
-      <div className="flex h-screen flex-col bg-slate-100">
+      <div className="flex h-screen flex-col bg-background">
         <AppHeader />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-base text-slate-800">Access Restricted</h2>
-            <p className="text-sm text-slate-500 mt-1">This page is only available to Auditors.</p>
-            <p className="text-xs text-slate-400 mt-2">Switch to Auditor role in the header to access this page.</p>
+            <AlertTriangle className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" />
+            <h2 className="text-heading-md text-foreground">Access Restricted</h2>
+            <p className="text-body-md text-[var(--neutral-500)] mt-1">This page is only available to Auditors.</p>
+            <p className="text-body-sm text-[var(--neutral-400)] mt-2">Switch to Auditor role in the header to access this page.</p>
           </div>
         </div>
       </div>
@@ -145,19 +145,19 @@ export default function AuditPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-slate-100">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="max-w-7xl mx-auto p-6 flex flex-col gap-6">
           {/* Human-Centered Header */}
-          <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-4 border border-emerald-100 mb-2">
+          <div className="bg-[var(--status-ok-bg)] rounded-xl p-4 border border-[var(--status-ok-border)] mb-2">
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                <Users className="h-5 w-5 text-emerald-600" />
+              <div className="h-10 w-10 rounded-lg bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)] flex items-center justify-center flex-shrink-0">
+                <Users className="h-5 w-5 text-[var(--success)]" />
               </div>
               <div className="flex-1">
-                <p className="text-[13px] text-slate-800">Shared Learning System</p>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <p className="text-heading-sm text-foreground">Shared Learning System</p>
+                <p className="text-body-sm text-[var(--neutral-600)] mt-1">
                   This dashboard helps identify patterns for team improvement, not individual performance tracking. 
                   Every insight here is designed to reduce documentation burden and improve patient outcomes together.
                 </p>
@@ -168,15 +168,15 @@ export default function AuditPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg text-slate-800">Audit Dashboard</h1>
-              <p className="text-sm text-slate-500 mt-0.5">Team performance and improvement opportunities</p>
+              <h1 className="text-heading-lg text-foreground">Audit Dashboard</h1>
+              <p className="text-body-md text-[var(--neutral-500)] mt-0.5">Team performance and improvement opportunities</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="h-8 text-[11px] gap-1.5 bg-transparent">
+              <Button variant="outline" className="h-8 text-label-sm gap-1.5 bg-transparent">
                 <Calendar className="h-3.5 w-3.5" />
                 Last 30 Days
               </Button>
-              <Button className="h-8 text-[11px] gap-1.5 bg-blue-600 hover:bg-blue-700">
+              <Button className="h-8 text-label-sm gap-1.5">
                 <FileText className="h-3.5 w-3.5" />
                 Export Report
               </Button>
@@ -224,41 +224,41 @@ export default function AuditPage() {
           {/* Status Distribution + Workload */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Status Distribution */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4">
+            <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-slate-400" />
+                <h3 className="text-heading-sm text-foreground flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-[var(--neutral-400)]" />
                   Case Status Distribution
                 </h3>
-                <span className="text-[10px] text-slate-400">{stats.totalCases} total</span>
+                <span className="text-caption text-[var(--neutral-400)]">{stats.totalCases} total</span>
               </div>
-              <div className="space-y-3">
-                <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-blue-500" />
-                <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-amber-500" />
-                <StatusBar label="Needs Physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-amber-500" />
-                <StatusBar label="Ready" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-emerald-500" />
-                <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-sky-500" />
-                <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-green-500" />
-                <StatusBar label="Denied" count={stats.byStatus.denied || 0} total={stats.totalCases} color="bg-red-500" />
+              <div className="flex flex-col gap-3">
+                <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-[var(--brand-500)]" />
+                <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
+                <StatusBar label="Needs Physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
+                <StatusBar label="Ready" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-[var(--success)]" />
+                <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-[var(--brand-400)]" />
+                <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-[var(--success)]" />
+                <StatusBar label="Denied" count={stats.byStatus.denied || 0} total={stats.totalCases} color="bg-[var(--destructive)]" />
               </div>
             </div>
 
             {/* Cases by Insurance */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4">
+            <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
-                  <Users className="h-4 w-4 text-slate-400" />
+                <h3 className="text-heading-sm text-foreground flex items-center gap-2">
+                  <Users className="h-4 w-4 text-[var(--neutral-400)]" />
                   Cases by Insurance
                 </h3>
               </div>
-              <div className="space-y-3">
+              <div className="flex flex-col gap-3">
                 {casesByInsurance.map(([insurance, count]) => (
                   <StatusBar 
                     key={insurance} 
                     label={insurance.length > 15 ? insurance.slice(0, 15) + "..." : insurance} 
                     count={count} 
                     total={stats.totalCases} 
-                    color="bg-blue-500" 
+                    color="bg-[var(--brand-500)]" 
                   />
                 ))}
               </div>
@@ -266,53 +266,53 @@ export default function AuditPage() {
           </div>
 
           {/* Coaching Notes - Constructive Feedback */}
-          <div className="bg-white rounded-lg border border-slate-200 p-4">
+          <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              <h3 className="text-heading-sm text-foreground flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-[var(--success)]" />
                 Team Wins & Coaching Notes
               </h3>
-              <span className="text-[10px] text-slate-500">This week</span>
+              <span className="text-caption text-[var(--neutral-500)]">This week</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Positive Feedback */}
-              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                <p className="text-[10px] text-emerald-700 uppercase tracking-wide mb-2">What's Working Well</p>
-                <ul className="space-y-2">
-                  <li className="text-[11px] text-emerald-800 flex items-start gap-2">
+              <div className="p-3 rounded-xl bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]">
+                <p className="text-overline text-[var(--status-ok-text)] mb-2">What's Working Well</p>
+                <ul className="flex flex-col gap-2">
+                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
                     <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     Documentation completeness improved 12% this week
                   </li>
-                  <li className="text-[11px] text-emerald-800 flex items-start gap-2">
+                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
                     <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     Average MD review time down to 1.8 minutes
                   </li>
-                  <li className="text-[11px] text-emerald-800 flex items-start gap-2">
+                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
                     <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     Zero missed deadlines for STAT cases
                   </li>
                 </ul>
               </div>
               {/* Improvement Opportunities */}
-              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
-                <p className="text-[10px] text-blue-700 uppercase tracking-wide mb-2">Improvement Opportunities</p>
-                <ul className="space-y-2">
-                  <li className="text-[11px] text-blue-800 flex items-start gap-2">
+              <div className="p-3 rounded-xl bg-[var(--status-info-bg)] border border-[var(--status-info-border)]">
+                <p className="text-overline text-[var(--status-info-text)] mb-2">Improvement Opportunities</p>
+                <ul className="flex flex-col gap-2">
+                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
                     <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     <span>Cardiology consults taking 2+ days - consider earlier requests</span>
                   </li>
-                  <li className="text-[11px] text-blue-800 flex items-start gap-2">
+                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
                     <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     <span>Aetna denials up 5% - review updated criteria for cardiac cases</span>
                   </li>
-                  <li className="text-[11px] text-blue-800 flex items-start gap-2">
+                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
                     <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
                     <span>Step-down documentation often missing - add to checklist?</span>
                   </li>
                 </ul>
               </div>
             </div>
-            <p className="text-[9px] text-slate-500 mt-3 pt-3 border-t border-slate-100">
+            <p className="text-caption text-[var(--neutral-500)] mt-3 pt-3 border-t border-border">
               Coaching notes are generated from patterns across all cases, not individual performance. The goal is shared learning to reduce everyone's workload.
             </p>
           </div>
@@ -320,73 +320,73 @@ export default function AuditPage() {
           {/* Alerts + Recent Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Compliance Alerts - Reframed */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4">
+            <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                <h3 className="text-heading-sm text-foreground flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-[var(--warning)]" />
                   Action Items
                 </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">
+                <span className="text-ds-badge px-2 py-0.5 rounded bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]">
                   {stats.pendingPhysician} pending
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 {stats.pendingPhysician > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-amber-50 border border-amber-100">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-amber-500" />
-                      <span className="text-[11px] text-slate-700">Cases awaiting physician review</span>
+                      <div className="h-2 w-2 rounded-full bg-[var(--warning)]" />
+                      <span className="text-body-sm text-foreground">Cases awaiting physician review</span>
                     </div>
-                    <span className="text-[11px] font-mono text-amber-700">{stats.pendingPhysician}</span>
+                    <span className="text-clinical-val text-[var(--status-warn-text)]">{stats.pendingPhysician}</span>
                   </div>
                 )}
                 {stats.readyForSubmission > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-emerald-50 border border-emerald-100">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                      <span className="text-[11px] text-slate-700">Cases ready for submission</span>
+                      <div className="h-2 w-2 rounded-full bg-[var(--success)]" />
+                      <span className="text-body-sm text-foreground">Cases ready for submission</span>
                     </div>
-                    <span className="text-[11px] font-mono text-emerald-700">{stats.readyForSubmission}</span>
+                    <span className="text-clinical-val text-[var(--status-ok-text)]">{stats.readyForSubmission}</span>
                   </div>
                 )}
                 {(stats.byStatus.denied || 0) > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-red-50 border border-red-100">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-[var(--status-error-bg)] border border-[var(--status-error-border)]">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-red-500" />
-                      <span className="text-[11px] text-slate-700">Denied cases requiring appeal</span>
+                      <div className="h-2 w-2 rounded-full bg-[var(--destructive)]" />
+                      <span className="text-body-sm text-foreground">Denied cases requiring appeal</span>
                     </div>
-                    <span className="text-[11px] font-mono text-red-700">{stats.byStatus.denied || 0}</span>
+                    <span className="text-clinical-val text-[var(--status-error-text)]">{stats.byStatus.denied || 0}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4">
+            <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[13px] text-slate-800 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-slate-400" />
+                <h3 className="text-heading-sm text-foreground flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-[var(--neutral-400)]" />
                   Recent Activity
                 </h3>
-                <Link href="/" className="text-[10px] text-blue-600 hover:underline flex items-center gap-1">
+                <Link href="/" className="text-caption text-[var(--brand-500)] hover:underline flex items-center gap-1">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
-              <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto">
                 {recentActivity.slice(0, 6).map((activity, idx) => {
                   const fromConfig = statusConfig[activity.from]
                   const toConfig = statusConfig[activity.to]
                   return (
-                    <div key={idx} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-0">
+                    <div key={idx} className="flex items-center gap-2 py-1.5 border-b border-border last:border-0">
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] text-slate-700 truncate">{activity.patientName}</p>
-                        <p className="text-[9px] text-slate-400">
+                        <p className="text-body-sm text-foreground truncate">{activity.patientName}</p>
+                        <p className="text-caption text-[var(--neutral-400)]">
                           {fromConfig.label} → {toConfig.label}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[9px] text-slate-500">{activity.changedBy}</p>
-                        <p className="text-[9px] text-slate-400">
+                        <p className="text-caption text-[var(--neutral-500)]">{activity.changedBy}</p>
+                        <p className="text-caption text-[var(--neutral-400)]">
                           {new Date(activity.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -394,7 +394,7 @@ export default function AuditPage() {
                   )
                 })}
                 {recentActivity.length === 0 && (
-                  <p className="text-[11px] text-slate-400 text-center py-4">No recent activity</p>
+                  <p className="text-body-sm text-[var(--neutral-400)] text-center py-4">No recent activity</p>
                 )}
               </div>
             </div>
@@ -402,7 +402,7 @@ export default function AuditPage() {
 
           {/* Footer note */}
           <div className="text-center py-4">
-            <p className="text-[10px] text-slate-400">
+            <p className="text-caption text-[var(--neutral-400)]">
               Data refreshes automatically. Last updated: {new Date().toLocaleTimeString()}
             </p>
           </div>

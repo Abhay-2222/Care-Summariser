@@ -133,10 +133,10 @@ const submittedPAs = [
 
 // Status configuration
 const statusConfig = {
-  pending: { label: "Pending Review", color: "bg-blue-50 text-blue-700 border-blue-200", icon: Clock },
-  approved: { label: "Approved", color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCircle },
-  denied: { label: "Denied", color: "bg-red-50 text-red-700 border-red-200", icon: XCircle },
-  info_requested: { label: "Info Requested", color: "bg-amber-50 text-amber-700 border-amber-200", icon: AlertTriangle },
+  pending: { label: "Pending Review", color: "bg-[var(--status-info-bg)] text-blue-700 border-blue-200", icon: Clock },
+  approved: { label: "Approved", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-emerald-200", icon: CheckCircle },
+  denied: { label: "Denied", color: "bg-[var(--status-error-bg)] text-red-700 border-red-200", icon: XCircle },
+  info_requested: { label: "Info Requested", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-amber-200", icon: AlertTriangle },
 }
 
 export default function PriorAuthPage() {
@@ -161,7 +161,7 @@ export default function PriorAuthPage() {
   const deniedCount = submittedPAs.filter(p => p.status === "denied").length
 
   return (
-    <div className="flex h-screen flex-col bg-slate-50">
+    <div className="flex h-screen flex-col bg-background">
       <AppHeader />
       <div className="flex-1 overflow-hidden">
         <div className="h-full p-4 md:p-6">
@@ -169,17 +169,17 @@ export default function PriorAuthPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-lg md:text-xl text-slate-900">Prior Authorization</h1>
-                <p className="text-sm text-slate-500">Compose, submit, and track authorization requests</p>
+                <h1 className="text-lg md:text-xl text-foreground">Prior Authorization</h1>
+                <p className="text-sm text-[var(--neutral-500)]">Compose, submit, and track authorization requests</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Badge variant="outline" className="bg-[var(--status-info-bg)] text-blue-700 border-blue-200">
                   {pendingCount} Pending
                 </Badge>
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                <Badge variant="outline" className="bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-emerald-200">
                   {approvedCount} Approved
                 </Badge>
-                <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                <Badge variant="outline" className="bg-[var(--status-error-bg)] text-red-700 border-red-200">
                   {deniedCount} Denied
                 </Badge>
               </div>
@@ -187,7 +187,7 @@ export default function PriorAuthPage() {
 
             {/* Main Content */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="w-full justify-start bg-white border">
+              <TabsList className="w-full justify-start bg-card border">
                 <TabsTrigger value="tracking" className="text-xs sm:text-sm">
                   <History className="h-4 w-4 mr-1.5" />
                   Submission Tracking
@@ -218,25 +218,25 @@ export default function PriorAuthPage() {
                                 className={cn(
                                   "p-3 rounded-lg border cursor-pointer transition-all",
                                   selectedPA?.id === pa.id
-                                    ? "border-blue-300 bg-blue-50"
-                                    : "border-slate-200 bg-white hover:border-slate-300"
+                                    ? "border-blue-300 bg-[var(--status-info-bg)]"
+                                    : "border-border bg-card hover:border-slate-300"
                                 )}
                                 onClick={() => setSelectedPA(pa)}
                               >
                                 <div className="flex items-start justify-between">
                                   <div>
-                                    <p className="font-medium text-sm text-slate-900">{pa.patientName}</p>
-                                    <p className="text-xs text-slate-500">{pa.paNumber}</p>
+                                    <p className="font-medium text-sm text-foreground">{pa.patientName}</p>
+                                    <p className="text-xs text-[var(--neutral-500)]">{pa.paNumber}</p>
                                   </div>
                                   <Badge variant="outline" className={cn("text-[10px]", statusInfo.color)}>
                                     <StatusIcon className="h-3 w-3 mr-1" />
                                     {statusInfo.label}
                                   </Badge>
                                 </div>
-                                <p className="text-xs text-slate-600 mt-1">{pa.procedure}</p>
+                                <p className="text-xs text-[var(--neutral-600)] mt-1">{pa.procedure}</p>
                                 <div className="mt-2 flex items-center justify-between">
                                   <Badge variant="outline" className="text-[10px]">{pa.payer}</Badge>
-                                  <span className="text-[10px] text-slate-400">{pa.submittedAt.split(" ")[0]}</span>
+                                  <span className="text-[10px] text-[var(--neutral-400)]">{pa.submittedAt.split(" ")[0]}</span>
                                 </div>
                               </div>
                             )
@@ -279,27 +279,27 @@ export default function PriorAuthPage() {
                         <CardContent className="flex-1 overflow-auto space-y-4">
                           {/* Status Banner */}
                           {selectedPA.status === "approved" && (
-                            <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div className="p-4 bg-[var(--status-ok-bg)] rounded-lg border border-emerald-200">
                               <div className="flex items-center gap-2 mb-2">
-                                <CheckCircle className="h-5 w-5 text-emerald-600" />
+                                <CheckCircle className="h-5 w-5 text-[var(--success)]" />
                                 <span className="text-sm text-emerald-900">Authorization Approved</span>
                               </div>
                               <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
-                                  <p className="text-emerald-700">Auth Number</p>
+                                  <p className="text-[var(--status-ok-text)]">Auth Number</p>
                                   <p className="font-medium text-emerald-900">{selectedPA.authNumber}</p>
                                 </div>
                                 <div>
-                                  <p className="text-emerald-700">Valid Until</p>
+                                  <p className="text-[var(--status-ok-text)]">Valid Until</p>
                                   <p className="font-medium text-emerald-900">{selectedPA.validUntil}</p>
                                 </div>
                               </div>
                               <div className="mt-3 flex gap-2">
-                                <Button size="sm" variant="outline" className="text-xs bg-white">
+                                <Button size="sm" variant="outline" className="text-xs bg-card">
                                   <Copy className="h-3 w-3 mr-1" />
                                   Copy Auth #
                                 </Button>
-                                <Button size="sm" variant="outline" className="text-xs bg-white">
+                                <Button size="sm" variant="outline" className="text-xs bg-card">
                                   <Printer className="h-3 w-3 mr-1" />
                                   Print
                                 </Button>
@@ -308,9 +308,9 @@ export default function PriorAuthPage() {
                           )}
 
                           {selectedPA.status === "denied" && (
-                            <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                            <div className="p-4 bg-[var(--status-error-bg)] rounded-lg border border-red-200">
                               <div className="flex items-center gap-2 mb-2">
-                                <XCircle className="h-5 w-5 text-red-600" />
+                                <XCircle className="h-5 w-5 text-[var(--destructive)]" />
                                 <span className="text-sm text-red-900">Authorization Denied</span>
                               </div>
                               <p className="text-sm text-red-800 mb-2">{selectedPA.denialReason}</p>
@@ -321,13 +321,13 @@ export default function PriorAuthPage() {
                           )}
 
                           {selectedPA.status === "info_requested" && (
-                            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                            <div className="p-4 bg-[var(--status-warn-bg)] rounded-lg border border-amber-200">
                               <div className="flex items-center gap-2 mb-2">
-                                <AlertTriangle className="h-5 w-5 text-amber-600" />
+                                <AlertTriangle className="h-5 w-5 text-[var(--warning)]" />
                                 <span className="text-sm text-amber-900">Additional Information Required</span>
                               </div>
                               <p className="text-sm text-amber-800 mb-2">{selectedPA.requestedInfo}</p>
-                              <div className="flex items-center gap-2 text-xs text-amber-700">
+                              <div className="flex items-center gap-2 text-xs text-[var(--status-warn-text)]">
                                 <Clock className="h-3 w-3" />
                                 Deadline: {selectedPA.infoDeadline}
                               </div>
@@ -335,10 +335,10 @@ export default function PriorAuthPage() {
                           )}
 
                           {/* AI Prediction */}
-                          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                          <div className="p-3 bg-[var(--status-info-bg)] rounded-lg border border-blue-100">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <Sparkles className="h-4 w-4 text-blue-600" />
+                                <Sparkles className="h-4 w-4 text-[var(--brand-500)]" />
                                 <span className="text-sm font-medium text-blue-900">AI Approval Prediction</span>
                               </div>
                               <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-700 border-blue-200">
@@ -353,19 +353,19 @@ export default function PriorAuthPage() {
 
                           {/* Timeline */}
                           <div>
-                            <p className="text-sm font-medium text-slate-700 mb-3">Submission Timeline</p>
+                            <p className="text-sm font-medium text-foreground mb-3">Submission Timeline</p>
                             <div className="space-y-0">
                               {selectedPA.trackingUpdates.map((update, index) => (
                                 <div key={index} className="flex gap-3">
                                   <div className="flex flex-col items-center">
                                     <div className={cn(
                                       "h-3 w-3 rounded-full border-2",
-                                      update.status === "complete" && "bg-emerald-500 border-emerald-500",
-                                      update.status === "current" && "bg-blue-500 border-blue-500 animate-pulse",
-                                      update.status === "approved" && "bg-emerald-500 border-emerald-500",
-                                      update.status === "denied" && "bg-red-500 border-red-500",
-                                      update.status === "action_required" && "bg-amber-500 border-amber-500",
-                                      update.status === "pending" && "bg-white border-slate-300"
+                                      update.status === "complete" && "bg-[var(--status-ok-bg)]0 border-emerald-500",
+                                      update.status === "current" && "bg-[var(--status-info-bg)]0 border-blue-500 animate-pulse",
+                                      update.status === "approved" && "bg-[var(--status-ok-bg)]0 border-emerald-500",
+                                      update.status === "denied" && "bg-[var(--status-error-bg)]0 border-red-500",
+                                      update.status === "action_required" && "bg-[var(--status-warn-bg)]0 border-amber-500",
+                                      update.status === "pending" && "bg-card border-slate-300"
                                     )} />
                                     {index < selectedPA.trackingUpdates.length - 1 && (
                                       <div className={cn(
@@ -379,15 +379,15 @@ export default function PriorAuthPage() {
                                   <div className="flex-1 pb-4">
                                     <p className={cn(
                                       "text-sm font-medium",
-                                      update.status === "approved" && "text-emerald-700",
+                                      update.status === "approved" && "text-[var(--status-ok-text)]",
                                       update.status === "denied" && "text-red-700",
-                                      update.status === "action_required" && "text-amber-700",
+                                      update.status === "action_required" && "text-[var(--status-warn-text)]",
                                       update.status === "current" && "text-blue-700",
-                                      (update.status === "complete" || update.status === "pending") && "text-slate-700"
+                                      (update.status === "complete" || update.status === "pending") && "text-foreground"
                                     )}>
                                       {update.event}
                                     </p>
-                                    <p className="text-xs text-slate-500">{update.timestamp}</p>
+                                    <p className="text-xs text-[var(--neutral-500)]">{update.timestamp}</p>
                                   </div>
                                 </div>
                               ))}
@@ -417,7 +417,7 @@ export default function PriorAuthPage() {
                       </>
                     ) : (
                       <CardContent className="flex-1 flex items-center justify-center">
-                        <div className="text-center text-slate-400">
+                        <div className="text-center text-[var(--neutral-400)]">
                           <History className="h-12 w-12 mx-auto mb-3 opacity-50" />
                           <p className="text-sm">Select a submission to view tracking details</p>
                         </div>
@@ -454,12 +454,12 @@ export default function PriorAuthPage() {
                   <CardContent className="flex-1 overflow-auto">
                     <div className="max-w-3xl space-y-6">
                       {/* Patient Info */}
-                      <div className="p-4 bg-slate-50 rounded-lg border">
+                      <div className="p-4 bg-background rounded-lg border">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-medium text-slate-900">Sarah Johnson</h3>
-                            <p className="text-sm text-slate-500">DOB: 03/15/1958 | MRN: MRN-892451</p>
-                            <p className="text-sm text-slate-500">Medicare Advantage</p>
+                            <h3 className="font-medium text-foreground">Sarah Johnson</h3>
+                            <p className="text-sm text-[var(--neutral-500)]">DOB: 03/15/1958 | MRN: MRN-892451</p>
+                            <p className="text-sm text-[var(--neutral-500)]">Medicare Advantage</p>
                           </div>
                           <Badge className="bg-blue-100 text-blue-700">Auto-Generated</Badge>
                         </div>
@@ -467,16 +467,16 @@ export default function PriorAuthPage() {
 
                       {/* Procedure */}
                       <div>
-                        <label className="text-sm font-medium text-slate-700">Requested Service</label>
-                        <div className="mt-1 p-3 bg-white rounded-lg border">
-                          <p className="font-medium text-slate-900">Inpatient Admission - Acute Heart Failure</p>
-                          <p className="text-sm text-slate-500">ICD-10: I50.31 | DRG: 291</p>
+                        <label className="text-sm font-medium text-foreground">Requested Service</label>
+                        <div className="mt-1 p-3 bg-card rounded-lg border">
+                          <p className="font-medium text-foreground">Inpatient Admission - Acute Heart Failure</p>
+                          <p className="text-sm text-[var(--neutral-500)]">ICD-10: I50.31 | DRG: 291</p>
                         </div>
                       </div>
 
                       {/* Clinical Justification */}
                       <div>
-                        <label className="text-sm font-medium text-slate-700">Clinical Justification</label>
+                        <label className="text-sm font-medium text-foreground">Clinical Justification</label>
                         <Textarea
                           className="mt-1 min-h-[200px]"
                           defaultValue={`Patient is a 67-year-old female admitted with acute decompensated heart failure requiring inpatient level of care.
@@ -508,7 +508,7 @@ Inpatient admission is medically necessary due to:
 
                       {/* Supporting Documentation */}
                       <div>
-                        <label className="text-sm font-medium text-slate-700">Attached Evidence</label>
+                        <label className="text-sm font-medium text-foreground">Attached Evidence</label>
                         <div className="mt-1 space-y-2">
                           {[
                             { name: "Admission H&P", type: "Progress Note" },
@@ -516,10 +516,10 @@ Inpatient admission is medically necessary due to:
                             { name: "Echocardiogram Results", type: "Diagnostic" },
                             { name: "Laboratory Panel", type: "Lab Results" },
                           ].map((doc, i) => (
-                            <div key={i} className="p-2 bg-white rounded border flex items-center justify-between">
+                            <div key={i} className="p-2 bg-card rounded border flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-slate-400" />
-                                <span className="text-sm text-slate-700">{doc.name}</span>
+                                <FileText className="h-4 w-4 text-[var(--neutral-400)]" />
+                                <span className="text-sm text-foreground">{doc.name}</span>
                                 <Badge variant="outline" className="text-[10px]">{doc.type}</Badge>
                               </div>
                               <Button variant="ghost" size="sm" className="h-6">
@@ -535,23 +535,23 @@ Inpatient admission is medically necessary due to:
                       </div>
 
                       {/* AI Confidence */}
-                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                      <div className="p-4 bg-[var(--status-info-bg)] rounded-lg border border-blue-100">
                         <div className="flex items-center gap-2 mb-3">
-                          <Sparkles className="h-5 w-5 text-blue-600" />
+                          <Sparkles className="h-5 w-5 text-[var(--brand-500)]" />
                           <span className="font-medium text-blue-900">AI Analysis</span>
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-center">
                           <div>
                             <p className="text-2xl font-mono text-blue-700">92%</p>
-                            <p className="text-xs text-blue-600">Confidence</p>
+                            <p className="text-xs text-[var(--brand-500)]">Confidence</p>
                           </div>
                           <div>
-                            <p className="text-2xl font-mono text-emerald-700">High</p>
-                            <p className="text-xs text-emerald-600">Approval Likelihood</p>
+                            <p className="text-2xl font-mono text-[var(--status-ok-text)]">High</p>
+                            <p className="text-xs text-[var(--success)]">Approval Likelihood</p>
                           </div>
                           <div>
                             <p className="text-2xl font-mono text-blue-700">4/4</p>
-                            <p className="text-xs text-blue-600">Payer Rules Met</p>
+                            <p className="text-xs text-[var(--brand-500)]">Payer Rules Met</p>
                           </div>
                         </div>
                       </div>
@@ -574,23 +574,23 @@ Inpatient admission is medically necessary due to:
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-3">
-            <div className="p-3 bg-slate-50 rounded-lg border">
+            <div className="p-3 bg-background rounded-lg border">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Patient</span>
+                <span className="text-sm text-[var(--neutral-600)]">Patient</span>
                 <span className="text-sm font-medium">Sarah Johnson</span>
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-slate-600">Service</span>
+                <span className="text-sm text-[var(--neutral-600)]">Service</span>
                 <span className="text-sm font-medium">Inpatient Admission</span>
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-slate-600">Payer</span>
+                <span className="text-sm text-[var(--neutral-600)]">Payer</span>
                 <span className="text-sm font-medium">Medicare Advantage</span>
               </div>
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+            <div className="p-3 bg-[var(--status-info-bg)] rounded-lg border border-blue-100">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-blue-600" />
+                <Sparkles className="h-4 w-4 text-[var(--brand-500)]" />
                 <span className="text-sm text-blue-800">AI predicts <strong>92%</strong> approval likelihood</span>
               </div>
             </div>
