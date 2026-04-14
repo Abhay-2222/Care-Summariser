@@ -393,33 +393,33 @@ export function PatientListPanel() {
                       
                       {/* Meta info */}
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-caption text-[var(--neutral-500)]">{patient.mrn}</span>
-                        <span className="text-caption text-[var(--neutral-300)]">|</span>
-                        <span className="text-caption text-[var(--neutral-500)]">{patient.age}yo {patient.gender}</span>
-                        <span className="text-caption text-[var(--neutral-300)]">|</span>
-                        <span className="text-caption text-[var(--neutral-400)] truncate">{patient.insurance}</span>
+                        <span className="text-caption text-[var(--neutral-600)]">{patient.mrn}</span>
+                        <span className="text-caption text-[var(--neutral-400)]">·</span>
+                        <span className="text-caption text-[var(--neutral-600)]">{patient.age}yo {patient.gender}</span>
+                        <span className="text-caption text-[var(--neutral-400)]">·</span>
+                        <span className="text-caption text-[var(--neutral-500)] truncate">{patient.insurance}</span>
                       </div>
                       
                       {/* Progress & Assignment */}
                       <div className="flex items-center gap-2 mt-1.5">
                         {/* Progress bar */}
-                        <div className="flex-1 h-1 bg-[var(--neutral-150)] rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-[var(--neutral-200)] rounded-full overflow-hidden">
                           <div 
                             className={cn(
                               "h-full rounded-full transition-all",
                               workflow.progressPercent >= 80 ? "bg-[var(--success)]" :
-                              workflow.progressPercent >= 50 ? "bg-[var(--warning)]" : "bg-[var(--neutral-300)]"
+                              workflow.progressPercent >= 50 ? "bg-[var(--warning)]" : "bg-[var(--neutral-400)]"
                             )}
                             style={{ width: `${workflow.progressPercent}%` }}
                           />
                         </div>
-                        <span className="text-caption font-mono text-[var(--neutral-400)] tabular-nums w-7">{workflow.progressPercent}%</span>
+                        <span className="text-caption font-mono text-[var(--neutral-600)] tabular-nums w-7">{workflow.progressPercent}%</span>
                       </div>
 
                       {/* Assignment info or Claim action */}
                       <div className="flex items-center justify-between mt-1.5">
                         {workflow.assignment ? (
-                          <div className="flex items-center gap-1 text-caption text-[var(--neutral-400)]">
+                          <div className="flex items-center gap-1 text-caption text-[var(--neutral-500)]">
                             <User className="h-2.5 w-2.5" />
                             <span className="truncate max-w-[100px]">{workflow.assignment.assignedTo}</span>
                           </div>

@@ -277,7 +277,7 @@ export function ClinicalSummaryView() {
                     <AlertTriangle className="h-3.5 w-3.5 text-[var(--warning)] flex-shrink-0 mt-0.5" />
                     <div className="min-w-0">
                       <span className="text-body-sm text-[var(--status-warn-text)] block">{alert.message}</span>
-                      <span className="text-caption text-[var(--warning)] block mt-0.5">
+                      <span className="text-caption text-[var(--status-warn-text)] block mt-0.5">
                         Needed to meet {selectedPatient.insurance} criteria and avoid treatment delay
                       </span>
                     </div>
@@ -324,14 +324,14 @@ export function ClinicalSummaryView() {
                         <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-400)]" />
                         <span className="text-body-sm text-[var(--neutral-600)]">{problem.name}</span>
                       </div>
-                      <span className="text-caption font-mono text-[var(--neutral-500)]">{problem.icdCode}</span>
+                              <span className="text-caption font-mono text-[var(--neutral-600)]">{problem.icdCode}</span>
                     </div>
                   ))}
                   {/* Comorbidities */}
                   {selectedPatient.problemList.filter(p => p.type === "comorbidity").length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border">
                       {selectedPatient.problemList.filter(p => p.type === "comorbidity").map(problem => (
-                        <span key={problem.id} className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--neutral-100)] text-[var(--neutral-500)]">
+                        <span key={problem.id} className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--neutral-100)] text-[var(--neutral-700)] border border-[var(--neutral-300)]">
                           {problem.name}
                         </span>
                       ))}
@@ -415,7 +415,7 @@ export function ClinicalSummaryView() {
                                         <Clock className="h-2.5 w-2.5" />
                                         Requested
                                       </span>
-                                      <span className="text-caption text-[var(--neutral-400)]">Sent to clinical team</span>
+                                      <span className="text-caption text-[var(--neutral-500)]">Sent to clinical team</span>
                                     </>
                                   ) : (
                                     // Show request button
@@ -504,7 +504,7 @@ export function ClinicalSummaryView() {
                   </div>
                   <div className="flex-1 min-w-0 pb-2">
                     <p className="text-label-md text-foreground">{event.title}</p>
-                    <p className="text-caption text-[var(--neutral-400)]">{event.timestamp}</p>
+                    <p className="text-caption text-[var(--neutral-500)]">{event.timestamp}</p>
                   </div>
                 </div>
               ))}
@@ -569,25 +569,25 @@ export function ClinicalSummaryView() {
           <div className="p-4 space-y-4">
             {/* Patient Info */}
             <div className="p-3 rounded-lg bg-[var(--neutral-50)] border border-border">
-              <p className="text-[12px] font-medium text-foreground">{selectedPatient.name}</p>
-              <p className="text-[10px] text-[var(--neutral-500)]">{selectedPatient.diagnoses[0]}</p>
+              <p className="text-label-md text-foreground">{selectedPatient.name}</p>
+              <p className="text-caption text-[var(--neutral-600)]">{selectedPatient.diagnoses[0]}</p>
             </div>
 
             {/* Items Requiring MD Attention */}
             <div className="space-y-3">
-              <p className="text-[10px] text-[var(--neutral-500)] uppercase tracking-wide">Items Requiring Physician Review</p>
+              <p className="text-overline text-[var(--neutral-600)]">Items Requiring Physician Review</p>
               
               {/* High Risk Factors */}
               {selectedPatient.careLens.riskFactors.filter(r => r.status === "open").length > 0 && (
-                <div className="p-3 rounded-lg bg-red-50 border border-red-100">
+                <div className="p-3 rounded-lg bg-[var(--status-error-bg)] border border-[var(--status-error-border)]">
                   <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="h-3.5 w-3.5 text-[var(--destructive)]" />
-                    <p className="text-[11px] font-medium text-red-700">Risk Factors ({selectedPatient.careLens.riskFactors.filter(r => r.status === "open").length})</p>
+                    <p className="text-label-sm text-[var(--status-error-text)]">Risk Factors ({selectedPatient.careLens.riskFactors.filter(r => r.status === "open").length})</p>
                   </div>
                   <ul className="space-y-1.5">
                     {selectedPatient.careLens.riskFactors.filter(r => r.status === "open").map((risk) => (
-                      <li key={risk.id} className="text-[10px] text-[var(--destructive)] flex items-start gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-red-400 mt-1 flex-shrink-0" />
+                      <li key={risk.id} className="text-caption text-[var(--status-error-text)] flex items-start gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--destructive)] mt-1 flex-shrink-0" />
                         <span>{risk.factor}</span>
                       </li>
                     ))}
@@ -597,15 +597,15 @@ export function ClinicalSummaryView() {
 
               {/* Policy Gaps */}
               {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length > 0 && (
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-100">
+                <div className="p-3 rounded-lg bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]">
                   <div className="flex items-center gap-2 mb-2">
                     <FileWarning className="h-3.5 w-3.5 text-[var(--warning)]" />
-                    <p className="text-[11px] font-medium text-amber-700">Policy Gaps ({selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length})</p>
+                    <p className="text-label-sm text-[var(--status-warn-text)]">Policy Gaps ({selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length})</p>
                   </div>
                   <ul className="space-y-1.5">
                     {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").map((gap) => (
-                      <li key={gap.id} className="text-[10px] text-[var(--warning)] flex items-start gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1 flex-shrink-0" />
+                      <li key={gap.id} className="text-caption text-[var(--status-warn-text)] flex items-start gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--warning)] mt-1 flex-shrink-0" />
                         <span>{gap.gap}</span>
                       </li>
                     ))}
@@ -614,22 +614,22 @@ export function ClinicalSummaryView() {
               )}
 
               {/* Medical Necessity Items */}
-              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
+              <div className="p-3 rounded-lg bg-[var(--status-info-bg)] border border-[var(--status-info-border)]">
                 <div className="flex items-center gap-2 mb-2">
                   <Stethoscope className="h-3.5 w-3.5 text-[var(--brand-500)]" />
-                  <p className="text-[11px] font-medium text-blue-700">Physician Will Validate</p>
+                  <p className="text-label-sm text-[var(--status-info-text)]">Physician Will Validate</p>
                 </div>
-                <ul className="space-y-1.5 text-[10px] text-[var(--brand-500)]">
+                <ul className="space-y-1.5 text-caption text-[var(--status-info-text)]">
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-400)] mt-1 flex-shrink-0" />
                     Medical necessity justification
                   </li>
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-400)] mt-1 flex-shrink-0" />
                     Treatment plan appropriateness
                   </li>
                   <li className="flex items-start gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-400)] mt-1 flex-shrink-0" />
                     Clinical documentation accuracy
                   </li>
                 </ul>
@@ -638,7 +638,7 @@ export function ClinicalSummaryView() {
 
             {/* Notes for Physician */}
             <div className="space-y-2">
-              <p className="text-[10px] text-[var(--neutral-500)] uppercase tracking-wide">Notes for Physician (Optional)</p>
+              <p className="text-overline text-[var(--neutral-600)]">Notes for Physician (Optional)</p>
               <Textarea
                 value={mdNotes}
                 onChange={(e) => setMdNotes(e.target.value)}
