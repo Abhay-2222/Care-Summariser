@@ -163,11 +163,11 @@ export function WorkflowBar({
             <Button
               variant={primaryAction.variant}
               size="sm"
-              className="h-7 px-3 text-label-sm gap-1.5"
+              className="h-7 px-3 text-label-sm gap-1.5 font-semibold"
               onClick={primaryAction.onClick}
               disabled={primaryAction.disabled}
             >
-              <primaryAction.icon className="h-3.5 w-3.5" />
+              <primaryAction.icon className="h-4 w-4" />
               {primaryAction.label}
             </Button>
           )}

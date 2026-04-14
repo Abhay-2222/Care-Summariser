@@ -132,31 +132,31 @@ function ChatMessage({
   return (
     <div className={cn("flex gap-2", role === "user" ? "justify-end" : "justify-start")}>
       {isAssistant && (
-        <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-          <Brain className="h-3 w-3 text-[var(--neutral-500)]" />
+        <div className="h-5 w-5 rounded-full bg-[var(--neutral-100)] border border-[var(--neutral-200)] flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Brain className="h-3 w-3 text-[var(--brand-500)]" />
         </div>
       )}
       <div className={cn(
-        "max-w-[85%] rounded-lg text-[10px]",
-        role === "user" 
-          ? "bg-slate-700 text-white px-2 py-1.5" 
-          : "bg-slate-100 border border-border"
+        "max-w-[85%] rounded-lg text-caption leading-relaxed",
+        role === "user"
+          ? "bg-[var(--brand-700)] text-white px-2.5 py-1.5"
+          : "bg-[var(--neutral-100)] border border-[var(--neutral-200)] text-[var(--neutral-800)]"
       )}>
         {isLoading ? (
-          <div className="flex items-center gap-1.5 px-2 py-1.5">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5">
             <Loader2 className="h-3 w-3 animate-spin text-[var(--neutral-500)]" />
-            <span className="text-[var(--neutral-500)]">Analyzing...</span>
+            <span className="text-[var(--neutral-600)]">Analyzing...</span>
           </div>
         ) : (
           <div>
-            <div className="px-2 py-1.5 text-foreground">{content}</div>
+            <div className="px-2.5 py-1.5 whitespace-pre-wrap">{content}</div>
             {quickActions && quickActions.length > 0 && (
-              <div className="flex flex-wrap gap-1 px-2 pb-1.5 pt-1 border-t border-border">
+              <div className="flex flex-wrap gap-1 px-2.5 pb-1.5 pt-1 border-t border-[var(--neutral-200)]">
                 {quickActions.map((action) => (
                   <button
                     key={action.id}
                     onClick={action.action}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-border hover:bg-[var(--neutral-50)] text-[var(--neutral-600)] text-[9px] transition-colors"
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-[var(--neutral-300)] hover:bg-[var(--neutral-50)] text-[var(--neutral-700)] text-caption transition-colors"
                   >
                     {action.icon}
                     {action.label}
@@ -745,7 +745,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                   <MessageSquare className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   Ask CareLens
                   {chatMessages.length > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1 text-[8px]">{chatMessages.length}</Badge>
+                    <Badge variant="secondary" className="h-4 px-1.5 text-caption font-semibold tabular-nums">{chatMessages.length}</Badge>
                   )}
                 </span>
                 {chatOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
@@ -755,9 +755,9 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                   <div className="h-36 overflow-y-auto mb-2 space-y-2 bg-card rounded-lg p-2.5 border border-border">
                     {chatMessages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center px-2">
-                        <MessageSquare className="h-6 w-6 text-slate-300 mb-2" />
-                        <p className="text-[10px] text-[var(--neutral-500)]">Ask questions about this case</p>
-                        <p className="text-[9px] text-[var(--neutral-400)] mt-0.5">e.g., "Why is evidence score low?" or "Draft a consult request"</p>
+                        <MessageSquare className="h-6 w-6 text-[var(--neutral-300)] mb-2" />
+                        <p className="text-caption text-[var(--neutral-600)]">Ask questions about this case</p>
+                        <p className="text-caption text-[var(--neutral-500)] mt-0.5">e.g., &quot;Why is evidence score low?&quot; or &quot;Draft a consult request&quot;</p>
                       </div>
                     ) : (
                       <>
@@ -784,7 +784,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     ].map((q) => (
                       <button
                         key={q.label}
-                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[var(--neutral-600)] text-[9px] hover:bg-slate-200 transition-colors"
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--neutral-100)] border border-[var(--neutral-200)] text-[var(--neutral-700)] text-caption hover:bg-[var(--neutral-150)] transition-colors"
                         onClick={() => {
                           setChatInput(q.label)
                           setTimeout(() => handleSendMessage(), 100)
@@ -802,11 +802,11 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                       placeholder="Ask about this case..."
-                      className="min-h-[32px] h-8 text-[10px] resize-none"
+                      className="min-h-[32px] h-8 text-caption resize-none"
                     />
                     <Button 
                       size="sm" 
-                      className="h-8 w-8 p-0 bg-slate-800 hover:bg-slate-900 text-white"
+                      className="h-8 w-8 p-0 bg-[var(--brand-700)] hover:bg-[var(--brand-800)] text-white"
                       onClick={handleSendMessage}
                       disabled={!chatInput.trim() || isTyping}
                     >
