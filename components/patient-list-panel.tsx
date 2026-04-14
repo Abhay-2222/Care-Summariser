@@ -391,13 +391,13 @@ export function PatientListPanel() {
                         </span>
                       </div>
                       
-                      {/* Meta info */}
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-caption text-[var(--neutral-600)]">{patient.mrn}</span>
-                        <span className="text-caption text-[var(--neutral-400)]">·</span>
-                        <span className="text-caption text-[var(--neutral-600)]">{patient.age}yo {patient.gender}</span>
-                        <span className="text-caption text-[var(--neutral-400)]">·</span>
-                        <span className="text-caption text-[var(--neutral-500)] truncate">{patient.insurance}</span>
+                      {/* Meta info — nowrap prevents the two-line layout inconsistency */}
+                      <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
+                        <span className="text-caption text-[var(--neutral-600)] shrink-0">{patient.mrn}</span>
+                        <span className="text-caption text-[var(--neutral-400)] shrink-0">·</span>
+                        <span className="text-caption text-[var(--neutral-600)] shrink-0">{patient.age}yo {patient.gender}</span>
+                        <span className="text-caption text-[var(--neutral-400)] shrink-0">·</span>
+                        <span className="text-caption text-[var(--neutral-500)] truncate min-w-0">{patient.insurance}</span>
                       </div>
                       
                       {/* Progress & Assignment */}
