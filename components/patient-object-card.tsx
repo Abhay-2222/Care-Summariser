@@ -194,11 +194,11 @@ export function PatientObjectCardCompact({
 
       {/* Row 4: Primary Diagnosis */}
       {primaryDiagnosis && (
-        <div className="mt-2 pt-2 border-t border-border">
-          <span className={cn(typography.title, "text-[11px]")}>
+        <div className="mt-2 pt-2 border-t border-border flex items-center gap-2">
+          <span className={typography.title}>
             {primaryDiagnosis.name}
           </span>
-          <span className="ml-2 text-ds-badge font-mono text-[var(--brand-600)]">
+          <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded">
             {primaryDiagnosis.icdCode}
           </span>
         </div>

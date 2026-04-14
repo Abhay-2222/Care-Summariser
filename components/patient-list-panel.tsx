@@ -282,7 +282,7 @@ export function PatientListPanel() {
                     )}
                   >
                     <span>{status.label}</span>
-                    <span className="text-[var(--neutral-400)] tabular-nums">{count}</span>
+                    <span className="text-body-sm text-[var(--neutral-500)] tabular-nums">{count}</span>
                   </DropdownMenuItem>
                 )
               })}
@@ -437,7 +437,7 @@ export function PatientListPanel() {
                                   Start Review
                                 </button>
                               </TooltipTrigger>
-                              <TooltipContent side="top" className="text-[9px]">
+                              <TooltipContent side="top" className="text-caption">
                                 Claim this case and begin UR review
                               </TooltipContent>
                             </Tooltip>
@@ -505,7 +505,7 @@ export function PatientListPanel() {
 
       {/* Footer - minimal, only shows filtered count when different */}
       <div className="px-3 py-1.5 border-t border-border bg-[var(--neutral-50)]">
-        <div className="flex items-center justify-between text-caption text-[var(--neutral-400)]">
+        <div className="flex items-center justify-between text-caption text-[var(--neutral-600)]">
           {sortedPatients.length !== patients.length ? (
             <span className="tabular-nums">{sortedPatients.length} shown</span>
           ) : (

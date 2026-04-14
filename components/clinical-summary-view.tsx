@@ -521,23 +521,23 @@ export function ClinicalSummaryView() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={handleExport}>
-                    <Download className="h-3.5 w-3.5 text-slate-400" />
+                    <Download className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="text-[10px]">Export</TooltipContent>
+                <TooltipContent className="text-caption">Export</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={() => setActiveTab("evidence")}>
-                    <Search className="h-3.5 w-3.5 text-slate-400" />
+                    <Search className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="text-[10px]">View Evidence</TooltipContent>
+                <TooltipContent className="text-caption">View Evidence</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
           
-          <span className="text-[10px] text-slate-400">
+          <span className="text-caption text-[var(--neutral-500)]">
             Updated {new Date(workflow.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
@@ -556,13 +556,13 @@ export function ClinicalSummaryView() {
       {/* Send to MD Sheet - Human-centered framing */}
       <Sheet open={showSendToMDSheet} onOpenChange={setShowSendToMDSheet}>
         <SheetContent className="w-full sm:max-w-md p-0">
-          <SheetHeader className="p-4 border-b border-border bg-gradient-to-r from-blue-50 to-slate-50">
-            <SheetTitle className="flex items-center gap-2 text-[14px]">
+          <SheetHeader className="p-4 border-b border-border bg-[var(--status-info-bg)]">
+            <SheetTitle className="flex items-center gap-2 text-body-md">
               <Stethoscope className="h-4 w-4 text-[var(--brand-500)]" />
               Get Clinical Sign-Off for {selectedPatient.name.split(" ")[0]}
             </SheetTitle>
-            <SheetDescription className="text-[11px]">
-              The physician will validate medical necessity so we can move forward with {selectedPatient.name.split(" ")[0]}'s care authorization
+            <SheetDescription className="text-caption text-[var(--neutral-600)]">
+              The physician will validate medical necessity so we can move forward with {selectedPatient.name.split(" ")[0]}&apos;s care authorization
             </SheetDescription>
           </SheetHeader>
 
@@ -643,7 +643,7 @@ export function ClinicalSummaryView() {
                 value={mdNotes}
                 onChange={(e) => setMdNotes(e.target.value)}
                 placeholder="Add context or specific questions for the physician..."
-                className="text-[11px] min-h-[80px]"
+                className="text-caption min-h-[80px]"
               />
             </div>
           </div>
@@ -651,13 +651,13 @@ export function ClinicalSummaryView() {
           <SheetFooter className="p-4 border-t border-border flex gap-2">
             <Button
               variant="outline"
-              className="flex-1 text-[11px] bg-transparent"
+              className="flex-1 text-label-sm bg-transparent"
               onClick={() => setShowSendToMDSheet(false)}
             >
               Cancel
             </Button>
             <Button
-              className="flex-1 text-[11px] bg-blue-600 hover:bg-blue-700"
+              className="flex-1 text-label-sm bg-[var(--brand-600)] hover:bg-[var(--brand-700)] text-white"
               onClick={() => {
                 handleSendToPhysician()
                 setShowSendToMDSheet(false)
