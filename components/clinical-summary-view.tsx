@@ -452,21 +452,22 @@ export function ClinicalSummaryView() {
           {/* AI Summary - Collapsible with design system typography */}
           <Collapsible open={summaryOpen} onOpenChange={setSummaryOpen}>
             <div className="bg-card rounded-xl border border-border shadow-ds-xs">
-              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
-                <div className="flex items-center gap-2">
-                  {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
-                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-700)]")}>AI CLINICAL SUMMARY</span>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 px-2 text-caption text-[var(--neutral-500)] bg-transparent"
+              <div className="relative flex items-center">
+                <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors pr-20">
+                  <div className="flex items-center gap-2">
+                    {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
+                    <span className={cn(typography.sectionHeader, "text-[var(--neutral-700)]")}>AI CLINICAL SUMMARY</span>
+                  </div>
+                </CollapsibleTrigger>
+                <button
+                  type="button"
+                  className="absolute right-3 flex items-center gap-1 h-6 px-2 text-caption text-[var(--neutral-500)] rounded hover:bg-[var(--neutral-100)] transition-colors"
                   onClick={(e) => { e.stopPropagation(); handleRegenerate() }}
                 >
-                  <RefreshCw className="h-3 w-3 mr-1" />
+                  <RefreshCw className="h-3 w-3" />
                   Refresh
-                </Button>
-              </CollapsibleTrigger>
+                </button>
+              </div>
               <CollapsibleContent>
                 <div className="px-3 pb-3 space-y-3">
                   <div>

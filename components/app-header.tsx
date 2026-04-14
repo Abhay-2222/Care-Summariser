@@ -154,7 +154,7 @@ export function AppHeader() {
                   className="h-8 gap-1.5 px-2 rounded-full bg-[var(--neutral-100)] hover:bg-[var(--neutral-150)] text-label-sm shadow-ds-xs"
                 >
                   <Avatar className="h-5 w-5">
-                    <AvatarFallback className={cn("text-[9px] text-white", currentRoleData.color)}>
+                    <AvatarFallback className={cn("text-ds-badge text-white", currentRoleData.color)}>
                       {currentRoleData.initials}
                     </AvatarFallback>
                   </Avatar>

@@ -82,10 +82,10 @@ export function AuditorLayout() {
             type="button"
             onClick={() => setStatusFilter(status)}
             className={cn(
-              "text-[10px] px-2 py-1 rounded-full border whitespace-nowrap transition-colors",
+              "text-label-sm px-2 py-1 rounded-full border whitespace-nowrap transition-colors",
               statusFilter === status
-                ? "bg-slate-800 text-white border-slate-800"
-                : "bg-card text-[var(--neutral-500)] border-border hover:border-slate-300"
+                ? "bg-[var(--neutral-900)] text-white border-[var(--neutral-900)]"
+                : "bg-card text-[var(--neutral-500)] border-border hover:border-[var(--neutral-400)]"
             )}
           >
             {status === "ALL" ? "All" : statusLabels[status] || status}
@@ -123,7 +123,7 @@ export function AuditorLayout() {
                     <p className={textStyles.body}>{patient.mrn}</p>
                   </td>
                   <td className="px-4 py-2">
-                    <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0", statusStyle)}>
+                    <Badge variant="outline" className={cn("text-ds-badge px-1.5 py-0", statusStyle)}>
                       {statusLabel}
                     </Badge>
                   </td>
@@ -136,10 +136,10 @@ export function AuditorLayout() {
                     <Badge
                       variant="outline"
                       className={cn(
-                        "text-[9px] px-1.5 py-0",
-                        patient.careLens.denialRisk === "High" && "bg-red-50 text-red-600 border-red-200",
-                        patient.careLens.denialRisk === "Medium" && "bg-amber-50 text-amber-600 border-amber-200",
-                        patient.careLens.denialRisk === "Low" && "bg-emerald-50 text-[var(--success)] border-emerald-200"
+                        "text-ds-badge px-1.5 py-0",
+                        patient.careLens.denialRisk === "High" && "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border-[var(--status-error-border)]",
+                        patient.careLens.denialRisk === "Medium" && "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border-[var(--status-warn-border)]",
+                        patient.careLens.denialRisk === "Low" && "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border-[var(--status-ok-border)]"
                       )}
                     >
                       {patient.careLens.denialRisk}
@@ -154,7 +154,7 @@ export function AuditorLayout() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 px-2 text-[10px] gap-1"
+                          className="h-6 px-2 text-caption gap-1"
                           onClick={() => setSelectedCaseId(patient.id)}
                         >
                           <History className="h-3 w-3" />
@@ -163,7 +163,7 @@ export function AuditorLayout() {
                       </SheetTrigger>
                       <SheetContent className="w-[360px] sm:w-[420px]">
                         <SheetHeader>
-                          <SheetTitle className={cn(textStyles.title, "text-[13px]")}>
+                          <SheetTitle className={textStyles.title}>
                             Audit Trail: {patient.name}
                           </SheetTitle>
                         </SheetHeader>
@@ -178,7 +178,7 @@ export function AuditorLayout() {
                                 key={entry.id}
                                 className={cn(containerStyles.card, spacing.cardPaddingCompact, "flex items-start gap-2")}
                               >
-                                <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <div className="h-5 w-5 rounded-full bg-[var(--neutral-100)] flex items-center justify-center flex-shrink-0 mt-0.5">
                                   <FileText className="h-2.5 w-2.5 text-[var(--neutral-500)]" />
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -186,7 +186,7 @@ export function AuditorLayout() {
                                   <div className="flex items-center gap-2 mt-0.5">
                                     <span className={textStyles.label}>{entry.user}</span>
                                     {entry.role && (
-                                      <Badge variant="outline" className="text-[8px] px-1 py-0 border-border text-[var(--neutral-500)]">
+                                      <Badge variant="outline" className="text-ds-badge px-1 py-0 border-border text-[var(--neutral-600)]">
                                         {entry.role}
                                       </Badge>
                                     )}
@@ -208,7 +208,7 @@ export function AuditorLayout() {
         {filteredPatients.length === 0 && (
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
-              <Eye className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+              <Eye className="h-8 w-8 text-[var(--neutral-300)] mx-auto mb-2" />
               <p className={cn(textStyles.body, "text-[var(--neutral-400)]")}>No cases match this filter.</p>
             </div>
           </div>
@@ -232,12 +232,12 @@ function StatCard({
       <p className={textStyles.label}>{label}</p>
       <p
         className={cn(
-          "text-[14px] font-mono tabular-nums",
+          "text-body-md font-mono tabular-nums font-semibold",
           color === "emerald" && "text-[var(--success)]",
-          color === "red" && "text-red-600",
-          color === "amber" && "text-amber-600",
+          color === "red" && "text-[var(--destructive)]",
+          color === "amber" && "text-[var(--warning)]",
           color === "blue" && "text-[var(--brand-500)]",
-          !color && "text-slate-800"
+          !color && "text-[var(--neutral-900)]"
         )}
       >
         {value}
