@@ -93,9 +93,10 @@
 /* Dark mode intentionally not implemented — single-theme clinical app */
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", monospace;
-  --font-serif: "Fraunces", "Fraunces Fallback", Georgia, serif;
+  /* --font-sans / --font-mono / --font-serif are injected by next/font via CSS variables
+     on the <html> element (--font-sans, --font-mono, --font-serif). Tailwind picks them
+     up automatically. Do NOT hard-code font names here — next/font controls the fallback
+     stack and preload. */
   --font-size-2xs: 0.625rem;
   --font-size-2xs--line-height: 0.875rem;
 
