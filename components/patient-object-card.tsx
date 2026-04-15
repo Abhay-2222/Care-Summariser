@@ -98,28 +98,25 @@ export function PatientObjectCard({
 
       {/* Row 2: Location · Clinical Info */}
       <div className="flex items-center gap-4 mt-2">
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Room</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Room</span>
           <span className={typography.body}>{patient.room}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>LOS</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">LOS</span>
           <span className={typography.body}>{patient.lengthOfStay}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Admitted</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Admitted</span>
           <span className={typography.body}>{patient.admissionDate}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Docs</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Docs</span>
           <span className={typography.body}>{patient.documentsProcessed}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Risk</span>
-          <span className={cn(
-            "text-ds-badge px-1.5 py-0.5 rounded",
-            riskStyle
-          )}>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Risk</span>
+          <span className={cn("text-ds-badge px-1.5 py-0.5 rounded", riskStyle)}>
             {patient.careLens.denialRisk}
           </span>
         </div>

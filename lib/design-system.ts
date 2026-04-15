@@ -28,17 +28,19 @@
 // =============================================================================
 
 export const typography = {
-  // Labels/Field Names: overline 11px mono bold — uses neutral-600 (#52525b) = 6.3:1 ✓ AA
-  label: "text-overline text-[var(--neutral-600)]",
+  // Labels/Field Names: caption 11px sans — uses neutral-500 (#71717a) = 4.6:1 ✓ AA
+  // Kept in sans (not mono) to avoid font-family mixing within a single row of content.
+  // Reserve text-overline (mono) for standalone section headers only.
+  label: "text-caption text-[var(--neutral-500)] uppercase tracking-wide",
   
-  // Body Text/Values: body-sm 13px — uses neutral-700 (#3f3f46) = 8.6:1 ✓ AA
+  // Body Text/Values: body-sm 13px sans — uses neutral-700 (#3f3f46) = 8.6:1 ✓ AA
   body: "text-body-sm text-[var(--neutral-700)]",
   
-  // Titles/Names/Key Info: label-md 13px semi — uses neutral-900 (#18181b) = 16:1 ✓ AAA
+  // Titles/Names/Key Info: label-md 13px semi sans — uses neutral-900 (#18181b) = 16:1 ✓ AAA
   title: "text-label-md text-[var(--neutral-900)]",
   
-  // Section Headers: overline 11px mono bold — uses neutral-600 (#52525b) = 6.3:1 ✓ AA
-  // NOTE: neutral-500 (#71717a) at 11px = 4.59:1 — technically passes but borderline; use 600 here
+  // Section Headers: overline 11px mono bold — used ONLY for standalone section title rows
+  // e.g. "PROBLEM LIST", "PAYER REQUIREMENTS" — not inline with body text
   sectionHeader: "text-overline text-[var(--neutral-600)]",
 } as const
 
