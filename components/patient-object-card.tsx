@@ -52,12 +52,13 @@ export function PatientObjectCard({
   return (
     <div className={cn("bg-card rounded-xl border border-border p-3 shadow-ds-xs", className)}>
       {/* Row 1: Name · Demographics · Insurance */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <h2 className={cn("text-patient-name truncate")}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+        {/* Mobile: Name on its own line; Desktop: inline with demographics */}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0 flex-1">
+          <h2 className="text-patient-name whitespace-nowrap">
             {patient.name}
           </h2>
-          <span className={typography.body}>·</span>
+          <span className={cn(typography.body, "hidden sm:inline")}>·</span>
           <span className={typography.body}>
             {patient.age}yo {patient.gender}
           </span>
@@ -65,8 +66,8 @@ export function PatientObjectCard({
           <span className={typography.body}>
             MRN: {maskPHI(patient.mrn)}
           </span>
-          <span className={typography.body}>·</span>
-          <span className={cn(typography.body, "truncate")}>
+          <span className={cn(typography.body, "hidden sm:inline")}>·</span>
+          <span className={cn(typography.body, "truncate hidden sm:inline")}>
             {patient.insurance}
           </span>
         </div>
@@ -74,7 +75,7 @@ export function PatientObjectCard({
         {/* PHI Toggle + Confidence */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className={cn(
-            "text-ds-badge px-2 py-0.5 rounded",
+            "text-ds-badge px-2 py-0.5 rounded whitespace-nowrap",
             confidenceStyle
           )}>
             {patient.careLens.overallConfidence} Confidence
@@ -96,37 +97,34 @@ export function PatientObjectCard({
         </div>
       </div>
 
-      {/* Row 2: Location · Clinical Info */}
-      <div className="flex items-center gap-4 mt-2">
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Room</span>
+      {/* Row 2: Location · Clinical Info — wraps on mobile */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Room</span>
           <span className={typography.body}>{patient.room}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>LOS</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">LOS</span>
           <span className={typography.body}>{patient.lengthOfStay}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Admitted</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Admitted</span>
           <span className={typography.body}>{patient.admissionDate}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Docs</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Docs</span>
           <span className={typography.body}>{patient.documentsProcessed}</span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className={typography.label}>Risk</span>
-          <span className={cn(
-            "text-ds-badge px-1.5 py-0.5 rounded",
-            riskStyle
-          )}>
+        <div className="flex items-center gap-1.5">
+          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Risk</span>
+          <span className={cn("text-ds-badge px-1.5 py-0.5 rounded", riskStyle)}>
             {patient.careLens.denialRisk}
           </span>
         </div>
       </div>
 
       {/* Row 3: Urgency Badge + Primary Diagnosis */}
-      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-border">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 pt-2 border-t border-border">
         <span className={cn(
           "text-ds-badge px-2 py-0.5 rounded flex-shrink-0",
           urgencyStyle
@@ -134,8 +132,8 @@ export function PatientObjectCard({
           {patient.urgency}
         </span>
         {primaryDiagnosis && (
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className={cn(typography.title, "truncate")}>
+          <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
+            <span className={cn(typography.title, "line-clamp-1")}>
               {primaryDiagnosis.name}
             </span>
             <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded flex-shrink-0">
@@ -194,11 +192,11 @@ export function PatientObjectCardCompact({
 
       {/* Row 4: Primary Diagnosis */}
       {primaryDiagnosis && (
-        <div className="mt-2 pt-2 border-t border-border">
-          <span className={cn(typography.title, "text-[11px]")}>
+        <div className="mt-2 pt-2 border-t border-border flex items-center gap-2">
+          <span className={typography.title}>
             {primaryDiagnosis.name}
           </span>
-          <span className="ml-2 text-ds-badge font-mono text-[var(--brand-600)]">
+          <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded">
             {primaryDiagnosis.icdCode}
           </span>
         </div>

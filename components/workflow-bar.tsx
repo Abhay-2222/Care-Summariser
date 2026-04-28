@@ -99,13 +99,13 @@ export function WorkflowBar({
   const totalIssues = openGaps + missingRules
 
   return (
-    <div className="sticky top-0 z-10 bg-card border-b border-border px-4 py-2">
-      <div className="flex items-center justify-between gap-4">
+    <div className="sticky top-0 z-10 bg-card border-b border-border px-3 sm:px-4 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4">
         {/* Left: Status + Progress */}
-        <div className="flex items-center gap-4 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
           {/* Status badge */}
           <span className={cn(
-            "flex-shrink-0 text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wide",
+            "flex-shrink-0 text-ds-badge px-2 py-0.5 rounded-full",
             statusInfo.badgeClass
           )}>
             {statusInfo.label}
@@ -113,48 +113,47 @@ export function WorkflowBar({
 
           {/* Progress bar */}
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-20 h-1.5 bg-[var(--neutral-150)] rounded-full overflow-hidden">
+            <div className="w-16 sm:w-20 h-1.5 bg-[var(--neutral-150)] rounded-full overflow-hidden flex-shrink-0">
               <div 
                 className={cn("h-full rounded-full transition-all", getProgressColor(progress))}
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <span className={cn(typography.label, "tabular-nums whitespace-nowrap")}>
-              {progress}% complete
+            <span className="text-caption text-[var(--neutral-600)] tabular-nums whitespace-nowrap">
+              {progress}%
             </span>
           </div>
 
-          {/* Issues indicator */}
+          {/* Issues indicator — inline on mobile */}
           {totalIssues > 0 && (
-            <div className="flex items-center gap-1.5 text-[var(--warning)]">
-              <AlertTriangle className="h-3 w-3" />
-              <span className="text-caption">
+            <div className="flex items-center gap-1 text-[var(--warning)]">
+              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+              <span className="text-caption whitespace-nowrap">
                 {totalIssues} {totalIssues === 1 ? "issue" : "issues"}
               </span>
             </div>
           )}
 
-          {/* Assignment */}
+          {/* Assignment — hidden on mobile */}
           {workflow.assignment && (
-            <span className={cn(typography.label, "hidden md:block")}>
+            <span className={cn(typography.label, "hidden lg:block whitespace-nowrap")}>
               {isAssignedToMe ? "Assigned to you" : `Assigned: ${workflow.assignment.assignedTo}`}
             </span>
           )}
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Issues indicator button - navigates to payer requirements section */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          {/* Issues indicator button */}
           {missingRules > 0 && (
             <Button
               variant="outline"
               size="sm"
-              className="h-7 px-2.5 text-caption gap-1.5 text-[var(--status-warn-text)] border-[var(--status-warn-border)] hover:bg-[var(--status-warn-bg)] bg-transparent"
+              className="h-7 px-2 sm:px-2.5 text-caption gap-1 sm:gap-1.5 text-[var(--status-warn-text)] border-[var(--status-warn-border)] hover:bg-[var(--status-warn-bg)] bg-transparent"
               onClick={onRequestDocs}
             >
-              <AlertTriangle className="h-3 w-3" />
-              <span className="hidden sm:inline">{missingRules} Missing</span>
-              <span className="sm:hidden">{missingRules}</span>
+              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">{missingRules} Missing</span>
             </Button>
           )}
 
@@ -163,12 +162,12 @@ export function WorkflowBar({
             <Button
               variant={primaryAction.variant}
               size="sm"
-              className="h-7 px-3 text-label-sm gap-1.5"
+              className="h-7 px-2 sm:px-3 text-label-sm gap-1 sm:gap-1.5 font-semibold whitespace-nowrap"
               onClick={primaryAction.onClick}
               disabled={primaryAction.disabled}
             >
-              <primaryAction.icon className="h-3.5 w-3.5" />
-              {primaryAction.label}
+              <primaryAction.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden xs:inline sm:inline">{primaryAction.label}</span>
             </Button>
           )}
 
@@ -178,7 +177,7 @@ export function WorkflowBar({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 text-[var(--neutral-400)] hover:text-foreground"
+                className="h-7 w-7 p-0 text-[var(--neutral-400)] hover:text-foreground flex-shrink-0"
               >
                 <ChevronDown className="h-4 w-4" />
               </Button>

@@ -7,9 +7,22 @@ import { AppProvider } from "@/lib/app-context"
 import { Toaster } from "@/components/ui/toaster"
 import { KeyboardShortcutsDialog } from "@/components/keyboard-shortcuts-dialog"
 
-const _plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] })
-const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"] })
-const _fraunces = Fraunces({ subsets: ["latin"], weight: ["300", "400", "700"], style: ["normal", "italic"] })
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans",
+})
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+})
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+})
 
 export const metadata: Metadata = {
   title: "CareSummarizer AI - Healthcare Prior Authorization Platform",
@@ -40,8 +53,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
+    <html lang="en" className={`${plusJakarta.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}>
+      <body className="font-sans antialiased">
         <AppProvider>
           {children}
           <Toaster />

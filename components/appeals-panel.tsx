@@ -51,28 +51,27 @@ export function AppealsPanel() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-100">
+        <div className="bg-card rounded-lg border border-border">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-slate-100">
+        <div className="px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2.5">
             <p className={cn(typography.sectionHeader, "text-[var(--neutral-500)]")}>APPEALS MANAGEMENT</p>
-            <Button size="sm" className="gap-1.5 text-[11px] h-7">
+            <Button size="sm" className="gap-1.5 text-label-sm h-7">
               <FileText className="h-3 w-3" />
               New Appeal
             </Button>
           </div>
           
-          {/* Status filters - pill style matching other panels */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1">
             {statusFilters.map((filter) => (
               <button
                 key={filter.value}
                 type="button"
                 className={cn(
-                  "flex-shrink-0 h-6 px-2.5 rounded-full text-[10px] font-medium transition-all whitespace-nowrap",
+                  "flex-shrink-0 h-6 px-2.5 rounded-full text-label-sm transition-all whitespace-nowrap",
                   statusFilter === filter.value 
-                    ? "bg-slate-800 text-white" 
-                    : "bg-[var(--neutral-50)] text-[var(--neutral-500)] hover:bg-slate-100 hover:text-slate-600",
+                    ? "bg-[var(--neutral-900)] text-white" 
+                    : "bg-[var(--neutral-50)] text-[var(--neutral-500)] hover:bg-[var(--neutral-100)] hover:text-[var(--neutral-700)]",
                 )}
                 onClick={() => setStatusFilter(filter.value)}
               >
@@ -82,29 +81,28 @@ export function AppealsPanel() {
           </div>
         </div>
         
-        {/* Content */}
         <div className="p-4">
           {mockAppeals.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10">
-              <CheckCircle2 className="mb-3 h-8 w-8 text-slate-300" />
-              <h3 className="text-[13px] font-medium text-foreground mb-1">No Active Appeals</h3>
-              <p className="text-[11px] text-[var(--neutral-400)] text-center">There are no pending appeals for this patient</p>
+              <CheckCircle2 className="mb-3 h-8 w-8 text-[var(--neutral-300)]" />
+              <h3 className="text-label-md text-foreground mb-1">No Active Appeals</h3>
+              <p className="text-caption text-[var(--neutral-500)] text-center">There are no pending appeals for this patient</p>
             </div>
           ) : (
             <div className="space-y-3">
               {mockAppeals.map((appeal) => (
-                <div key={appeal.id} className="p-3 rounded-lg border border-slate-100 bg-[var(--neutral-50)]/50">
+                <div key={appeal.id} className="p-3 rounded-lg border border-border bg-[var(--neutral-50)]">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         {appeal.status === "Approved" ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-[var(--success)]" />
                         ) : appeal.status === "Pending Review" ? (
-                          <Clock className="h-3.5 w-3.5 text-amber-500" />
+                          <Clock className="h-3.5 w-3.5 text-[var(--warning)]" />
                         ) : (
-                          <AlertCircle className="h-3.5 w-3.5 text-red-500" />
+                          <AlertCircle className="h-3.5 w-3.5 text-[var(--destructive)]" />
                         )}
-                        <h4 className="text-[12px] font-medium text-foreground">{appeal.caseNumber}</h4>
+                        <h4 className="text-label-sm font-semibold text-foreground">{appeal.caseNumber}</h4>
                         <Badge
                           variant={
                             appeal.status === "Approved"
@@ -113,34 +111,34 @@ export function AppealsPanel() {
                                 ? "warning"
                                 : "secondary"
                           }
-                          className="text-[9px] h-4 px-1.5"
+                          className="text-ds-badge h-4 px-1.5"
                         >
                           {appeal.status}
                         </Badge>
                       </div>
-                      <div className="mt-2 space-y-1 text-[11px]">
+                      <div className="mt-2 space-y-1">
                         <div className="flex gap-2">
-                          <span className="text-[var(--neutral-400)] w-16">Submitted</span>
-                          <span className="text-slate-600">{appeal.submittedDate}</span>
+                          <span className="text-caption text-[var(--neutral-500)] w-16">Submitted</span>
+                          <span className="text-caption text-[var(--neutral-700)]">{appeal.submittedDate}</span>
                         </div>
                         <div className="flex gap-2">
-                          <span className="text-[var(--neutral-400)] w-16">Reason</span>
-                          <span className="text-slate-600">{appeal.reason}</span>
+                          <span className="text-caption text-[var(--neutral-500)] w-16">Reason</span>
+                          <span className="text-caption text-[var(--neutral-700)]">{appeal.reason}</span>
                         </div>
                         <div className="flex gap-2">
-                          <span className="text-[var(--neutral-400)] w-16">Next Step</span>
-                          <span className="text-slate-600">{appeal.nextStep}</span>
+                          <span className="text-caption text-[var(--neutral-500)] w-16">Next Step</span>
+                          <span className="text-caption text-[var(--neutral-700)]">{appeal.nextStep}</span>
                         </div>
                         {appeal.dueDate !== "-" && (
                           <div className="flex gap-2">
-                            <span className="text-[var(--neutral-400)] w-16">Due Date</span>
-                            <span className="text-[var(--warning)] font-medium">{appeal.dueDate}</span>
+                            <span className="text-caption text-[var(--neutral-500)] w-16">Due Date</span>
+                            <span className="text-caption text-[var(--warning)] font-medium">{appeal.dueDate}</span>
                           </div>
                         )}
                       </div>
                     </div>
                     {appeal.status === "Pending Review" && (
-                      <Button variant="ghost" size="sm" className="text-[10px] h-6 px-2 text-[var(--neutral-400)] hover:text-slate-600">
+                      <Button variant="ghost" size="sm" className="text-caption h-6 px-2 text-[var(--neutral-500)] hover:text-[var(--neutral-800)]">
                         Update
                       </Button>
                     )}

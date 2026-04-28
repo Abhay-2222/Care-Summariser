@@ -65,32 +65,32 @@ function ExplainableConfidence({ label, score, explanation, factors }: Confidenc
         className="w-full p-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors"
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="h-1.5 w-6 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-            <div className="h-full rounded-full bg-slate-400" style={{ width: `${score}%` }} />
+          <div className="h-1.5 w-6 rounded-full bg-[var(--neutral-200)] overflow-hidden flex-shrink-0">
+            <div className="h-full rounded-full bg-[var(--neutral-500)]" style={{ width: `${score}%` }} />
           </div>
-          <span className="text-[10px] text-[var(--neutral-600)]">{label}</span>
-          <span className="text-[9px] text-[var(--neutral-400)]">({metCount}/{factors.length})</span>
+          <span className="text-caption text-[var(--neutral-700)]">{label}</span>
+          <span className="text-caption text-[var(--neutral-500)]">({metCount}/{factors.length})</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono text-slate-800">{score}%</span>
+          <span className="text-caption font-mono font-semibold text-[var(--neutral-800)]">{score}%</span>
           {expanded ? <ChevronDown className="h-3 w-3 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3 w-3 text-[var(--neutral-400)]" />}
         </div>
       </button>
       {expanded && (
-        <div className="px-2.5 pb-2.5 border-t border-border bg-[var(--neutral-50)]/50">
-          <p className="text-[9px] text-[var(--neutral-500)] py-2 leading-relaxed">{explanation}</p>
+        <div className="px-2.5 pb-2.5 border-t border-border bg-[var(--neutral-50)]">
+          <p className="text-caption text-[var(--neutral-600)] py-2 leading-relaxed">{explanation}</p>
           <div className="space-y-1">
             {factors.map((factor, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <div className={cn(
                   "h-3 w-3 rounded-full border flex items-center justify-center flex-shrink-0",
-                  factor.met ? "border-slate-300 bg-slate-100" : "border-border"
+                  factor.met ? "border-[var(--neutral-300)] bg-[var(--neutral-100)]" : "border-border"
                 )}>
-                  {factor.met && <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />}
+                  {factor.met && <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-500)]" />}
                 </div>
                 <span className={cn(
-                  "text-[9px]",
-                  factor.met ? "text-[var(--neutral-600)]" : "text-[var(--neutral-400)]"
+                  "text-caption",
+                  factor.met ? "text-[var(--neutral-700)]" : "text-[var(--neutral-500)]"
                 )}>{factor.label}</span>
               </div>
             ))}
@@ -103,7 +103,7 @@ function ExplainableConfidence({ label, score, explanation, factors }: Confidenc
 
 function RiskBadge({ level }: { level: RiskLevel }) {
   return (
-    <span className={cn("px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wide", riskStyles[level])}>
+    <span className={cn("px-1.5 py-0.5 rounded text-ds-badge", riskStyles[level])}>
       {level}
     </span>
   )
@@ -132,31 +132,31 @@ function ChatMessage({
   return (
     <div className={cn("flex gap-2", role === "user" ? "justify-end" : "justify-start")}>
       {isAssistant && (
-        <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
-          <Brain className="h-3 w-3 text-[var(--neutral-500)]" />
+        <div className="h-5 w-5 rounded-full bg-[var(--neutral-100)] border border-[var(--neutral-200)] flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Brain className="h-3 w-3 text-[var(--brand-500)]" />
         </div>
       )}
       <div className={cn(
-        "max-w-[85%] rounded-lg text-[10px]",
-        role === "user" 
-          ? "bg-slate-700 text-white px-2 py-1.5" 
-          : "bg-slate-100 border border-border"
+        "max-w-[85%] rounded-lg text-caption leading-relaxed",
+        role === "user"
+          ? "bg-[var(--brand-700)] text-white px-2.5 py-1.5"
+          : "bg-[var(--neutral-100)] border border-[var(--neutral-200)] text-[var(--neutral-800)]"
       )}>
         {isLoading ? (
-          <div className="flex items-center gap-1.5 px-2 py-1.5">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5">
             <Loader2 className="h-3 w-3 animate-spin text-[var(--neutral-500)]" />
-            <span className="text-[var(--neutral-500)]">Analyzing...</span>
+            <span className="text-[var(--neutral-600)]">Analyzing...</span>
           </div>
         ) : (
           <div>
-            <div className="px-2 py-1.5 text-foreground">{content}</div>
+            <div className="px-2.5 py-1.5 whitespace-pre-wrap">{content}</div>
             {quickActions && quickActions.length > 0 && (
-              <div className="flex flex-wrap gap-1 px-2 pb-1.5 pt-1 border-t border-border">
+              <div className="flex flex-wrap gap-1 px-2.5 pb-1.5 pt-1 border-t border-[var(--neutral-200)]">
                 {quickActions.map((action) => (
                   <button
                     key={action.id}
                     onClick={action.action}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-border hover:bg-[var(--neutral-50)] text-[var(--neutral-600)] text-[9px] transition-colors"
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-[var(--neutral-300)] hover:bg-[var(--neutral-50)] text-[var(--neutral-700)] text-caption transition-colors"
                   >
                     {action.icon}
                     {action.label}
@@ -386,17 +386,17 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
         <SheetHeader className="px-3 py-2.5 border-b border-border bg-[var(--neutral-50)] flex-shrink-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                <Brain className="h-4 w-4 text-[var(--neutral-500)]" />
+              <div className="h-7 w-7 rounded-lg bg-[var(--brand-50)] border border-[var(--brand-100)] flex items-center justify-center flex-shrink-0">
+                <Brain className="h-4 w-4 text-[var(--brand-500)]" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <SheetTitle className="text-[12px] font-medium text-slate-800">CareLens</SheetTitle>
-                  <Badge variant="outline" className="text-[7px] h-4 px-1.5 border-border text-[var(--neutral-500)] bg-[var(--neutral-50)] flex-shrink-0">
+                  <SheetTitle className="text-label-md text-[var(--neutral-900)]">CareLens</SheetTitle>
+                  <Badge variant="outline" className="text-ds-badge h-4 px-1.5 border-border text-[var(--neutral-600)] bg-[var(--neutral-50)] flex-shrink-0">
                     {hasPermission("edit_summary") ? "Interactive" : hasPermission("approve_pa") ? "Review" : "Audit"}
                   </Badge>
                 </div>
-                <p className="text-[9px] text-[var(--neutral-500)] truncate">{selectedPatient.name} - {selectedPatient.insurance}</p>
+                <p className="text-caption text-[var(--neutral-500)] truncate">{selectedPatient.name} · {selectedPatient.insurance}</p>
               </div>
             </div>
             {roleView.showExport && (
@@ -410,7 +410,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
         <ScrollArea className="flex-1 overflow-y-auto">
           <div className="p-3 space-y-3">
             <div className="p-2.5 bg-[var(--neutral-50)] rounded-lg border border-border">
-              <p className="text-[10px] text-[var(--neutral-500)] leading-relaxed">
+              <p className="text-caption text-[var(--neutral-600)] leading-relaxed">
                 Analyzed {selectedPatient.documentsProcessed} documents for this case.
                 {openRiskCount > 0 
                   ? <> Found {openRiskCount} item{openRiskCount > 1 ? 's' : ''} to review below.</>
@@ -421,24 +421,24 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <div className="grid grid-cols-3 gap-2">
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-[8px] text-[var(--neutral-400)] uppercase tracking-wide">Confidence</p>
-                <p className="text-[13px] font-mono text-slate-800">{careLens.overallConfidence}</p>
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Confidence</p>
+                <p className="text-label-md font-mono text-[var(--neutral-900)]">{careLens.overallConfidence}</p>
               </div>
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-[8px] text-[var(--neutral-400)] uppercase tracking-wide">Denial Risk</p>
-                <p className="text-[13px] font-mono text-slate-800">{careLens.denialRisk}</p>
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Denial Risk</p>
+                <p className="text-label-md font-mono text-[var(--neutral-900)]">{careLens.denialRisk}</p>
               </div>
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-[8px] text-[var(--neutral-400)] uppercase tracking-wide">Rules</p>
-                <p className="text-[13px] font-mono text-slate-800">
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Rules</p>
+                <p className="text-label-md font-mono text-[var(--neutral-900)]">
                   {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[10px] text-[var(--neutral-600)]">How we calculated confidence</p>
-              <p className="text-[9px] text-[var(--neutral-500)] -mt-1">Click each score to see contributing factors</p>
+              <p className="text-caption font-medium text-[var(--neutral-700)]">How we calculated confidence</p>
+              <p className="text-caption text-[var(--neutral-500)] -mt-1">Click each score to see contributing factors</p>
               
               <ExplainableConfidence 
                 label="Evidence Quality"
@@ -482,12 +482,12 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <Collapsible open={risksOpen} onOpenChange={setRisksOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-[10px] text-[var(--neutral-600)] flex items-center gap-1.5">
+                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
                   {risksOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                  <AlertTriangle className="h-3 w-3 text-[var(--neutral-400)]" />
+                  <AlertTriangle className="h-3 w-3 text-[var(--neutral-500)]" />
                   Risk Factors
                   {openRiskCount > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1 text-[8px] bg-red-100 text-[var(--destructive)]">
+                    <Badge variant="secondary" className="h-4 px-1.5 text-ds-badge bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]">
                       {openRiskCount}
                     </Badge>
                   )}
@@ -503,9 +503,9 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     <div 
                       key={risk.id} 
                       className={cn(
-                        "rounded-lg border text-[10px] overflow-hidden transition-all",
-                        isOpen ? "bg-[var(--status-error-bg)]/50 border-[var(--status-error-border)]" : 
-                        isAddressed ? "bg-[var(--status-ok-bg)]/50 border-[var(--status-ok-border)]" :
+                        "rounded-lg border text-caption overflow-hidden transition-all",
+                        isOpen ? "bg-[var(--status-error-bg)] border-[var(--status-error-border)]" : 
+                        isAddressed ? "bg-[var(--status-ok-bg)] border-[var(--status-ok-border)]" :
                         isDismissed ? "bg-[var(--neutral-50)] border-border opacity-50" :
                         "bg-[var(--neutral-50)] border-border"
                       )}
@@ -514,39 +514,36 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
                             <p className={cn(
-                              "text-foreground leading-tight",
+                              "text-caption text-[var(--neutral-800)] leading-tight",
                               (isAddressed || isDismissed) && "line-through opacity-60"
                             )}>{risk.factor}</p>
-                            {/* Show explanation inline when expanded */}
                             {isOpen && risk.explanation && (
-                              <p className="text-[9px] text-[var(--neutral-500)] mt-1 leading-relaxed">{risk.explanation}</p>
+                              <p className="text-caption text-[var(--neutral-600)] mt-1 leading-relaxed">{risk.explanation}</p>
                             )}
                           </div>
                           <RiskBadge level={risk.severity} />
                         </div>
                         
-                        {/* Status indicator for resolved items */}
                         {isAddressed && (
                           <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
-                            <div className="h-3 w-3 rounded-full border border-slate-300 bg-slate-100 flex items-center justify-center">
-                              <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                            <div className="h-3 w-3 rounded-full border border-[var(--neutral-300)] bg-[var(--neutral-100)] flex items-center justify-center">
+                              <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-500)]" />
                             </div>
-                            <span className="text-[9px] text-[var(--neutral-500)]">Addressed</span>
+                            <span className="text-caption text-[var(--neutral-600)]">Addressed</span>
                           </div>
                         )}
                         {isDismissed && (
                           <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
                             <div className="h-3 w-3 rounded-full border border-border" />
-                            <span className="text-[9px] text-[var(--neutral-400)]">Dismissed</span>
+                            <span className="text-caption text-[var(--neutral-500)]">Dismissed</span>
                           </div>
                         )}
                         
-                        {/* Action buttons for open risks */}
                         {isOpen && roleView.showActions && (
-                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-red-100">
+                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--status-error-border)]">
                             <button 
                               type="button"
-                              className="text-[9px] text-[var(--neutral-500)] hover:text-foreground underline"
+                              className="text-caption text-[var(--neutral-600)] hover:text-foreground underline"
                               onClick={() => handleChallenge(risk.id, risk.factor)}
                             >
                               Why is this flagged?
@@ -555,7 +552,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-6 px-2 text-[9px] text-[var(--neutral-600)] hover:bg-slate-100 gap-1 bg-transparent"
+                                className="h-6 px-2 text-caption text-[var(--neutral-700)] hover:bg-[var(--neutral-100)] gap-1 bg-transparent"
                                 onClick={() => {
                                   updateRiskFactorStatus(risk.id, "addressed", "Resolved")
                                   toast({ title: "Risk Addressed", description: "Marked as addressed" })
@@ -567,7 +564,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-6 px-2 text-[9px] text-[var(--neutral-400)] hover:bg-[var(--neutral-50)] gap-1 bg-transparent"
+                                className="h-6 px-2 text-caption text-[var(--neutral-500)] hover:bg-[var(--neutral-50)] gap-1 bg-transparent"
                                 onClick={() => {
                                   updateRiskFactorStatus(risk.id, "not_applicable", "Not applicable")
                                   toast({ title: "Risk Dismissed", description: "Marked as not applicable" })
@@ -588,12 +585,12 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <Collapsible open={gapsOpen} onOpenChange={setGapsOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-[10px] text-[var(--neutral-600)] flex items-center gap-1.5">
+                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
                   {gapsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                  <FileWarning className="h-3 w-3 text-[var(--neutral-400)]" />
+                  <FileWarning className="h-3 w-3 text-[var(--neutral-500)]" />
                   Policy Gaps
                   {openGapCount > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1 text-[8px] bg-amber-100 text-[var(--warning)]">
+                    <Badge variant="secondary" className="h-4 px-1.5 text-ds-badge bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]">
                       {openGapCount}
                     </Badge>
                   )}
@@ -604,15 +601,15 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                   <div 
                     key={gap.id} 
                     className={cn(
-                      "p-2 rounded-md border text-[10px]",
+                      "p-2 rounded-md border",
                       gap.status === "open" 
-                        ? "bg-[var(--status-warn-bg)]/50 border-[var(--status-warn-border)]" 
+                        ? "bg-[var(--status-warn-bg)] border-[var(--status-warn-border)]" 
                         : "bg-[var(--neutral-50)] border-border opacity-60"
                     )}
                   >
-                    <p className="text-foreground leading-tight">{gap.gap}</p>
+                    <p className="text-caption text-[var(--neutral-800)] leading-tight">{gap.gap}</p>
                     {gap.status === "open" && gap.policyReference && (
-                      <p className="text-[9px] text-[var(--neutral-400)] mt-1">Policy: {gap.policyReference}</p>
+                      <p className="text-caption text-[var(--neutral-500)] mt-1">Policy: {gap.policyReference}</p>
                     )}
                   </div>
                 ))}
@@ -621,12 +618,12 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <Collapsible open={recsOpen} onOpenChange={setRecsOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-[10px] text-[var(--neutral-600)] flex items-center gap-1.5">
+                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
                   {recsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-                  <Lightbulb className="h-3 w-3 text-[var(--neutral-400)]" />
+                  <Lightbulb className="h-3 w-3 text-[var(--neutral-500)]" />
                   Recommendations
                   {pendingRecCount > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1 text-[8px] bg-blue-100 text-[var(--brand-500)]">
+                    <Badge variant="secondary" className="h-4 px-1.5 text-ds-badge bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]">
                       {pendingRecCount}
                     </Badge>
                   )}
@@ -643,48 +640,46 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     <div 
                       key={rec.id} 
                       className={cn(
-                        "rounded-lg border text-[10px] overflow-hidden transition-all",
-                        isPending || isInProgress ? "bg-[var(--status-info-bg)]/50 border-[var(--status-info-border)]" : 
-                        isCompleted ? "bg-[var(--status-ok-bg)]/50 border-[var(--status-ok-border)]" :
+                        "rounded-lg border text-caption overflow-hidden transition-all",
+                        isPending || isInProgress ? "bg-[var(--status-info-bg)] border-[var(--status-info-border)]" : 
+                        isCompleted ? "bg-[var(--status-ok-bg)] border-[var(--status-ok-border)]" :
                         isDismissed ? "bg-[var(--neutral-50)] border-border opacity-50" :
                         "bg-[var(--neutral-50)] border-border"
                       )}
                     >
                       <div className="p-2">
                         <p className={cn(
-                          "text-foreground leading-tight",
+                          "text-caption text-[var(--neutral-800)] leading-tight",
                           (isCompleted || isDismissed) && "line-through opacity-60"
                         )}>{rec.text}</p>
                         
-                        {/* Status indicator for completed items */}
                         {isCompleted && (
                           <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
-                            <div className="h-3 w-3 rounded-full border border-slate-300 bg-slate-100 flex items-center justify-center">
-                              <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                            <div className="h-3 w-3 rounded-full border border-[var(--neutral-300)] bg-[var(--neutral-100)] flex items-center justify-center">
+                              <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-500)]" />
                             </div>
-                            <span className="text-[9px] text-[var(--neutral-500)]">Completed</span>
+                            <span className="text-caption text-[var(--neutral-600)]">Completed</span>
                           </div>
                         )}
                         {isDismissed && (
                           <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
                             <div className="h-3 w-3 rounded-full border border-border" />
-                            <span className="text-[9px] text-[var(--neutral-400)]">Skipped</span>
+                            <span className="text-caption text-[var(--neutral-500)]">Skipped</span>
                           </div>
                         )}
                         {isInProgress && (
                           <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
-                            <Loader2 className="h-3 w-3 text-[var(--neutral-400)] animate-spin" />
-                            <span className="text-[9px] text-[var(--neutral-500)]">In progress</span>
+                            <Loader2 className="h-3 w-3 text-[var(--neutral-500)] animate-spin" />
+                            <span className="text-caption text-[var(--neutral-600)]">In progress</span>
                           </div>
                         )}
                         
-                        {/* Action buttons for pending recommendations */}
                         {isPending && roleView.showActions && (
                           <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-[var(--status-info-border)]">
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="h-6 px-2 text-[9px] text-[var(--neutral-600)] hover:bg-slate-100 gap-1 bg-transparent"
+                              className="h-6 px-2 text-caption text-[var(--neutral-700)] hover:bg-[var(--neutral-100)] gap-1 bg-transparent"
                               onClick={() => {
                                 updateRecommendationStatus(rec.id, "completed", "Done")
                                 toast({ title: "Recommendation Completed", description: "Action marked as done" })
@@ -696,7 +691,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="h-6 px-2 text-[9px] text-[var(--neutral-400)] hover:bg-slate-100 gap-1 bg-transparent"
+                              className="h-6 px-2 text-caption text-[var(--neutral-500)] hover:bg-[var(--neutral-50)] gap-1 bg-transparent"
                               onClick={() => {
                                 updateRecommendationStatus(rec.id, "dismissed", "Skipped")
                                 toast({ title: "Recommendation Skipped", description: "Action dismissed" })
@@ -715,21 +710,21 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
             </Collapsible>
 
             <div className="p-2 rounded-lg bg-[var(--neutral-50)] border border-border">
-              <p className="text-[9px] text-[var(--neutral-500)] mb-1.5">{selectedPatient.insurance} Intel</p>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[9px]">
+              <p className="text-caption font-medium text-[var(--neutral-700)] mb-1.5">{selectedPatient.insurance} Intel</p>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                 <div className="flex justify-between">
-                  <span className="text-[var(--neutral-400)]">Wait</span>
-                  <span className="text-[var(--neutral-600)]">~4 days</span>
+                  <span className="text-caption text-[var(--neutral-500)]">Wait</span>
+                  <span className="text-caption text-[var(--neutral-700)]">~4 days</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[var(--neutral-400)]">Similar</span>
-                  <span className="text-[var(--neutral-600)] font-mono">78%</span>
+                  <span className="text-caption text-[var(--neutral-500)]">Similar</span>
+                  <span className="text-caption font-mono text-[var(--neutral-700)]">78%</span>
                 </div>
               </div>
             </div>
 
             {hasPermission("view_audit_log") && (
-              <Button variant="outline" className="w-full h-8 text-[10px] gap-1.5 bg-transparent">
+              <Button variant="outline" className="w-full h-8 text-label-sm gap-1.5 bg-transparent">
                 <Download className="h-3 w-3" />
                 Export Analysis Report
               </Button>
@@ -740,12 +735,12 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
         {roleView.showChat && (
           <div className="border-t border-border bg-[var(--neutral-50)] flex-shrink-0">
             <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
-              <CollapsibleTrigger className="w-full px-3 py-2 flex items-center justify-between hover:bg-slate-100">
-                <span className="text-[10px] text-[var(--neutral-600)] flex items-center gap-1.5">
+              <CollapsibleTrigger className="w-full px-3 py-2 flex items-center justify-between hover:bg-[var(--neutral-100)] transition-colors">
+                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
                   <MessageSquare className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   Ask CareLens
                   {chatMessages.length > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1 text-[8px]">{chatMessages.length}</Badge>
+                    <Badge variant="secondary" className="h-4 px-1.5 text-caption font-semibold tabular-nums">{chatMessages.length}</Badge>
                   )}
                 </span>
                 {chatOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
@@ -755,9 +750,9 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                   <div className="h-36 overflow-y-auto mb-2 space-y-2 bg-card rounded-lg p-2.5 border border-border">
                     {chatMessages.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center px-2">
-                        <MessageSquare className="h-6 w-6 text-slate-300 mb-2" />
-                        <p className="text-[10px] text-[var(--neutral-500)]">Ask questions about this case</p>
-                        <p className="text-[9px] text-[var(--neutral-400)] mt-0.5">e.g., "Why is evidence score low?" or "Draft a consult request"</p>
+                        <MessageSquare className="h-6 w-6 text-[var(--neutral-300)] mb-2" />
+                        <p className="text-caption text-[var(--neutral-600)]">Ask questions about this case</p>
+                        <p className="text-caption text-[var(--neutral-500)] mt-0.5">e.g., &quot;Why is evidence score low?&quot; or &quot;Draft a consult request&quot;</p>
                       </div>
                     ) : (
                       <>
@@ -784,7 +779,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     ].map((q) => (
                       <button
                         key={q.label}
-                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[var(--neutral-600)] text-[9px] hover:bg-slate-200 transition-colors"
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--neutral-100)] border border-[var(--neutral-200)] text-[var(--neutral-700)] text-caption hover:bg-[var(--neutral-150)] transition-colors"
                         onClick={() => {
                           setChatInput(q.label)
                           setTimeout(() => handleSendMessage(), 100)
@@ -802,11 +797,11 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
                       placeholder="Ask about this case..."
-                      className="min-h-[32px] h-8 text-[10px] resize-none"
+                      className="min-h-[32px] h-8 text-caption resize-none"
                     />
                     <Button 
                       size="sm" 
-                      className="h-8 w-8 p-0 bg-slate-800 hover:bg-slate-900 text-white"
+                      className="h-8 w-8 p-0 bg-[var(--brand-700)] hover:bg-[var(--brand-800)] text-white"
                       onClick={handleSendMessage}
                       disabled={!chatInput.trim() || isTyping}
                     >
