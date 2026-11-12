@@ -2,6 +2,20 @@ import type { CaseStatus, CaseWorkflow, Patient, UserRole } from "./types"
 import { statusLabels } from "./design-system"
 import { demoNow, demoRandom } from "./demo-clock"
 
+export function formatDeadline(hours: number): string {
+  const overdue = hours < 0
+  const abs = Math.abs(hours)
+  if (abs < 48) {
+    const rounded = Math.max(1, Math.round(abs))
+    return overdue ? `Overdue by ${rounded} h` : `Due in ${Math.round(abs)} h`
+  }
+  const days = Math.round(abs / 24)
+  if (days <= 14) return overdue ? `Overdue by ${days} days` : `Due in ${days} days`
+  const date = new Date(Date.now() + hours * 60 * 60 * 1000)
+  const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  return overdue ? `Overdue ${label}` : `Due ${label}`
+}
+
 export function rulesMet(patient: Pick<Patient, "payerRules">): number {
   return patient.payerRules.filter((rule) => rule.status === "satisfied").length
 }
@@ -216,10 +230,10 @@ export const statusConfig: Record<CaseStatus, {
   },
   denied: { 
     label: statusLabels.denied, 
-    color: "text-[var(--status-error-text)]", 
+    color: "text-[var(--neutral-600)]", 
     bgColor: "bg-transparent",
     borderColor: "border-transparent",
-    badgeClass: "text-[var(--status-error-text)]"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   appealing: { 
     label: statusLabels.appealing, 

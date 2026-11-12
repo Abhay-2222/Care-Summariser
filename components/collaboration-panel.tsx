@@ -232,25 +232,30 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               {notes.map((note) => (
                 <div
                   key={note.id}
-                  className={cn(
-                    "p-3 rounded-lg border",
-                    note.pinned && "border-border",
-                    note.type === "system" && "bg-[var(--neutral-50)] border-[var(--neutral-200)]",
-                    !note.pinned && note.type !== "system" && "bg-card border-border"
-                  )}
+                  className="rounded-lg border border-border bg-card p-3"
                 >
                   {note.type === "system" ? (
-                    <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-500)]">
-                      <Clock className="h-3 w-3" />
-                      <span>{note.content}</span>
-                      <span className="text-[var(--neutral-500)] ml-auto">{note.timestamp}</span>
+                    <div className="flex items-start gap-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--neutral-200)]">
+                        <Clock className="h-3 w-3 text-[var(--neutral-600)]" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span className="text-body text-[var(--neutral-900)]">System</span>
+                          {note.category && (
+                            <span className="text-meta text-[var(--neutral-500)]">{categoryConfig[note.category].label}</span>
+                          )}
+                        </div>
+                        <p className="mt-1 pl-0 text-body text-[var(--neutral-800)]">{note.content}</p>
+                        <p className="mt-1 text-meta text-[var(--neutral-500)]">{note.timestamp}</p>
+                      </div>
                     </div>
                   ) : (
                     <>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
+                            <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-200)]">
                               {note.author.initials}
                             </AvatarFallback>
                           </Avatar>
@@ -291,7 +296,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                           </Popover>
                         </div>
                       </div>
-                      <p className="text-body-sm text-foreground mt-2">
+                      <p className="mt-2 pl-8 text-body text-[var(--neutral-800)]">
                         {note.content.split(/(@[\w\s.]+)/).map((part, i) =>
                           part.startsWith("@") ? (
                             <span key={i} className="text-[var(--brand-500)]">{part}</span>
@@ -434,30 +439,18 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
         {/* History Tab */}
         <TabsContent value="history" className="flex-1 flex flex-col m-0 p-3">
           <ScrollArea className="flex-1 -mx-3 px-3">
-            <div className="space-y-0">
+            <div className="space-y-3 py-3">
               {[
-                { action: "PA submitted to payer", user: "Sarah Williams", time: "Today, 9:30 AM", icon: Send },
-                { action: "Case approved by physician", user: "Dr. Robert Chen", time: "Today, 9:22 AM", icon: CheckCircle },
-                { action: "Cardiology note added", user: "Dr. Lisa Park", time: "Today, 8:45 AM", icon: FileText },
-                { action: "Status changed to Ready", user: "System", time: "Today, 8:30 AM", icon: AlertTriangle },
-                { action: "Case claimed", user: "Sarah Williams", time: "Yesterday, 2:15 PM", icon: UserPlus },
-                { action: "Case created", user: "System", time: "Jan 20, 2026", icon: Clock },
-              ].map((item, index) => (
-                <div key={index} className="flex gap-3 py-2">
-                  <div className="flex flex-col items-center">
-                    <div className="h-6 w-6 rounded-full bg-[var(--neutral-100)] flex items-center justify-center">
-                      <item.icon className="h-3 w-3 text-[var(--neutral-500)]" />
-                    </div>
-                    {index < 5 && <div className="w-0.5 flex-1 bg-[var(--neutral-200)] my-1" />}
-                  </div>
-                  <div className="flex-1 pb-2">
-                    <p className="text-label-md text-foreground">{item.action}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-caption text-[var(--neutral-500)]">{item.user}</span>
-                      <span className="text-caption text-[var(--neutral-500)]">|</span>
-                      <span className="text-caption text-[var(--neutral-500)]">{item.time}</span>
-                    </div>
-                  </div>
+                { action: "Sent to the payer", user: "Sarah Williams", time: "Today, 9:30 AM" },
+                { action: "Signed off", user: "Dr. Robert Chen", time: "Today, 9:22 AM" },
+                { action: "Cardiology note added", user: "Dr. Lisa Park", time: "Today, 8:45 AM" },
+                { action: "Signed off", user: "System", time: "Today, 8:30 AM" },
+                { action: "Case claimed", user: "Sarah Williams", time: "Yesterday, 2:15 PM" },
+                { action: "Case opened", user: "System", time: "Jan 20, 2026" },
+              ].map((item) => (
+                <div key={item.action + item.time} className="rounded-lg border border-border bg-card p-3">
+                  <p className="text-body text-[var(--neutral-900)]">{item.action}</p>
+                  <p className="mt-1 text-meta text-[var(--neutral-500)]">{item.user} · {item.time}</p>
                 </div>
               ))}
             </div>

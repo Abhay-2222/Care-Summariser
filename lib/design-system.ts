@@ -176,13 +176,13 @@ export function getProgressColor(percent: number): string {
 export const requirementStatusStyles = {
   satisfied: {
     container: "bg-transparent border-transparent",
-    icon: "text-[var(--neutral-400)]",
+    icon: "text-[var(--neutral-500)]",
     text: "text-foreground",
   },
   missing: {
     container: "bg-transparent border-transparent",
-    icon: "text-[var(--status-error-text)]",
-    text: "text-[var(--status-error-text)]",
+    icon: "text-[var(--neutral-800)]",
+    text: "text-[var(--neutral-800)]",
   },
   unclear: {
     container: "bg-transparent border-transparent",

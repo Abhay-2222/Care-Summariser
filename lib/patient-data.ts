@@ -1,5 +1,5 @@
 import type { SeedPatient, RiskFactor, PolicyGap, Recommendation, AuditEntry } from "./types"
-import { demoRandom } from "./demo-clock"
+import { demoNow, demoRandom } from "./demo-clock"
 
 // Helper to generate unique IDs
 const uid = () => demoRandom().toString(36).substring(2, 9)
@@ -19,9 +19,8 @@ const generateRoom = () => `${Math.floor(demoRandom() * 500) + 100}-${"ABCD"[Mat
 
 // Date generator (within last 10 days)
 const generateAdmissionDate = (daysAgo: number) => {
-  const date = new Date()
-  date.setDate(date.getDate() - daysAgo)
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  const date = new Date(demoNow.getTime() - daysAgo * 24 * 60 * 60 * 1000)
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
 }
 
 // MRN generator

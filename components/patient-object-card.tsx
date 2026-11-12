@@ -30,59 +30,35 @@ export function PatientObjectCard({
   onTogglePHI,
   className 
 }: PatientObjectCardProps) {
-  const maskPHI = (value: string) => (showPHI ? value : "********")
-  
-  // Get primary diagnosis
   const primaryDiagnosis = patient.problemList.find(p => p.type === "primary")
+  const urgencyWord = patient.urgency === "STAT" ? "STAT" : patient.urgency === "URGENT" ? "Urgent" : "Routine"
 
   return (
-    <div className={cn("min-w-0", className)}>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-3 lg:grid-cols-[auto_auto_minmax(0,1fr)_auto]">
-        <div className="min-w-0">
-          <p className={typography.meta}>Patient</p>
-          <h2 className="mt-1 flex items-center gap-2 whitespace-nowrap">
-            <span className={typography.name}>{patient.name}</span>
-            <span className={typography.meta}>{patient.age} {patient.gender}</span>
-            {onTogglePHI && (
-              <Button variant="ghost" size="sm" className="h-5 w-5 p-0" aria-label={showPHI ? "Hide details" : "Show details"} onClick={onTogglePHI}>
-                {showPHI ? (
-                  <EyeOff className="h-3 w-3 text-[var(--neutral-400)]" />
-                ) : (
-                  <Eye className="h-3 w-3 text-[var(--neutral-400)]" />
-                )}
-              </Button>
+    <div className={cn("group/identity min-w-0", className)}>
+      <h2 className="flex items-baseline gap-2">
+        <span className="text-title text-[var(--neutral-900)]">{showPHI ? patient.name : "********"}</span>
+        <span className="text-meta text-[var(--neutral-500)]">{patient.age} {patient.gender}</span>
+        <span className={cn("text-meta", patient.urgency === "STAT" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-600)]")}>{urgencyWord}</span>
+        {onTogglePHI && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="focus-ring h-5 w-5 p-0 opacity-0 group-hover/identity:opacity-100 group-focus-within/identity:opacity-100"
+            aria-label={showPHI ? "Hide patient details" : "Show patient details"}
+            onClick={onTogglePHI}
+          >
+            {showPHI ? (
+              <EyeOff className="h-3 w-3 text-[var(--neutral-500)]" />
+            ) : (
+              <Eye className="h-3 w-3 text-[var(--neutral-500)]" />
             )}
-          </h2>
-        </div>
-        <div className="min-w-0">
-          <p className={typography.meta}>Insurance</p>
-          <p className={cn(typography.body, "mt-1 whitespace-nowrap")}>{patient.insurance}</p>
-        </div>
-        <div className="min-w-0">
-          <p className={typography.meta}>Case</p>
-          <p className={cn(typography.body, "mt-1 truncate")}>
-            {maskPHI(patient.mrn)}
-            <span className={typography.meta}> · {patient.admissionDate}</span>
-            {patient.urgency === "STAT" && (
-              <span className="text-[var(--status-error-text)]"> · STAT</span>
-            )}
-          </p>
-        </div>
-        <div>
-          <p className={typography.meta}>Risk</p>
-          <p className={cn(
-            typography.body,
-            "mt-1 whitespace-nowrap",
-            patient.careLens.denialRisk === "High" && "text-[var(--status-error-text)]"
-          )}>
-            {patient.careLens.denialRisk}
-          </p>
-        </div>
-      </div>
-      <div className="mt-3 flex items-baseline gap-2">
-        <p className={cn(typography.meta, "shrink-0")}>Diagnosis</p>
-        <p className={typography.body}>{primaryDiagnosis?.name ?? "None recorded"}</p>
-      </div>
+          </Button>
+        )}
+      </h2>
+      <p className="mt-2 text-body text-[var(--neutral-800)]">{primaryDiagnosis?.name ?? "None recorded"}</p>
+      <p className="mt-1 text-meta text-[var(--neutral-500)]">
+        {showPHI ? patient.mrn : "********"} · {patient.insurance} · Admitted {patient.admissionDate}
+      </p>
     </div>
   )
 }

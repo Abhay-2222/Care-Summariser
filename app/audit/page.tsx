@@ -284,7 +284,7 @@ export default function AuditPage() {
                   <Activity className="h-4 w-4 text-[var(--neutral-400)]" />
                   Recent Activity
                 </h3>
-                <Link href="/" className="text-caption text-[var(--brand-500)] hover:underline flex items-center gap-1">
+                <Link href="/queue" className="text-caption text-[var(--brand-500)] hover:underline flex items-center gap-1">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

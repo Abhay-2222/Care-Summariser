@@ -39,7 +39,7 @@ export default function PatientDetailPage() {
           <main className="flex flex-1 items-center justify-center bg-background">
             <div className="text-center">
               <p className="text-body text-[var(--neutral-700)]">This case is not in the queue.</p>
-              <Link href="/" className="mt-2 inline-block text-body text-[var(--brand-600)]">Back to the queue</Link>
+              <Link href="/queue" className="mt-2 inline-block text-body text-[var(--brand-600)]">Back to the queue</Link>
             </div>
           </main>
         </div>
