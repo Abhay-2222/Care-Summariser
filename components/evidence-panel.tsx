@@ -15,7 +15,7 @@ const docTypeFilters = [
   { value: "lab", label: "Labs" },
   { value: "imaging", label: "Imaging" },
   { value: "consult", label: "Consults" },
-  { value: "needed", label: "Needed for Auth" }, // New filter for docs needed for authorization
+  { value: "needed", label: "Needed for the request" },
 ]
 
 // Mock documents with requirements they satisfy
@@ -108,13 +108,13 @@ export function EvidencePanel() {
       <div className="bg-white rounded-lg border border-slate-100">
         {/* Header - minimal with design system typography */}
         <div className="px-4 py-3 border-b border-slate-100">
-          <p className={cn(typography.sectionHeader, "mb-2")}>EVIDENCE SEARCH</p>
+          <p className={cn(typography.sectionHeader, "mb-2")}>Evidence</p>
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
             <input
               type="text"
               placeholder="Search documentation..."
-              className="w-full h-7 pl-7 pr-3 rounded-md text-[11px] bg-[var(--neutral-50)] border-0 text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-200"
+              className="w-full h-7 pl-7 pr-3 rounded-md text-body bg-[var(--neutral-50)] border-0 text-[var(--neutral-700)] placeholder:text-[var(--neutral-400)] focus:outline-none focus:ring-1 focus:ring-[var(--neutral-200)]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -127,17 +127,17 @@ export function EvidencePanel() {
                 key={filter.value}
                 type="button"
                 className={cn(
-                  "h-6 px-2 rounded text-[11px] transition-all",
+                  "h-6 px-2 rounded text-meta transition-all",
                   docTypeFilter === filter.value 
-                    ? "bg-slate-700 text-white font-medium" 
-                    : "text-[var(--neutral-400)] hover:text-[var(--neutral-500)] hover:bg-[var(--neutral-50)]",
+                    ? "bg-[var(--neutral-800)] text-white" 
+                    : "text-[var(--neutral-500)] hover:text-foreground hover:bg-[var(--neutral-50)]",
                   filter.value === "needed" && "border border-blue-200"
                 )}
                 onClick={() => setDocTypeFilter(filter.value)}
               >
                 {filter.label}
                 {filter.value === "needed" && (
-                  <span className="ml-1 text-[9px]">({neededForAuthCount})</span>
+                  <span className="ml-1">({neededForAuthCount})</span>
                 )}
               </button>
             ))}
@@ -151,7 +151,7 @@ export function EvidencePanel() {
               key={doc.id}
               className={cn(
                 "p-3 cursor-pointer transition-colors hover:bg-[var(--neutral-50)]",
-                selectedDoc === doc.id && "bg-[var(--status-info-bg)] border-l-2 border-l-blue-500"
+                selectedDoc === doc.id && "bg-[var(--neutral-50)]"
               )}
               onClick={() => setSelectedDoc(doc.id === selectedDoc ? null : doc.id)}
             >
@@ -159,14 +159,9 @@ export function EvidencePanel() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <FileText className="h-3.5 w-3.5 text-[var(--neutral-400)] flex-shrink-0" />
-                    <h4 className={cn(typography.title)}>{doc.type}</h4>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-border">
-                      {doc.relevance}% match
-                    </span>
+                    <h4 className={typography.body}>{doc.type}</h4>
                     {doc.isNeededForAuth && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--status-info-bg)] text-[var(--brand-500)] border border-blue-200">
-                        Auth Doc
-                      </span>
+                      <span className="text-caption text-[var(--neutral-500)]">Needed for the request</span>
                     )}
                   </div>
                   
@@ -188,25 +183,16 @@ export function EvidencePanel() {
                   {/* Satisfies Requirements - clickable links back to Summary */}
                   {doc.satisfiesRequirements && doc.satisfiesRequirements.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-100">
-                      <Link2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />
-                      <span className={cn(typography.label, "text-[var(--success)]")}>Satisfies:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {doc.satisfiesRequirements.map((req) => (
-                          <span 
-                            key={req}
-                            className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-[var(--success)] border border-emerald-200 cursor-pointer hover:bg-emerald-100"
-                          >
-                            {req}
-                          </span>
-                        ))}
-                      </div>
+                      <span className="text-caption text-[var(--neutral-500)]">
+                        Meets {doc.satisfiesRequirements.join(", ")}
+                      </span>
                     </div>
                   )}
                 </div>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-[10px] h-6 px-2 text-[var(--neutral-400)] hover:text-slate-600 bg-transparent"
+                  className="h-6 px-2 text-meta hover:text-foreground bg-transparent"
                 >
                   View
                 </Button>

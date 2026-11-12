@@ -65,8 +65,9 @@ const statusOptions: { label: string; value: CaseStatus | "ALL"; color: string }
   { label: "All", value: "ALL", color: "bg-[var(--neutral-100)] text-[var(--neutral-600)]" },
   { label: "New", value: "new", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
   { label: "In Progress", value: "in_progress", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
-  { label: "Needs MD", value: "needs_physician", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
-  { label: "Ready", value: "ready", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)]" },
+  { label: "With physician", value: "needs_physician", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
+  { label: "Escalated", value: "escalated", color: "bg-[var(--status-error-bg)] text-[var(--status-error-text)]" },
+  { label: "Signed off", value: "ready", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)]" },
   { label: "Submitted", value: "submitted", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
 ]
 
@@ -88,6 +89,7 @@ export function PatientListPanel() {
 } = useApp()
   const [searchQuery, setSearchQuery] = useState("")
   const [bulkMode, setBulkMode] = useState(false)
+  const [queueSlice, setQueueSlice] = useState<"all" | "due" | "yours" | "waiting">("all")
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const isMobile = useIsMobile()
   
@@ -104,14 +106,22 @@ export function PatientListPanel() {
         searchQuery === "" ||
         patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         patient.mrn.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesUrgency && matchesStatus && matchesSearch
+      const dueToday = !!patient.paDeadline && (patient.paDeadline.hoursRemaining <= 24 || patient.paDeadline.status === "overdue")
+      const yours = patient.workflow.assignment?.assignedTo === currentUser.name
+      const waiting = patient.workflow.status === "needs_physician" || patient.workflow.status === "escalated" || patient.workflow.status === "submitted"
+      const matchesSlice =
+        queueSlice === "all" ||
+        (queueSlice === "due" && dueToday) ||
+        (queueSlice === "yours" && yours) ||
+        (queueSlice === "waiting" && waiting)
+      return matchesUrgency && matchesStatus && matchesSearch && matchesSlice
     })
-  }, [patients, selectedFilter, statusFilter, searchQuery])
+  }, [patients, selectedFilter, statusFilter, searchQuery, queueSlice, currentUser.name])
 
   // Sort by urgency priority and then by status
   const sortedPatients = useMemo(() => {
     const urgencyPriority = { STAT: 0, URGENT: 1, ROUTINE: 2 }
-    const statusPriority = { new: 0, needs_physician: 1, in_progress: 2, ready: 3, submitted: 4, approved: 5, denied: 6, appealing: 7 }
+    const statusPriority = { new: 0, needs_physician: 1, escalated: 2, in_progress: 3, ready: 4, submitted: 5, approved: 6, denied: 7, appealing: 8 }
     
     return [...filteredPatients].sort((a, b) => {
       // First by urgency
@@ -216,7 +226,7 @@ export function PatientListPanel() {
       {showClose && (
         <div className="px-3 py-2.5 border-b border-border bg-card flex items-center justify-between">
           <div>
-            <h2 className="text-heading-sm text-foreground">Patient Queue</h2>
+            <h2 className={typography.title}>Queue</h2>
             <p className="text-caption text-[var(--neutral-500)]">{sortedPatients.length} patients</p>
           </div>
           <Button 
@@ -232,6 +242,29 @@ export function PatientListPanel() {
       
       {/* Header - Optimized minimal design */}
       <div className="px-3 py-2.5 border-b border-border">
+        <div className="mb-2">
+          <h2 className={typography.title}>Queue</h2>
+        </div>
+        <div className="flex gap-1 mb-2">
+          {([
+            ["due", "Due today", patients.filter((patient) => !!patient.paDeadline && (patient.paDeadline.hoursRemaining <= 24 || patient.paDeadline.status === "overdue")).length],
+            ["yours", "Yours", patients.filter((patient) => patient.workflow.assignment?.assignedTo === currentUser.name).length],
+            ["waiting", "Waiting", patients.filter((patient) => patient.workflow.status === "needs_physician" || patient.workflow.status === "escalated" || patient.workflow.status === "submitted").length],
+          ] as const).map(([id, label, count]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setQueueSlice(queueSlice === id ? "all" : id)}
+              className={cn(
+                "flex-1 rounded-lg border px-2 py-1 text-left",
+                queueSlice === id ? "border-[var(--brand-500)] bg-[var(--brand-50)]" : "border-border bg-card"
+              )}
+            >
+              <span className="block text-caption text-[var(--neutral-500)]">{label}</span>
+              <span className="block text-label-md text-foreground tabular-nums">{count}</span>
+            </button>
+          ))}
+        </div>
         {/* Search + Filters in one row */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -239,7 +272,7 @@ export function PatientListPanel() {
             <input
               id="patient-search"
               type="text"
-              placeholder="Search..."
+              placeholder="Name or MRN"
               className="w-full h-8 pl-8 pr-8 rounded-lg text-body-sm bg-[var(--neutral-50)] border border-border text-foreground placeholder:text-[var(--neutral-400)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-100)] focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -289,37 +322,6 @@ export function PatientListPanel() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        
-        {/* Urgency quick filters - compact icons only */}
-        <div className="flex items-center gap-0.5 mt-2">
-          {urgencyOptions.map((filter) => {
-            const isActive = selectedFilter === filter.value
-            const count = urgencyCounts[filter.value as keyof typeof urgencyCounts]
-            const Icon = filter.icon
-            
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded text-caption transition-all",
-                  isActive 
-                    ? "bg-[var(--neutral-800)] text-white" 
-                    : "text-[var(--neutral-400)] hover:text-foreground hover:bg-[var(--neutral-50)]",
-                )}
-                onClick={() => setSelectedFilter(filter.value)}
-              >
-                <Icon className={cn(
-                  "h-3 w-3",
-                  !isActive && filter.value === "STAT" && "text-[var(--destructive)]",
-                  !isActive && filter.value === "URGENT" && "text-[var(--warning)]",
-                )} />
-                {filter.value !== "ALL" && <span className="tabular-nums">{count}</span>}
-                {filter.value === "ALL" && <span>All</span>}
-              </button>
-            )
-          })}
-        </div>
       </div>
 
       {/* Patient List */}
@@ -327,7 +329,9 @@ export function PatientListPanel() {
         {sortedPatients.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-[var(--neutral-400)]">
             <Search className="h-5 w-5 mb-2" />
-            <span className="text-caption">No patients found</span>
+            <span className="text-caption">
+              {searchQuery ? `No match for "${searchQuery}"` : "Nothing in the queue."}
+            </span>
           </div>
         ) : (
           <div className="py-1">
@@ -335,8 +339,6 @@ export function PatientListPanel() {
               const isSelected = selectedPatientId === patient.id
               const workflow = patient.workflow
               const statusInfo = statusConfig[workflow.status]
-              const isNew = workflow.status === "new"
-              const canClaim = isNew && hasPermission("claim_case")
 
               return (
                 <div
@@ -353,8 +355,7 @@ export function PatientListPanel() {
                   }}
                 >
                   <div className="flex items-start gap-2">
-                    {/* Bulk selection checkbox or Urgency dot */}
-                    {bulkMode ? (
+                    {bulkMode && (
                       <button
                         className="mt-1 flex-shrink-0"
                         onClick={(e) => togglePatientSelection(patient.id, e)}
@@ -365,92 +366,29 @@ export function PatientListPanel() {
                           <Square className="h-4 w-4 text-[var(--neutral-300)] hover:text-[var(--neutral-400)]" />
                         )}
                       </button>
-                    ) : (
-                      <div className={cn(
-                        "mt-1.5 h-2 w-2 rounded-full flex-shrink-0",
-                        patient.urgency === "STAT" ? "bg-[var(--destructive)]" :
-                        patient.urgency === "URGENT" ? "bg-[var(--warning)]" : "bg-[var(--neutral-300)]"
-                      )} />
                     )}
-                    
                     <div className="flex-1 min-w-0">
-                      {/* Name row */}
-                      <div className="flex items-center justify-between gap-1">
-                        <span className={cn(
-                          "text-patient-name truncate",
-                          isSelected ? "text-[var(--brand-600)]" : "text-foreground"
-                        )}>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={cn("text-name truncate", isSelected ? "text-[var(--brand-700)]" : "text-foreground")}>
                           {patient.name}
                         </span>
-                        {/* Status badge - consistent styling everywhere */}
-                        <span className={cn(
-                          "flex-shrink-0 text-ds-badge px-1.5 py-0.5 rounded",
-                          statusInfo.badgeClass
-                        )}>
+                        <span className={cn("flex-shrink-0 text-meta", statusInfo.badgeClass)}>
                           {statusInfo.label}
                         </span>
                       </div>
-                      
-                      {/* Meta info — nowrap prevents the two-line layout inconsistency */}
-                      <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
-                        <span className="text-caption text-[var(--neutral-600)] shrink-0">{patient.mrn}</span>
-                        <span className="text-caption text-[var(--neutral-400)] shrink-0">·</span>
-                        <span className="text-caption text-[var(--neutral-600)] shrink-0">{patient.age}yo {patient.gender}</span>
-                        <span className="text-caption text-[var(--neutral-400)] shrink-0">·</span>
-                        <span className="text-caption text-[var(--neutral-500)] truncate min-w-0">{patient.insurance}</span>
-                      </div>
-                      
-                      {/* Progress & Assignment */}
-                      <div className="flex items-center gap-2 mt-1.5">
-                        {/* Progress bar */}
-                        <div className="flex-1 h-1.5 bg-[var(--neutral-200)] rounded-full overflow-hidden">
-                          <div 
-                            className={cn(
-                              "h-full rounded-full transition-all",
-                              workflow.progressPercent >= 80 ? "bg-[var(--success)]" :
-                              workflow.progressPercent >= 50 ? "bg-[var(--warning)]" : "bg-[var(--neutral-400)]"
-                            )}
-                            style={{ width: `${workflow.progressPercent}%` }}
-                          />
-                        </div>
-                        <span className="text-caption font-mono text-[var(--neutral-600)] tabular-nums w-7">{workflow.progressPercent}%</span>
-                      </div>
-
-                      {/* Assignment info or Claim action */}
-                      <div className="flex items-center justify-between mt-1.5">
-                        {workflow.assignment ? (
-                          <div className="flex items-center gap-1 text-caption text-[var(--neutral-500)]">
-                            <User className="h-2.5 w-2.5" />
-                            <span className="truncate max-w-[100px]">{workflow.assignment.assignedTo}</span>
-                          </div>
-                        ) : canClaim ? (
-                          <TooltipProvider delayDuration={0}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  className="flex items-center gap-1 text-caption text-[var(--brand-500)] hover:text-[var(--brand-600)] transition-colors"
-                                  onClick={(e) => handleClaimCase(patient.id, e)}
-                                >
-                                  <span className="h-4 w-4 rounded bg-[var(--brand-50)] flex items-center justify-center">
-                                    <ArrowRight className="h-2.5 w-2.5" />
-                                  </span>
-                                  Start Review
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="text-caption">
-                                Claim this case and begin UR review
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ) : (
-                          <span className="text-caption text-[var(--neutral-300)] italic">Awaiting assignment</span>
-                        )}
-                        
-                        {/* Risk indicator */}
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={cn(
+                          "text-meta",
+                          patient.paDeadline?.status === "overdue" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-500)]"
+                        )}>
+                          {patient.paDeadline
+                            ? patient.paDeadline.status === "overdue"
+                              ? `Overdue ${Math.abs(patient.paDeadline.hoursRemaining)} h`
+                              : `Due in ${patient.paDeadline.hoursRemaining} h`
+                            : `${patient.payerRules.filter((rule) => rule.status === "satisfied").length} of ${patient.payerRules.length}`}
+                        </span>
                         {patient.careLens?.denialRisk === "High" && (
-                          <span className="text-ds-badge px-1.5 py-0.5 rounded bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]">
-                            High Risk
-                          </span>
+                          <span className="text-meta text-[var(--status-error-text)]">High risk</span>
                         )}
                       </div>
                     </div>

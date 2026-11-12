@@ -1,4 +1,13 @@
 import type { CaseStatus, CaseWorkflow, Patient, UserRole } from "./types"
+import { statusLabels } from "./design-system"
+
+export function requirementsMet(patient: Pick<Patient, "payerRules" | "careLens">): boolean {
+  const rulesOk = patient.payerRules.every((rule) => rule.status === "satisfied")
+  const noHighOpenRisk = patient.careLens.riskFactors.every(
+    (risk) => !(risk.severity === "High" && risk.status === "open")
+  )
+  return rulesOk && noHighOpenRisk
+}
 
 // Calculate progress based on CareLens data and payer rules
 export function calculateProgress(patient: Patient): number {
@@ -26,32 +35,23 @@ export function calculateProgress(patient: Patient): number {
 
 // Check if case is ready for PA submission
 export function isReadyForPA(patient: Patient): boolean {
-  const { careLens, payerRules } = patient
-  
-  const allRulesSatisfied = payerRules.every(r => r.status === "satisfied")
-  const noHighRisks = careLens.riskFactors.filter(r => r.severity === "High" && r.status === "open").length === 0
-  const confidenceHigh = careLens.overallConfidence === "High"
-  
-  return allRulesSatisfied && noHighRisks && confidenceHigh
+  return requirementsMet(patient)
 }
 
 // Generate initial workflow state based on patient data
 export function generateWorkflow(patient: Omit<Patient, "workflow">, index: number): CaseWorkflow {
   const progress = calculateProgressFromPartial(patient)
-  const readyForPA = isReadyForPAFromPartial(patient)
-  
-  // Distribute statuses across patients for demo variety
-  const statusDistribution: CaseStatus[] = [
-    "new", "new", "new",
-    "in_progress", "in_progress", "in_progress", "in_progress",
-    "needs_physician", "needs_physician",
-    "ready", "ready",
+  const readyForPA = requirementsMet(patient)
+  const otherStatuses: CaseStatus[] = [
+    "new",
+    "in_progress",
+    "needs_physician",
+    "escalated",
     "submitted",
-    "approved",
-    "denied"
+    "denied",
+    "appealing",
   ]
-  
-  const status = statusDistribution[index % statusDistribution.length]
+  const status: CaseStatus = readyForPA ? "ready" : otherStatuses[index % otherStatuses.length]
   
   const mockUsers = [
     { name: "Maria Santos", role: "case_manager" as UserRole },
@@ -88,6 +88,16 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
     })
   }
   
+  if (status === "escalated") {
+    const physician = mockUsers.find(u => u.role === "physician") || mockUsers[3]
+    workflow.physicianDecision = {
+      decision: "escalated",
+      decidedBy: physician.name,
+      decidedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+      notes: "Sent to the medical director.",
+    }
+  }
+
   // Add physician decision for approved/denied cases
   if (status === "approved" || status === "denied" || status === "submitted") {
     const physician = mockUsers.find(u => u.role === "physician") || mockUsers[3]
@@ -117,16 +127,7 @@ function calculateProgressFromPartial(patient: Omit<Patient, "workflow">): numbe
   return Math.round(rulesProgress + gapsProgress + 30)
 }
 
-function isReadyForPAFromPartial(patient: Omit<Patient, "workflow">): boolean {
-  const { careLens, payerRules } = patient
-  
-  const allRulesSatisfied = payerRules.every(r => r.status === "satisfied")
-  const noHighRisks = careLens.riskFactors.filter(r => r.severity === "High" && r.status === "open").length === 0
-  
-  return allRulesSatisfied && noHighRisks
-}
-
-// Status display helpers - Consistent badge styles everywhere
+// Status display helpers - labels come from the design system
 // Uses design system: bg-{color}-50, text-{color}-600, border-{color}-200
 export const statusConfig: Record<CaseStatus, { 
   label: string
@@ -136,60 +137,67 @@ export const statusConfig: Record<CaseStatus, {
   badgeClass: string // Combined class for easy use
 }> = {
   new: { 
-    label: "New", 
+    label: statusLabels.new, 
     color: "text-blue-600", 
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
-    badgeClass: "bg-blue-50 text-blue-600 border border-blue-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   in_progress: { 
-    label: "In Progress", 
+    label: statusLabels.in_progress, 
     color: "text-slate-600", 
     bgColor: "bg-slate-100",
     borderColor: "border-slate-200",
-    badgeClass: "bg-slate-100 text-slate-600 border border-slate-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   needs_physician: { 
-    label: "Needs MD", 
-    color: "text-amber-600", 
-    bgColor: "bg-amber-50",
-    borderColor: "border-amber-200",
-    badgeClass: "bg-amber-50 text-amber-600 border border-amber-200"
+    label: statusLabels.needs_physician, 
+    color: "text-[var(--neutral-600)]", 
+    bgColor: "bg-transparent",
+    borderColor: "border-transparent",
+    badgeClass: "text-[var(--neutral-600)]"
+  },
+  escalated: {
+    label: statusLabels.escalated,
+    color: "text-red-600",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
+    badgeClass: "text-[var(--status-error-text)]",
   },
   ready: { 
-    label: "Ready", 
+    label: statusLabels.ready, 
     color: "text-emerald-600", 
     bgColor: "bg-emerald-50",
     borderColor: "border-emerald-200",
-    badgeClass: "bg-emerald-50 text-emerald-600 border border-emerald-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   submitted: { 
-    label: "Submitted", 
+    label: statusLabels.submitted, 
     color: "text-sky-600", 
     bgColor: "bg-sky-50",
     borderColor: "border-sky-200",
-    badgeClass: "bg-sky-50 text-sky-600 border border-sky-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   approved: { 
-    label: "Approved", 
+    label: statusLabels.approved, 
     color: "text-green-600", 
     bgColor: "bg-green-50",
     borderColor: "border-green-200",
-    badgeClass: "bg-green-50 text-green-600 border border-green-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   denied: { 
-    label: "Denied", 
-    color: "text-red-600", 
-    bgColor: "bg-red-50",
-    borderColor: "border-red-200",
-    badgeClass: "bg-red-50 text-red-600 border border-red-200"
+    label: statusLabels.denied, 
+    color: "text-[var(--status-error-text)]", 
+    bgColor: "bg-transparent",
+    borderColor: "border-transparent",
+    badgeClass: "text-[var(--status-error-text)]"
   },
   appealing: { 
-    label: "Appealing", 
+    label: statusLabels.appealing, 
     color: "text-orange-600", 
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
-    badgeClass: "bg-orange-50 text-orange-600 border border-orange-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
 }
 
@@ -200,15 +208,15 @@ export const urgencyConfig: Record<string, {
 }> = {
   STAT: { 
     label: "STAT", 
-    badgeClass: "bg-red-50 text-red-600 border border-red-200"
+    badgeClass: "text-[var(--status-error-text)]"
   },
   URGENT: { 
     label: "Urgent", 
-    badgeClass: "bg-amber-50 text-amber-600 border border-amber-200"
+    badgeClass: "text-[var(--neutral-600)]"
   },
   ROUTINE: { 
     label: "Routine", 
-    badgeClass: "bg-slate-50 text-slate-500 border border-slate-200"
+    badgeClass: "text-[var(--neutral-500)]"
   },
 }
 
@@ -227,6 +235,11 @@ export function getNextStatuses(currentStatus: CaseStatus, role: UserRole): Case
     },
     needs_physician: {
       case_manager: ["in_progress"],
+      physician: ["ready", "in_progress", "escalated"],
+      auditor: [],
+    },
+    escalated: {
+      case_manager: [],
       physician: ["ready", "in_progress"],
       auditor: [],
     },
@@ -280,7 +293,7 @@ export function canPerformAction(action: string, role: UserRole, caseStatus: Cas
     },
     approve: {
       case_manager: [],
-      physician: ["needs_physician", "ready"],
+      physician: ["needs_physician", "escalated", "ready"],
       auditor: [],
     },
     submit: {
@@ -291,7 +304,7 @@ export function canPerformAction(action: string, role: UserRole, caseStatus: Cas
     view_audit: {
       case_manager: [],
       physician: [],
-      auditor: ["new", "in_progress", "needs_physician", "ready", "submitted", "approved", "denied", "appealing"],
+      auditor: ["new", "in_progress", "needs_physician", "escalated", "ready", "submitted", "approved", "denied", "appealing"],
     },
   }
   

@@ -55,8 +55,8 @@ export function AppealsPanel() {
         {/* Header */}
         <div className="px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2.5">
-            <p className={cn(typography.sectionHeader, "text-[var(--neutral-500)]")}>APPEALS MANAGEMENT</p>
-            <Button size="sm" className="gap-1.5 text-label-sm h-7">
+            <p className={cn(typography.sectionHeader, "text-foreground")}>Appeals</p>
+            <Button size="sm" className="h-7 px-3 text-label-sm">
               <FileText className="h-3 w-3" />
               New Appeal
             </Button>
@@ -102,19 +102,13 @@ export function AppealsPanel() {
                         ) : (
                           <AlertCircle className="h-3.5 w-3.5 text-[var(--destructive)]" />
                         )}
-                        <h4 className="text-label-sm font-semibold text-foreground">{appeal.caseNumber}</h4>
-                        <Badge
-                          variant={
-                            appeal.status === "Approved"
-                              ? "success"
-                              : appeal.status === "Pending Review"
-                                ? "warning"
-                                : "secondary"
-                          }
-                          className="text-ds-badge h-4 px-1.5"
-                        >
+                        <h4 className={cn(typography.body, "text-foreground")}>{appeal.caseNumber}</h4>
+                        <span className={cn(
+                          "text-caption",
+                          appeal.status === "Denied" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-500)]"
+                        )}>
                           {appeal.status}
-                        </Badge>
+                        </span>
                       </div>
                       <div className="mt-2 space-y-1">
                         <div className="flex gap-2">
@@ -132,7 +126,7 @@ export function AppealsPanel() {
                         {appeal.dueDate !== "-" && (
                           <div className="flex gap-2">
                             <span className="text-caption text-[var(--neutral-500)] w-16">Due Date</span>
-                            <span className="text-caption text-[var(--warning)] font-medium">{appeal.dueDate}</span>
+                            <span className="text-meta text-[var(--warning)]">{appeal.dueDate}</span>
                           </div>
                         )}
                       </div>

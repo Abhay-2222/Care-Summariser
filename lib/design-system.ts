@@ -24,25 +24,22 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // =============================================================================
-// TYPOGRAPHY SYSTEM - Exactly 4 text styles
+// TYPOGRAPHY — one face, two weights, three sizes
+// Title 16/600 is the page title and the patient name.
+// Body  13/400 is everything you read.
+// Meta  12/400 is a label, a status, a date, or a code.
 // =============================================================================
 
 export const typography = {
-  // Labels/Field Names: caption 11px sans — uses neutral-500 (#71717a) = 4.6:1 ✓ AA
-  // Kept in sans (not mono) to avoid font-family mixing within a single row of content.
-  // Reserve text-overline (mono) for standalone section headers only.
-  label: "text-caption text-[var(--neutral-500)] uppercase tracking-wide",
-  
-  // Body Text/Values: body-sm 13px sans — uses neutral-700 (#3f3f46) = 8.6:1 ✓ AA
-  body: "text-body-sm text-[var(--neutral-700)]",
-  
-  // Titles/Names/Key Info: label-md 13px semi sans — uses neutral-900 (#18181b) = 16:1 ✓ AAA
-  title: "text-label-md text-[var(--neutral-900)]",
-  
-  // Section Headers: overline 11px mono bold — used ONLY for standalone section title rows
-  // e.g. "PROBLEM LIST", "PAYER REQUIREMENTS" — not inline with body text
-  sectionHeader: "text-overline text-[var(--neutral-600)]",
+  title: "text-title text-[var(--neutral-900)]",
+  name: "text-title text-[var(--neutral-900)]",
+  body: "text-body text-[var(--neutral-700)]",
+  meta: "text-meta text-[var(--neutral-500)]",
+  label: "text-meta text-[var(--neutral-500)]",
+  sectionHeader: "text-meta text-[var(--neutral-500)]",
 } as const
+
+export const regionLabel = "text-meta text-[var(--neutral-500)] pt-6 first:pt-0"
 
 // Alias for guidelines compatibility - both names reference the same styles
 export const textStyles = typography
@@ -61,6 +58,7 @@ export const statusBadgeStyles = {
   new: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]",
   in_progress: "bg-[var(--neutral-100)] text-[var(--neutral-800)] border border-[var(--neutral-300)]",
   needs_physician: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] border border-[var(--status-warn-border)]",
+  escalated: "bg-[var(--status-error-bg)] text-[var(--status-error-text)] border border-[var(--status-error-border)]",
   ready: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]",
   submitted: "bg-[var(--status-info-bg)] text-[var(--status-info-text)] border border-[var(--status-info-border)]",
   approved: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)] border border-[var(--status-ok-border)]",
@@ -78,8 +76,9 @@ export const statusBadgeStyles = {
 export const statusLabels = {
   new: "New",
   in_progress: "In Progress",
-  needs_physician: "Needs MD",
-  ready: "Ready",
+  needs_physician: "With physician",
+  escalated: "Escalated",
+  ready: "Signed off",
   submitted: "Submitted",
   approved: "Approved",
   denied: "Denied",
@@ -143,9 +142,9 @@ export const confidenceStyles = {
 } as const
 
 export const riskStyles = {
-  High: "text-[var(--status-error-text)] bg-[var(--status-error-bg)] border border-[var(--status-error-border)]",
-  Medium: "text-[var(--status-warn-text)] bg-[var(--status-warn-bg)] border border-[var(--status-warn-border)]",
-  Low: "text-[var(--status-ok-text)] bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]",
+  High: "text-[var(--status-error-text)]",
+  Medium: "text-[var(--neutral-600)]",
+  Low: "text-[var(--neutral-500)]",
 } as const
 
 // Alias for guidelines compatibility
@@ -176,18 +175,18 @@ export function getProgressColor(percent: number): string {
 
 export const requirementStatusStyles = {
   satisfied: {
-    container: "bg-[var(--status-ok-bg)] border-[var(--status-ok-border)]",
-    icon: "text-[var(--success)]",
-    text: "text-[var(--status-ok-text)]",
+    container: "bg-transparent border-transparent",
+    icon: "text-[var(--neutral-400)]",
+    text: "text-foreground",
   },
   missing: {
-    container: "bg-[var(--status-error-bg)] border-[var(--status-error-border)]", 
-    icon: "text-[var(--destructive)]",
+    container: "bg-transparent border-transparent",
+    icon: "text-[var(--status-error-text)]",
     text: "text-[var(--status-error-text)]",
   },
   unclear: {
-    container: "bg-[var(--status-warn-bg)] border-[var(--status-warn-border)]",
-    icon: "text-[var(--warning)]", 
-    text: "text-[var(--status-warn-text)]",
+    container: "bg-transparent border-transparent",
+    icon: "text-[var(--neutral-500)]",
+    text: "text-foreground",
   },
 } as const

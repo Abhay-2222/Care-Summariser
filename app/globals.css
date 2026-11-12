@@ -16,7 +16,7 @@
 
   /* Neutral scale — matches playbook spec exactly */
   --neutral-0: #ffffff;
-  --neutral-50: #fafafa;
+  --neutral-50: #f7f8fa;
   --neutral-100: #f4f4f5;
   --neutral-150: #ebebec;
   --neutral-200: #e4e4e7;
@@ -29,7 +29,7 @@
   --neutral-900: #18181b;   /* headings / high-emphasis */
 
   /* Semantic tokens */
-  --background: #fafafa;
+  --background: #f7f8fa;
   --foreground: #18181b;
   --card: #ffffff;
   --card-foreground: #18181b;
@@ -49,7 +49,7 @@
   --warning-foreground: #27272a;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #e4e4e7;
+  --border: #e6e9ee;
   --input: #d4d4d8;
   --ring: #2d6a9f;
   --chart-1: #2d6a9f;
@@ -58,13 +58,13 @@
   --chart-4: #dc2626;
   --chart-5: #7c3aed;
   --radius: 0.75rem;
-  --sidebar: #fafafa;
+  --sidebar: #f7f8fa;
   --sidebar-foreground: #27272a;
   --sidebar-primary: #2d6a9f;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f4f4f5;
   --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e4e4e7;
+  --sidebar-border: #e6e9ee;
   --sidebar-ring: #2d6a9f;
 
   /* Shadows */
@@ -366,108 +366,57 @@
 }
 
 /* ============================================================
-   DESIGN SYSTEM TYPOGRAPHY SCALE
-   Defined OUTSIDE @layer so Tailwind v4 always includes them.
-   These are the ONLY font-size/weight/family classes used
-   in this codebase — never use Tailwind's built-in text-sm,
-   text-base, text-lg, text-xl, etc.
+   DESIGN SYSTEM TYPOGRAPHY
+   One face. Two weights. Three sizes.
+   Title 16/600 — the page title and the patient name.
+   Body  13/400 — the words you read, including buttons.
+   Meta  12/400 — labels, status, dates, and codes.
+   Older class names are aliases, so a leftover class
+   cannot invent a fourth size or a third weight.
    ============================================================ */
 
-.text-display-2xl {
-  font-family: var(--font-serif);
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.text-display-xl {
-  font-family: var(--font-serif);
-  font-size: 36px;
-  font-weight: 300;
-  font-style: italic;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-.text-heading-lg {
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-.text-heading-md {
-  font-family: var(--font-sans);
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-.text-heading-sm {
+.text-title,
+.text-name,
+.text-patient-name,
+.text-heading-sm,
+.text-heading-md,
+.text-heading-lg,
+.text-display-xl,
+.text-display-2xl,
+.text-clinical-val {
   font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
   line-height: 1.35;
 }
-.text-body-lg {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.65;
-}
-.text-body-md {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.6;
-}
-.text-body-sm {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.5;
-}
+
+.text-body,
+.text-body-sm,
+.text-body-md,
+.text-body-lg,
 .text-label-md {
   font-family: var(--font-sans);
   font-size: 13px;
-  font-weight: 500;
-  line-height: 1.35;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
 }
-.text-label-sm {
+
+.text-meta,
+.text-label-sm,
+.text-caption,
+.text-overline,
+.text-ds-badge {
   font-family: var(--font-sans);
   font-size: 12px;
-  font-weight: 500;
-  line-height: 1.3;
-}
-.text-caption {
-  font-family: var(--font-sans);
-  font-size: 11px;
   font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
   line-height: 1.4;
-}
-.text-overline {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1.4;
-}
-.text-clinical-val {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1;
-}
-.text-patient-name {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.35;
-}
-.text-ds-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1;
 }

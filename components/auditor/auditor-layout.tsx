@@ -51,7 +51,7 @@ export function AuditorLayout() {
   }
 
   const statusFilters: (CaseStatus | "ALL")[] = [
-    "ALL", "new", "in_progress", "needs_physician", "ready", "submitted", "approved", "denied", "appealing",
+    "ALL", "new", "in_progress", "needs_physician", "escalated", "ready", "submitted", "approved", "denied", "appealing",
   ]
 
   return (
@@ -66,7 +66,6 @@ export function AuditorLayout() {
           <StatCard label="Total cases" value={stats.totalCases} />
           <StatCard label="Approval rate" value={`${stats.approvalRate}%`} color="emerald" />
           <StatCard label="Denial rate" value={`${stats.denialRate}%`} color="red" />
-          <StatCard label="Avg processing" value={stats.avgProcessingTime} />
           <StatCard label="Pending MD" value={stats.pendingPhysician} color="amber" />
           <StatCard label="Ready to submit" value={stats.readyForSubmission} color="blue" />
           <StatCard label="Audit entries" value={auditLog.length} />

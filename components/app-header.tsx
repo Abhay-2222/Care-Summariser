@@ -3,12 +3,7 @@
 
 import {
   ChevronDown,
-  LayoutDashboard,
-  Shield,
-  Settings,
   ClipboardList,
-  LogOut,
-  HelpCircle,
   Search,
   User,
   Stethoscope,
@@ -38,9 +33,7 @@ import { NotificationCenter } from "@/components/notification-center"
 
 const baseNavItems = [
   { name: "Queue", href: "/", icon: ClipboardList, roles: ["case_manager", "physician"] },
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["case_manager", "physician", "auditor"] },
   { name: "MD Review", href: "/medical-director", icon: Stethoscope, roles: ["physician"] },
-  { name: "Appeals", href: "/appeals", icon: Shield, roles: ["case_manager"] },
   { name: "Audit", href: "/audit", icon: FileCheck, roles: ["auditor"] },
 ]
 
@@ -135,7 +128,7 @@ export function AppHeader() {
                   <Search className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Search (Ctrl+K)</TooltipContent>
+              <TooltipContent side="bottom" className="text-meta">Search</TooltipContent>
             </Tooltip>
 
             
@@ -186,20 +179,6 @@ export function AppHeader() {
                     )}
                   </DropdownMenuItem>
                 ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-body-sm gap-2">
-                  <Settings className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-body-sm gap-2">
-                  <HelpCircle className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
-                  Help Center
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-body-sm gap-2 text-[var(--destructive)] focus:text-[var(--destructive)]">
-                  <LogOut className="h-3.5 w-3.5" />
-                  Sign out
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </TooltipProvider>

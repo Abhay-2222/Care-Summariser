@@ -254,7 +254,7 @@ function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): P
       severity: "High",
       mitigation: "Request consult note from cardiology",
       status: state === "clean" ? "addressed" : "open",
-      explanation: "Payer policy requires cardiology consultation documentation within 24 hours for heart failure admissions. Denial probability: 73%.",
+      explanation: "Payer policy requires cardiology consultation documentation within 24 hours for heart failure admissions.",
       evidenceLinks: ["ED Admission Note", "Cardiology Order - Pending"],
       suggestedActions: [
         { id: uid(), type: "request_consult", label: "Request Cardiology Note", description: "Send urgent request to cardiology" },

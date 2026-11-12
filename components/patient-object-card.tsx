@@ -1,12 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { 
-  typography, 
-  statusBadgeStyles, 
-  confidenceStyles,
-  riskStyles,
-} from "@/lib/design-system"
+import { typography } from "@/lib/design-system"
 import type { Patient } from "@/lib/types"
 import { Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -39,108 +34,54 @@ export function PatientObjectCard({
   
   // Get primary diagnosis
   const primaryDiagnosis = patient.problemList.find(p => p.type === "primary")
-  
-  // Urgency badge style
-  const urgencyStyle = statusBadgeStyles[patient.urgency]
-  
-  // Risk style
-  const riskStyle = riskStyles[patient.careLens.denialRisk]
-  
-  // Confidence style
-  const confidenceStyle = confidenceStyles[patient.careLens.overallConfidence]
 
   return (
-    <div className={cn("bg-card rounded-xl border border-border p-3 shadow-ds-xs", className)}>
-      {/* Row 1: Name · Demographics · Insurance */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-        {/* Mobile: Name on its own line; Desktop: inline with demographics */}
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0 flex-1">
-          <h2 className="text-patient-name whitespace-nowrap">
-            {patient.name}
+    <div className={cn("min-w-0", className)}>
+      <div className="grid grid-cols-2 gap-x-8 gap-y-3 lg:grid-cols-[auto_auto_minmax(0,1fr)_auto]">
+        <div className="min-w-0">
+          <p className={typography.meta}>Patient</p>
+          <h2 className="mt-1 flex items-center gap-2 whitespace-nowrap">
+            <span className={typography.name}>{patient.name}</span>
+            <span className={typography.meta}>{patient.age} {patient.gender}</span>
+            {onTogglePHI && (
+              <Button variant="ghost" size="sm" className="h-5 w-5 p-0" onClick={onTogglePHI}>
+                {showPHI ? (
+                  <EyeOff className="h-3 w-3 text-[var(--neutral-400)]" />
+                ) : (
+                  <Eye className="h-3 w-3 text-[var(--neutral-400)]" />
+                )}
+              </Button>
+            )}
           </h2>
-          <span className={cn(typography.body, "hidden sm:inline")}>·</span>
-          <span className={typography.body}>
-            {patient.age}yo {patient.gender}
-          </span>
-          <span className={typography.body}>·</span>
-          <span className={typography.body}>
-            MRN: {maskPHI(patient.mrn)}
-          </span>
-          <span className={cn(typography.body, "hidden sm:inline")}>·</span>
-          <span className={cn(typography.body, "truncate hidden sm:inline")}>
-            {patient.insurance}
-          </span>
         </div>
-        
-        {/* PHI Toggle + Confidence */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className={cn(
-            "text-ds-badge px-2 py-0.5 rounded whitespace-nowrap",
-            confidenceStyle
+        <div className="min-w-0">
+          <p className={typography.meta}>Insurance</p>
+          <p className={cn(typography.body, "mt-1 whitespace-nowrap")}>{patient.insurance}</p>
+        </div>
+        <div className="min-w-0">
+          <p className={typography.meta}>Case</p>
+          <p className={cn(typography.body, "mt-1 truncate")}>
+            {maskPHI(patient.mrn)}
+            <span className={typography.meta}> · {patient.admissionDate}</span>
+            {patient.urgency === "STAT" && (
+              <span className="text-[var(--status-error-text)]"> · STAT</span>
+            )}
+          </p>
+        </div>
+        <div>
+          <p className={typography.meta}>Risk</p>
+          <p className={cn(
+            typography.body,
+            "mt-1 whitespace-nowrap",
+            patient.careLens.denialRisk === "High" && "text-[var(--status-error-text)]"
           )}>
-            {patient.careLens.overallConfidence} Confidence
-          </span>
-          {onTogglePHI && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={onTogglePHI}
-            >
-              {showPHI ? (
-                <EyeOff className="h-3 w-3 text-[var(--neutral-400)]" />
-              ) : (
-                <Eye className="h-3 w-3 text-[var(--neutral-400)]" />
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Row 2: Location · Clinical Info — wraps on mobile */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
-        <div className="flex items-center gap-1.5">
-          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Room</span>
-          <span className={typography.body}>{patient.room}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">LOS</span>
-          <span className={typography.body}>{patient.lengthOfStay}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Admitted</span>
-          <span className={typography.body}>{patient.admissionDate}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Docs</span>
-          <span className={typography.body}>{patient.documentsProcessed}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-caption text-[var(--neutral-500)] uppercase tracking-wide">Risk</span>
-          <span className={cn("text-ds-badge px-1.5 py-0.5 rounded", riskStyle)}>
             {patient.careLens.denialRisk}
-          </span>
+          </p>
         </div>
       </div>
-
-      {/* Row 3: Urgency Badge + Primary Diagnosis */}
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 pt-2 border-t border-border">
-        <span className={cn(
-          "text-ds-badge px-2 py-0.5 rounded flex-shrink-0",
-          urgencyStyle
-        )}>
-          {patient.urgency}
-        </span>
-        {primaryDiagnosis && (
-          <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
-            <span className={cn(typography.title, "line-clamp-1")}>
-              {primaryDiagnosis.name}
-            </span>
-            <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded flex-shrink-0">
-              {primaryDiagnosis.icdCode}
-            </span>
-          </div>
-        )}
+      <div className="mt-3 flex items-baseline gap-2">
+        <p className={cn(typography.meta, "shrink-0")}>Diagnosis</p>
+        <p className={typography.body}>{primaryDiagnosis?.name ?? "None recorded"}</p>
       </div>
     </div>
   )
@@ -158,8 +99,6 @@ export function PatientObjectCardCompact({
 }: PatientObjectCardProps) {
   const maskPHI = (value: string) => (showPHI ? value : "********")
   const primaryDiagnosis = patient.problemList.find(p => p.type === "primary")
-  const urgencyStyle = statusBadgeStyles[patient.urgency]
-  const riskStyle = riskStyles[patient.careLens.denialRisk]
 
   return (
     <div className={cn("bg-card rounded-xl border border-border p-3 shadow-ds-xs", className)}>
@@ -169,10 +108,10 @@ export function PatientObjectCardCompact({
           {patient.name}
         </h2>
         <span className={cn(
-          "text-ds-badge px-2 py-0.5 rounded flex-shrink-0",
-          urgencyStyle
+          "text-caption flex-shrink-0",
+          patient.urgency === "STAT" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-600)]"
         )}>
-          {patient.urgency}
+          {patient.urgency === "STAT" ? "STAT" : patient.urgency === "URGENT" ? "Urgent" : "Routine"}
         </span>
       </div>
 
@@ -185,18 +124,21 @@ export function PatientObjectCardCompact({
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
         <span className={typography.body}>Room {patient.room}</span>
         <span className={typography.body}>LOS: {patient.lengthOfStay}</span>
-        <span className={cn("text-ds-badge px-1.5 py-0.5 rounded", riskStyle)}>
-          {patient.careLens.denialRisk} Risk
+        <span className={cn(
+          "text-caption",
+          patient.careLens.denialRisk === "High" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-600)]"
+        )}>
+          Denial risk {patient.careLens.denialRisk}
         </span>
       </div>
 
       {/* Row 4: Primary Diagnosis */}
       {primaryDiagnosis && (
         <div className="mt-2 pt-2 border-t border-border flex items-center gap-2">
-          <span className={typography.title}>
+          <span className={typography.body}>
             {primaryDiagnosis.name}
           </span>
-          <span className="text-ds-badge font-mono text-[var(--brand-600)] bg-[var(--brand-50)] px-1.5 py-0.5 rounded">
+          <span className="text-caption text-[var(--neutral-500)]">
             {primaryDiagnosis.icdCode}
           </span>
         </div>

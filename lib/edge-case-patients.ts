@@ -788,7 +788,7 @@ export const aiUncertaintyPatient: Patient = {
     { id: uid(), timestamp: "Day 3", title: "Neurosurgery Consult", description: "'Either surgical or conservative path reasonable'" },
   ],
   alerts: [
-    { id: uid(), message: "AI CONFIDENCE: 50% - Cannot reliably predict payer decision", type: "warning" },
+    { id: uid(), message: "Cannot reliably predict the payer decision. A person has to choose the pathway.", type: "warning" },
     { id: uid(), message: "Both treatment pathways have equal evidence support", type: "warning" },
     { id: uid(), message: "Human clinical judgment required", type: "warning" },
   ],
@@ -816,7 +816,7 @@ export const aiUncertaintyPatient: Patient = {
     riskFactors: [
       {
         id: "rf-edge7-1",
-        factor: "AI confidence at 50% - cannot reliably assess",
+        factor: "Cannot reliably assess which pathway the payer will accept",
         severity: "Medium",
         status: "open",
         explanation: "Both surgical and conservative pathways have equal evidence. AI cannot predict payer preference with confidence.",
@@ -844,7 +844,7 @@ export const aiUncertaintyPatient: Patient = {
     recommendations: [
       {
         id: "rec-edge7-1",
-        text: "AI LIMITATION: Cannot recommend pathway - 50% confidence",
+        text: "Cannot recommend a pathway. Both options have the same evidence.",
         priority: "high",
         status: "pending",
         category: "clinical",
@@ -869,7 +869,7 @@ export const aiUncertaintyPatient: Patient = {
     ],
     auditTrail: [
       { id: uid(), timestamp: "Day 1 10:00", action: "Case analysis initiated", user: "AI System" },
-      { id: uid(), timestamp: "Day 3 14:00", action: "AI CONFIDENCE: 50% - Human decision required", user: "CareLens" },
+      { id: uid(), timestamp: "Day 3 14:00", action: "Human decision required. CareLens cannot choose a pathway.", user: "CareLens" },
       { id: uid(), timestamp: "Day 3 14:01", action: "Both pathways have equal historical approval rates", user: "AI System" },
     ]
   }
@@ -1177,7 +1177,7 @@ export const cleanSlatePatient: Patient = {
       { id: uid(), timestamp: "Day 1 14:00", action: "Pre-op documentation verified complete", user: "AI System" },
       { id: uid(), timestamp: "Day 1 18:00", action: "Operative report processed", user: "AI System" },
       { id: uid(), timestamp: "Day 2 09:00", action: "Post-op criteria on track", user: "CareLens" },
-      { id: uid(), timestamp: "Day 3 08:00", action: "Case ready for PA - HIGH CONFIDENCE", user: "CareLens" },
+      { id: uid(), timestamp: "Day 3 08:00", action: "Case ready for PA", user: "CareLens" },
       { id: uid(), timestamp: "Day 3 08:30", action: "PA submitted and approved", user: "Case Manager" },
     ]
   }

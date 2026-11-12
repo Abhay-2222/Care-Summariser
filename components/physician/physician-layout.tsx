@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
+import { requirementsMet } from "@/lib/workflow-utils"
 import { statusBadgeStyles } from "@/lib/design-system"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -151,7 +152,7 @@ export function PhysicianLayout() {
               actionTaken === "escalated" && "text-red-700"
             )}
           >
-            Case {actionTaken}. {currentIndex < totalCases - 1 ? "Proceed to next case." : "All cases reviewed."}
+            {actionTaken}
           </span>
           {currentIndex < totalCases - 1 && (
             <Button size="sm" variant="outline" onClick={goToNext} className="h-7 text-[11px]">
@@ -297,7 +298,7 @@ export function PhysicianLayout() {
           {/* Decision notes */}
           <div className="pt-2 space-y-1.5">
             <label htmlFor="physician-notes" className="text-[9px] font-mono uppercase tracking-widest text-[var(--neutral-400)]">
-              Decision notes (optional)
+              Reason
             </label>
             <Textarea
               id="physician-notes"
@@ -326,7 +327,7 @@ export function PhysicianLayout() {
             size="sm"
             variant="outline"
             onClick={handleEscalate}
-            disabled={!!actionTaken}
+            disabled={!!actionTaken || !notes.trim()}
             className="h-9 text-[11px] gap-1.5 px-4 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
           >
             <AlertTriangle className="h-3.5 w-3.5" />
@@ -336,20 +337,20 @@ export function PhysicianLayout() {
             size="sm"
             variant="outline"
             onClick={handleDefer}
-            disabled={!!actionTaken}
+            disabled={!!actionTaken || !notes.trim()}
             className="h-9 text-[11px] gap-1.5 px-4 border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
           >
             <Clock className="h-3.5 w-3.5" />
-            Defer
+            Send back
           </Button>
           <Button
             size="sm"
             onClick={handleApprove}
-            disabled={!!actionTaken}
+            disabled={!!actionTaken || !requirementsMet(currentCase)}
             className="h-9 text-[11px] gap-1.5 px-5 bg-slate-900 hover:bg-slate-800 text-white tracking-tight"
           >
             <CheckCircle className="h-3.5 w-3.5" />
-            Approve
+            Sign off
           </Button>
         </div>
       </div>

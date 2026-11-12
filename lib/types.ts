@@ -7,7 +7,8 @@ export type CaseStatus =
   | "new"           // Just arrived in queue
   | "in_progress"   // Case Manager working on it
   | "needs_physician" // Sent to physician for approval
-  | "ready"         // All requirements met, ready for submission
+  | "escalated"     // Physician sent the case to the medical director
+  | "ready"         // All requirements met, physician signed off
   | "submitted"     // PA submitted to payer
   | "approved"      // Payer approved
   | "denied"        // Payer denied

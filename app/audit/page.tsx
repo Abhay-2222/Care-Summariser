@@ -149,27 +149,9 @@ export default function AuditPage() {
       <AppHeader />
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6 flex flex-col gap-6">
-          {/* Human-Centered Header */}
-          <div className="bg-[var(--status-ok-bg)] rounded-xl p-4 border border-[var(--status-ok-border)] mb-2">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-lg bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)] flex items-center justify-center flex-shrink-0">
-                <Users className="h-5 w-5 text-[var(--success)]" />
-              </div>
-              <div className="flex-1">
-                <p className="text-heading-sm text-foreground">Shared Learning System</p>
-                <p className="text-body-sm text-[var(--neutral-600)] mt-1">
-                  This dashboard helps identify patterns for team improvement, not individual performance tracking. 
-                  Every insight here is designed to reduce documentation burden and improve patient outcomes together.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-heading-lg text-foreground">Audit Dashboard</h1>
-              <p className="text-body-md text-[var(--neutral-500)] mt-0.5">Team performance and improvement opportunities</p>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" className="h-8 text-label-sm gap-1.5 bg-transparent">
@@ -195,29 +177,16 @@ export default function AuditPage() {
             <StatCard 
               title="Approval Rate" 
               value={`${stats.approvalRate}%`} 
-              subtitle="of processed cases"
-              trend="+5% vs last month"
-              trendUp={true}
+              subtitle="of decided cases"
               icon={CheckCircle2}
               color="emerald"
             />
             <StatCard 
               title="Denial Rate" 
               value={`${stats.denialRate}%`} 
-              subtitle="of processed cases"
-              trend="-2% vs last month"
-              trendUp={true}
+              subtitle="of decided cases"
               icon={XCircle}
               color="red"
-            />
-            <StatCard 
-              title="Avg Processing" 
-              value={stats.avgProcessingTime} 
-              subtitle="claim to submission"
-              trend="0.3 days faster"
-              trendUp={true}
-              icon={Clock}
-              color="teal"
             />
           </div>
 
@@ -235,8 +204,9 @@ export default function AuditPage() {
               <div className="flex flex-col gap-3">
                 <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-[var(--brand-500)]" />
                 <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
-                <StatusBar label="Needs Physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
-                <StatusBar label="Ready" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-[var(--success)]" />
+                <StatusBar label="With physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
+                <StatusBar label="Escalated" count={stats.byStatus.escalated || 0} total={stats.totalCases} color="bg-[var(--destructive)]" />
+                <StatusBar label="Signed off" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-[var(--success)]" />
                 <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-[var(--brand-400)]" />
                 <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-[var(--success)]" />
                 <StatusBar label="Denied" count={stats.byStatus.denied || 0} total={stats.totalCases} color="bg-[var(--destructive)]" />
@@ -263,58 +233,6 @@ export default function AuditPage() {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Coaching Notes - Constructive Feedback */}
-          <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-heading-sm text-foreground flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-[var(--success)]" />
-                Team Wins & Coaching Notes
-              </h3>
-              <span className="text-caption text-[var(--neutral-500)]">This week</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Positive Feedback */}
-              <div className="p-3 rounded-xl bg-[var(--status-ok-bg)] border border-[var(--status-ok-border)]">
-                <p className="text-overline text-[var(--status-ok-text)] mb-2">What's Working Well</p>
-                <ul className="flex flex-col gap-2">
-                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
-                    <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    Documentation completeness improved 12% this week
-                  </li>
-                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
-                    <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    Average MD review time down to 1.8 minutes
-                  </li>
-                  <li className="text-body-sm text-[var(--status-ok-text)] flex items-start gap-2">
-                    <CheckCircle2 className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    Zero missed deadlines for STAT cases
-                  </li>
-                </ul>
-              </div>
-              {/* Improvement Opportunities */}
-              <div className="p-3 rounded-xl bg-[var(--status-info-bg)] border border-[var(--status-info-border)]">
-                <p className="text-overline text-[var(--status-info-text)] mb-2">Improvement Opportunities</p>
-                <ul className="flex flex-col gap-2">
-                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
-                    <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    <span>Cardiology consults taking 2+ days - consider earlier requests</span>
-                  </li>
-                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
-                    <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    <span>Aetna denials up 5% - review updated criteria for cardiac cases</span>
-                  </li>
-                  <li className="text-body-sm text-[var(--status-info-text)] flex items-start gap-2">
-                    <ArrowRight className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                    <span>Step-down documentation often missing - add to checklist?</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <p className="text-caption text-[var(--neutral-500)] mt-3 pt-3 border-t border-border">
-              Coaching notes are generated from patterns across all cases, not individual performance. The goal is shared learning to reduce everyone's workload.
-            </p>
           </div>
 
           {/* Alerts + Recent Activity */}

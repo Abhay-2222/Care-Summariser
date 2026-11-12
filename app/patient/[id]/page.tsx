@@ -4,16 +4,13 @@ import { useParams } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { PatientListPanel } from "@/components/patient-list-panel"
 import { CareLensDrawer } from "@/components/care-lens-drawer"
-import { RoleAwareLayout } from "@/components/role-aware-layout"
-import { PhysicianLayout } from "@/components/physician/physician-layout"
-import { AuditorLayout } from "@/components/auditor/auditor-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClinicalSummaryView } from "@/components/clinical-summary-view"
 import { PriorAuthComposer } from "@/components/prior-auth-composer"
 import { EvidencePanel } from "@/components/evidence-panel"
 import { AppealsPanel } from "@/components/appeals-panel"
 import { CollaborationPanel } from "@/components/collaboration-panel"
-import { Activity, FileText, Search, RefreshCw, Loader2, Brain, Eye, BarChart3, MessageSquare } from "lucide-react"
+import { Activity, FileText, Search, RefreshCw, Loader2, Brain, MessageSquare } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 import { useEffect, useState, createContext, useContext } from "react"
 import { Button } from "@/components/ui/button"
@@ -36,7 +33,7 @@ export const useCareLensContext = () => useContext(CareLensContext)
 export default function PatientDetailPage() {
   const params = useParams()
   const id = params.id as string
-  const { setSelectedPatientId, selectedPatient, currentRole, hasPermission, careLensOpen, setCareLensOpen } = useApp()
+  const { setSelectedPatientId, selectedPatient, hasPermission, careLensOpen, setCareLensOpen } = useApp()
   const [activeTab, setActiveTab] = useState("clinical-summary")
 
   useEffect(() => {
@@ -55,7 +52,7 @@ export default function PatientDetailPage() {
           <main className="flex flex-1 items-center justify-center bg-muted/30">
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="h-8 w-8 text-primary animate-spin" />
-              <p className="text-sm text-muted-foreground">Loading patient...</p>
+              <p className="text-body text-muted-foreground">Loading patient...</p>
             </div>
           </main>
         </div>
@@ -65,19 +62,11 @@ export default function PatientDetailPage() {
 
   const tabItems = [
     { value: "clinical-summary", icon: Activity, label: "Summary", shortcut: "1" },
-    { value: "prior-auth", icon: FileText, label: "Prior Auth", shortcut: "2" },
+    { value: "prior-auth", icon: FileText, label: "Request", shortcut: "2" },
     { value: "evidence", icon: Search, label: "Evidence", shortcut: "3" },
     { value: "appeals", icon: RefreshCw, label: "Appeals", shortcut: "4" },
-    { value: "collaboration", icon: MessageSquare, label: "Team", shortcut: "5" },
+    { value: "collaboration", icon: MessageSquare, label: "Notes", shortcut: "5" },
   ]
-
-  // Role-specific CareLens button config
-  const careLensButtonConfig = {
-    case_manager: { icon: Brain, label: "Open CareLens", description: "Full interactive analysis" },
-    physician: { icon: Eye, label: "View Analysis", description: "Read-only case analysis" },
-    auditor: { icon: BarChart3, label: "Analysis Report", description: "Export & audit data" },
-  }
-  const careLensButton = careLensButtonConfig[currentRole]
 
   // Nurse/Case Manager view (full tabbed layout)
   const nurseView = (
@@ -85,9 +74,9 @@ export default function PatientDetailPage() {
       <TabContext.Provider value={{ activeTab, setActiveTab }}>
         <div className="flex flex-1 overflow-hidden">
           <PatientListPanel />
-          <main className="flex-1 overflow-hidden flex flex-col bg-white">
+          <main className="flex-1 overflow-hidden flex flex-col bg-background">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              <div className="border-b border-slate-100 bg-white px-4 flex-shrink-0">
+              <div className="border-b border-border bg-card px-4 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <TabsList className="h-auto bg-transparent p-0 gap-1 border-0 shadow-none">
                     {tabItems.map((tab) => {
@@ -97,7 +86,7 @@ export default function PatientDetailPage() {
                         <TabsTrigger 
                           key={tab.value}
                           value={tab.value} 
-                          className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-[12px] font-normal text-[var(--neutral-400)] hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-0"
+                          className="relative h-10 px-3 gap-2 rounded-none border-0 bg-transparent text-meta hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-0"
                         >
                           <Icon className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">{tab.label}</span>
@@ -112,13 +101,13 @@ export default function PatientDetailPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`h-9 gap-2 text-[13px] font-normal ${careLensOpen ? "text-[var(--brand-700)] bg-[var(--brand-50)]" : "text-[var(--neutral-500)] hover:text-[var(--brand-500)] hover:bg-[var(--brand-50)]"}`}
+                    className={`h-9 gap-2 text-body ${careLensOpen ? "text-[var(--brand-700)] bg-[var(--brand-50)]" : "text-[var(--neutral-500)] hover:text-[var(--brand-500)] hover:bg-[var(--brand-50)]"}`}
                     onClick={() => setCareLensOpen(!careLensOpen)}
                   >
-                    <careLensButton.icon className="h-4 w-4" />
-                    <span className="hidden sm:inline">{careLensButton.label}</span>
+                    <Brain className="h-4 w-4" />
+                    <span className="hidden sm:inline">CareLens</span>
                     {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
-                      <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-[11px] font-medium flex items-center justify-center">
+                      <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-meta flex items-center justify-center">
                         {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
                       </span>
                     )}
@@ -157,19 +146,7 @@ export default function PatientDetailPage() {
   return (
     <div className="flex h-screen flex-col bg-background">
       <AppHeader />
-      <RoleAwareLayout
-        nurseView={nurseView}
-        physicianView={
-          <div className="flex-1 overflow-hidden bg-white">
-            <PhysicianLayout />
-          </div>
-        }
-        auditorView={
-          <div className="flex-1 overflow-hidden bg-white">
-            <AuditorLayout />
-          </div>
-        }
-      />
+      {nurseView}
     </div>
   )
 }

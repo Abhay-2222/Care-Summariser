@@ -5,7 +5,7 @@ import type { Patient, RecommendationStatus, RiskFactorStatus, PolicyGapStatus, 
 import { ROLE_PERMISSIONS } from "./types"
 import { allPatients } from "./patient-data"
 import { edgeCasePatients } from "./edge-case-patients"
-import { generateWorkflow, calculateProgress, isReadyForPA } from "./workflow-utils"
+import { generateWorkflow, calculateProgress, requirementsMet } from "./workflow-utils"
 
 const mockPatients: Patient[] = [
   {
@@ -92,7 +92,7 @@ const mockPatients: Patient[] = [
           severity: "High", 
           mitigation: "Request consult note from cardiology",
           status: "open",
-          explanation: "Payer policy requires cardiology consultation documentation within 24 hours for heart failure admissions. Without this, the case has a 73% denial probability based on historical data.",
+          explanation: "Payer policy requires cardiology consultation documentation within 24 hours for heart failure admissions.",
           evidenceLinks: ["ED Admission Note", "Cardiology Order - Pending"],
           suggestedActions: [
             { id: "rfa-1", type: "request_consult", label: "Request Cardiology Note", description: "Send urgent request to cardiology for consultation note" },
@@ -470,7 +470,6 @@ interface AppContextType {
 interface AuditStats {
   totalCases: number
   byStatus: Record<CaseStatus, number>
-  avgProcessingTime: string
   approvalRate: number
   denialRate: number
   pendingPhysician: number
@@ -653,7 +652,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     hour: "2-digit",
                     minute: "2-digit",
                   }),
-                  action: `Risk factor ${status}: ${patient.careLens.riskFactors.find((r) => r.id === riskFactorId)?.factor.substring(0, 40)}...`,
+                  action: status === "not_applicable" ? "gap not applicable" : "gap resolved",
                   user: "Dr. Current User",
                 },
                 ...patient.careLens.auditTrail,
@@ -715,7 +714,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     hour: "2-digit",
                     minute: "2-digit",
                   }),
-                  action: `Policy gap ${status}: ${patient.careLens.policyGaps.find((p) => p.id === policyGapId)?.gap.substring(0, 40)}...`,
+                  action: status === "resolved" ? "gap resolved" : "gap not applicable",
                   user: currentUser.name,
                 },
                 ...patient.careLens.auditTrail,
@@ -728,7 +727,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Workflow Actions
   const claimCase = (patientId: string) => {
-    logAction("Case claimed", patientId)
+    logAction("claimed", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -792,7 +791,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
-          ? {
+          ? newStatus === "ready" && !requirementsMet(p)
+            ? p
+            : {
               ...p,
               workflow: {
                 ...p.workflow,
@@ -809,7 +810,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 ],
                 lastUpdated: new Date().toISOString(),
                 progressPercent: calculateProgress(p),
-                readyForPA: isReadyForPA(p),
+                readyForPA: requirementsMet(p),
               },
             }
           : p
@@ -818,15 +819,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const sendToPhysician = (patientId: string, notes?: string) => {
-    logAction("Sent to physician for review", patientId)
+    logAction("sent for sign-off", patientId)
     updateCaseStatus(patientId, "needs_physician", notes || "Sent to physician for review and approval")
   }
 
   const physicianApprove = (patientId: string, notes?: string) => {
-    logAction("Physician approved PA", patientId)
+    const target = patients.find((p) => p.id === patientId)
+    if (!target || !requirementsMet(target)) return
+    logAction("signed off", patientId)
     setPatients((prev) =>
       prev.map((p) =>
-        p.id === patientId
+        p.id === patientId && requirementsMet(p)
           ? {
               ...p,
               workflow: {
@@ -857,7 +860,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const physicianDefer = (patientId: string, notes?: string) => {
-    logAction("Physician deferred - additional documentation needed", patientId)
+    if (!notes?.trim()) return
+    logAction("sent back", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -891,7 +895,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const physicianEscalate = (patientId: string, notes?: string) => {
-    logAction("Physician escalated to medical director", patientId)
+    if (!notes?.trim()) return
+    logAction("escalated", patientId)
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -899,7 +904,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
               ...p,
               workflow: {
                 ...p.workflow,
-                status: "in_progress" as CaseStatus,
+                status: "escalated" as CaseStatus,
                 physicianDecision: {
                   decision: "escalated",
                   decidedBy: currentUser.name,
@@ -910,7 +915,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                   ...p.workflow.statusHistory,
                   {
                     from: p.workflow.status,
-                    to: "in_progress" as CaseStatus,
+                    to: "escalated" as CaseStatus,
                     changedBy: currentUser.name,
                     changedAt: new Date().toISOString(),
                     notes: notes || "Escalated to medical director",
@@ -925,7 +930,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const submitPA = (patientId: string) => {
-    logAction("PA submitted to payer", patientId)
+    logAction("sent to payer", patientId)
     updateCaseStatus(patientId, "submitted", "PA submitted to payer")
   }
 
@@ -942,7 +947,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return {
       totalCases: patients.length,
       byStatus,
-      avgProcessingTime: "2.4 days",
       approvalRate: total > 0 ? Math.round((approved / total) * 100) : 0,
       denialRate: total > 0 ? Math.round((denied / total) * 100) : 0,
       pendingPhysician: byStatus.needs_physician || 0,

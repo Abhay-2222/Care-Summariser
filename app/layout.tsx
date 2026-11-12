@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Plus_Jakarta_Sans, JetBrains_Mono, Fraunces } from "next/font/google"
+import { Plus_Jakarta_Sans } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { AppProvider } from "@/lib/app-context"
@@ -9,24 +9,13 @@ import { KeyboardShortcutsDialog } from "@/components/keyboard-shortcuts-dialog"
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600"],
   variable: "--font-sans",
-})
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-mono",
-})
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["300", "400", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
 })
 
 export const metadata: Metadata = {
-  title: "CareSummarizer AI - Healthcare Prior Authorization Platform",
-  description: "Enterprise healthcare AI platform for utilization review and prior authorization",
+  title: "CareSummarizer",
+  description: "Prior authorization review for hospital case managers and physicians.",
   generator: "v0.app",
   icons: {
     icon: [
@@ -53,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}>
+    <html lang="en" className={plusJakarta.variable}>
       <body className="font-sans antialiased">
         <AppProvider>
           {children}

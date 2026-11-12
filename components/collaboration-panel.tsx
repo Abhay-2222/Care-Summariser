@@ -227,7 +227,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                   key={note.id}
                   className={cn(
                     "p-3 rounded-lg border",
-                    note.pinned && "border-[var(--status-warn-border)] bg-[var(--status-warn-bg)]",
+                    note.pinned && "border-border",
                     note.type === "system" && "bg-[var(--neutral-50)] border-[var(--neutral-200)]",
                     !note.pinned && note.type !== "system" && "bg-card border-border"
                   )}
@@ -243,7 +243,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className={cn("text-[9px] text-white", note.author.color)}>
+                            <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
                               {note.author.initials}
                             </AvatarFallback>
                           </Avatar>
@@ -257,9 +257,9 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                         </div>
                         <div className="flex items-center gap-1">
                           {note.category && (
-                            <Badge variant="outline" className={cn("text-ds-badge h-4", categoryConfig[note.category].color)}>
+                            <span className="text-caption text-[var(--neutral-500)]">
                               {categoryConfig[note.category].label}
-                            </Badge>
+                            </span>
                           )}
                           <Popover>
                             <PopoverTrigger asChild>
@@ -318,7 +318,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="min-h-[60px] text-xs pr-20 resize-none"
+                className="min-h-[60px] text-body pr-20 resize-none"
                 rows={2}
               />
               {showMentions && (
@@ -331,7 +331,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[var(--neutral-100)] rounded"
                     >
                       <Avatar className="h-5 w-5">
-                        <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
+                        <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -396,7 +396,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className={cn("text-[10px] text-white", member.color)}>
+                        <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
                           {member.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -479,13 +479,13 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <SelectItem key={member.id} value={member.id}>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-5 w-5">
-                          <AvatarFallback className={cn("text-[8px] text-white", member.color)}>
+                          <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
                             {member.initials}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <span className="text-sm">{member.name}</span>
-                          <span className="text-xs text-[var(--neutral-400)] ml-2">{member.role}</span>
+                          <span className="text-body">{member.name}</span>
+                          <span className="text-meta ml-2">{member.role}</span>
                         </div>
                       </div>
                     </SelectItem>
@@ -494,7 +494,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-foreground">Handoff Reason</label>
+              <label className="text-meta text-foreground">Handoff Reason</label>
               <Select>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select reason..." />
@@ -509,16 +509,16 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-foreground">Handoff Notes</label>
+              <label className="text-meta text-foreground">Handoff Notes</label>
               <Textarea
                 placeholder="Provide context about the current state of the case, pending items, and any urgent concerns..."
                 className="mt-1"
                 rows={4}
               />
             </div>
-            <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
+            <div className="flex items-center gap-2 p-3 rounded-lg border border-border">
               <AlertTriangle className="h-4 w-4 text-[var(--warning)] flex-shrink-0" />
-              <p className="text-xs text-amber-800">
+              <p className="text-meta text-amber-800">
                 The recipient will be notified immediately and will have full access to case history and notes.
               </p>
             </div>

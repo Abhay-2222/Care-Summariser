@@ -1,27 +1,17 @@
 "use client"
 
+import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useApp } from "@/lib/app-context"
-import { statusConfig } from "@/lib/workflow-utils"
-import { typography, getProgressColor } from "@/lib/design-system"
+import { statusConfig, requirementsMet } from "@/lib/workflow-utils"
+import { typography } from "@/lib/design-system"
 import { cn } from "@/lib/utils"
-import { 
-  Play, 
-  Send, 
-  UserCheck, 
-  CheckCircle2, 
-  ChevronDown,
-  FileText,
-  Clock,
-  AlertTriangle,
-} from "lucide-react"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Send,
+  UserCheck,
+  CheckCircle2,
+} from "lucide-react"
 
 interface WorkflowBarProps {
   onRequestDocs?: () => void
@@ -30,178 +20,133 @@ interface WorkflowBarProps {
   onSubmit?: () => void
 }
 
-export function WorkflowBar({ 
-  onRequestDocs, 
-  onSendToMD, 
-  onGeneratePA, 
-  onSubmit 
+function formatSince(iso?: string) {
+  if (!iso) return ""
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  return date.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+}
+
+export function WorkflowBar({
+  onRequestDocs,
+  onSendToMD,
+  onGeneratePA,
+  onSubmit,
 }: WorkflowBarProps) {
-  const { selectedPatient, currentRole, hasPermission, claimCase, currentUser } = useApp()
+  const {
+    selectedPatient,
+    patients,
+    hasPermission,
+    claimCase,
+    physicianApprove,
+    physicianDefer,
+    physicianEscalate,
+    setSelectedPatientId,
+  } = useApp()
+  const router = useRouter()
+  const pathname = usePathname()
+  const [reason, setReason] = useState("")
 
   if (!selectedPatient) return null
 
   const workflow = selectedPatient.workflow
   const statusInfo = statusConfig[workflow.status]
-  const progress = workflow.progressPercent
-  const isAssignedToMe = workflow.assignment?.assignedTo === currentUser
+  const met = selectedPatient.payerRules.filter((rule) => rule.status === "satisfied").length
+  const total = selectedPatient.payerRules.length
+  const isPhysician = hasPermission("approve_pa")
+  const isCaseManager = hasPermission("claim_case")
+  const physicianTurn = workflow.status === "needs_physician" || workflow.status === "escalated"
 
-  // Determine primary action based on status
-  const getPrimaryAction = () => {
-    if (workflow.status === "new" && !isAssignedToMe) {
-      return {
-        label: "Claim Case",
-        icon: Play,
-        onClick: () => claimCase(selectedPatient.id),
-        variant: "default" as const,
-      }
-    }
-    if (workflow.status === "in_progress" && workflow.readyForPA) {
-      return {
-        label: "Generate PA",
-        icon: FileText,
-        onClick: onGeneratePA,
-        variant: "default" as const,
-      }
-    }
-    if (workflow.status === "needs_physician") {
-      return {
-        label: "Awaiting MD",
-        icon: Clock,
-        onClick: undefined,
-        variant: "secondary" as const,
-        disabled: true,
-      }
-    }
-    if (workflow.status === "ready") {
-      return {
-        label: "Submit PA",
-        icon: Send,
-        onClick: onSubmit,
-        variant: "default" as const,
-      }
-    }
-    if (workflow.status === "in_progress") {
-      return {
-        label: "Send to MD",
-        icon: UserCheck,
-        onClick: onSendToMD,
-        variant: "outline" as const,
-      }
-    }
-    return null
+  const advance = () => {
+    const next =
+      patients.find((patient) => patient.id !== selectedPatient.id && patient.workflow.status === "needs_physician") ??
+      patients.find((patient) => patient.id !== selectedPatient.id)
+    if (!next) return
+    setSelectedPatientId(next.id)
+    if (pathname.startsWith("/patient")) router.push(`/patient/${next.id}`)
+    setReason("")
   }
 
-  const primaryAction = getPrimaryAction()
+  const signOff = () => {
+    physicianApprove(selectedPatient.id, reason)
+    advance()
+  }
 
-  // Count issues that need attention
-  const openGaps = selectedPatient.careLens?.policyGaps?.filter(g => g.status === "open").length || 0
-  const missingRules = selectedPatient.payerRules?.filter(r => r.status === "missing").length || 0
-  const totalIssues = openGaps + missingRules
+  const sendBack = () => {
+    if (!reason.trim()) return
+    physicianDefer(selectedPatient.id, reason)
+    advance()
+  }
+
+  const escalate = () => {
+    if (!reason.trim()) return
+    physicianEscalate(selectedPatient.id, reason)
+    advance()
+  }
+
+  const holder = workflow.assignment?.assignedTo
+  const since = formatSince(workflow.assignment?.assignedAt)
 
   return (
-    <div className="sticky top-0 z-10 bg-card border-b border-border px-3 sm:px-4 py-2">
-      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4">
-        {/* Left: Status + Progress */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
-          {/* Status badge */}
-          <span className={cn(
-            "flex-shrink-0 text-ds-badge px-2 py-0.5 rounded-full",
-            statusInfo.badgeClass
-          )}>
+    <div className="shrink-0">
+      <div className="flex items-end gap-3">
+        <div>
+          <p className={typography.meta}>Status</p>
+          <p className={cn(typography.body, "mt-1 whitespace-nowrap", statusInfo.badgeClass)}>
             {statusInfo.label}
-          </span>
-
-          {/* Progress bar */}
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-16 sm:w-20 h-1.5 bg-[var(--neutral-150)] rounded-full overflow-hidden flex-shrink-0">
-              <div 
-                className={cn("h-full rounded-full transition-all", getProgressColor(progress))}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <span className="text-caption text-[var(--neutral-600)] tabular-nums whitespace-nowrap">
-              {progress}%
-            </span>
-          </div>
-
-          {/* Issues indicator — inline on mobile */}
-          {totalIssues > 0 && (
-            <div className="flex items-center gap-1 text-[var(--warning)]">
-              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
-              <span className="text-caption whitespace-nowrap">
-                {totalIssues} {totalIssues === 1 ? "issue" : "issues"}
-              </span>
-            </div>
-          )}
-
-          {/* Assignment — hidden on mobile */}
-          {workflow.assignment && (
-            <span className={cn(typography.label, "hidden lg:block whitespace-nowrap")}>
-              {isAssignedToMe ? "Assigned to you" : `Assigned: ${workflow.assignment.assignedTo}`}
-            </span>
-          )}
+            <span className={typography.meta}> · {met} of {total}</span>
+            {workflow.status === "needs_physician" && holder && (
+              <span className={typography.meta}>{since ? ` · ${since}` : ""}</span>
+            )}
+          </p>
         </div>
 
-        {/* Right: Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-          {/* Issues indicator button */}
-          {missingRules > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 sm:px-2.5 text-caption gap-1 sm:gap-1.5 text-[var(--status-warn-text)] border-[var(--status-warn-border)] hover:bg-[var(--status-warn-bg)] bg-transparent"
-              onClick={onRequestDocs}
-            >
-              <AlertTriangle className="h-3 w-3 flex-shrink-0" />
-              <span className="whitespace-nowrap">{missingRules} Missing</span>
+          {isCaseManager && workflow.status === "new" && (
+            <Button size="sm" className="h-7 px-3 text-body" onClick={() => claimCase(selectedPatient.id)}>
+              Claim
             </Button>
           )}
 
-          {/* Primary action button */}
-          {primaryAction && (
-            <Button
-              variant={primaryAction.variant}
-              size="sm"
-              className="h-7 px-2 sm:px-3 text-label-sm gap-1 sm:gap-1.5 font-semibold whitespace-nowrap"
-              onClick={primaryAction.onClick}
-              disabled={primaryAction.disabled}
-            >
-              <primaryAction.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="hidden xs:inline sm:inline">{primaryAction.label}</span>
+          {isCaseManager && workflow.status === "in_progress" && hasPermission("send_to_physician") && (
+            <Button size="sm" variant="outline" className="h-7 px-2 sm:px-3 text-body gap-1.5 bg-transparent" onClick={onSendToMD}>
+              <UserCheck className="h-3.5 w-3.5" />
+              Send for sign-off
             </Button>
           )}
 
-          {/* More actions dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {isCaseManager && workflow.status === "ready" && hasPermission("submit_pa") && (
+            <Button size="sm" className="h-7 px-2 sm:px-3 text-body gap-1.5" onClick={onSubmit}>
+              <Send className="h-3.5 w-3.5" />
+              Send to {selectedPatient.insurance}
+            </Button>
+          )}
+
+          {isPhysician && physicianTurn && (
+            <>
+              <input
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                placeholder="Reason"
+                className="h-7 w-36 rounded-md border border-border bg-card px-2 text-caption"
+              />
               <Button
-                variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 text-[var(--neutral-400)] hover:text-foreground flex-shrink-0"
+                className="h-7 px-2 sm:px-3 text-body gap-1.5"
+                disabled={!requirementsMet(selectedPatient)}
+                onClick={signOff}
               >
-                <ChevronDown className="h-4 w-4" />
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Sign off
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem className="text-body-sm" onClick={onSendToMD}>
-                <UserCheck className="h-3.5 w-3.5 mr-2" />
-                Send to MD Review
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-body-sm" onClick={onGeneratePA}>
-                <FileText className="h-3.5 w-3.5 mr-2" />
-                Generate PA Letter
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-body-sm text-[var(--warning)]">
-                <Clock className="h-3.5 w-3.5 mr-2" />
-                Defer Case
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-body-sm text-[var(--destructive)]">
-                <AlertTriangle className="h-3.5 w-3.5 mr-2" />
+              <Button size="sm" variant="outline" className="h-7 px-2 text-body bg-transparent" disabled={!reason.trim()} onClick={sendBack}>
+                Send back
+              </Button>
+              <Button size="sm" variant="outline" className="h-7 px-2 text-body bg-transparent" disabled={!reason.trim()} onClick={escalate}>
                 Escalate
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

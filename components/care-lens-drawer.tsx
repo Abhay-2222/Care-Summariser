@@ -37,68 +37,13 @@ import {
   Target,
 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
-import type { ConfidenceLevel, RiskLevel } from "@/lib/types"
+import type { RiskLevel } from "@/lib/types"
 import { riskStyles } from "@/lib/design-system"
 
 interface CareLensDrawerProps {
   isOpen: boolean
   onClose: () => void
   mode: "full" | "readonly"
-}
-
-interface ConfidenceFactorProps {
-  label: string
-  score: number
-  explanation: string
-  factors: { label: string; met: boolean }[]
-  color: string
-}
-
-function ExplainableConfidence({ label, score, explanation, factors }: ConfidenceFactorProps) {
-  const [expanded, setExpanded] = useState(false)
-  const metCount = factors.filter(f => f.met).length
-  
-  return (
-    <div className="border border-border rounded-lg overflow-hidden">
-      <button 
-        onClick={() => setExpanded(!expanded)}
-        className="w-full p-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors"
-      >
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="h-1.5 w-6 rounded-full bg-[var(--neutral-200)] overflow-hidden flex-shrink-0">
-            <div className="h-full rounded-full bg-[var(--neutral-500)]" style={{ width: `${score}%` }} />
-          </div>
-          <span className="text-caption text-[var(--neutral-700)]">{label}</span>
-          <span className="text-caption text-[var(--neutral-500)]">({metCount}/{factors.length})</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-caption font-mono font-semibold text-[var(--neutral-800)]">{score}%</span>
-          {expanded ? <ChevronDown className="h-3 w-3 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3 w-3 text-[var(--neutral-400)]" />}
-        </div>
-      </button>
-      {expanded && (
-        <div className="px-2.5 pb-2.5 border-t border-border bg-[var(--neutral-50)]">
-          <p className="text-caption text-[var(--neutral-600)] py-2 leading-relaxed">{explanation}</p>
-          <div className="space-y-1">
-            {factors.map((factor, i) => (
-              <div key={i} className="flex items-center gap-1.5">
-                <div className={cn(
-                  "h-3 w-3 rounded-full border flex items-center justify-center flex-shrink-0",
-                  factor.met ? "border-[var(--neutral-300)] bg-[var(--neutral-100)]" : "border-border"
-                )}>
-                  {factor.met && <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-500)]" />}
-                </div>
-                <span className={cn(
-                  "text-caption",
-                  factor.met ? "text-[var(--neutral-700)]" : "text-[var(--neutral-500)]"
-                )}>{factor.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
 }
 
 function RiskBadge({ level }: { level: RiskLevel }) {
@@ -235,26 +180,17 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
   const openGapCount = careLens.policyGaps.filter(g => g.status === "open").length
   const pendingRecCount = careLens.recommendations.filter(r => r.status === "pending").length
 
-  const levelToPercent = (level: ConfidenceLevel): number => {
-    return level === "High" ? 90 : level === "Medium" ? 65 : 35
-  }
-  const confidencePercents = {
-    evidence: levelToPercent(careLens.confidenceBreakdown.evidenceCompleteness),
-    policy: levelToPercent(careLens.confidenceBreakdown.policyAlignment),
-    clinical: levelToPercent(careLens.confidenceBreakdown.clinicalClarity),
-  }
-
   const getAIResponse = (question: string): string => {
     const q = question.toLowerCase()
     if (q.includes("los") || q.includes("length of stay")) {
       return "LOS risk is flagged because the patient's frailty score (6/10) combined with a 72-hour respiratory decline pattern suggests potential extended stay. Similar cases average 2.3 additional days. Consider documenting step-down criteria to mitigate."
     }
     if (q.includes("deny") || q.includes("denial")) {
-      return `Denial risk is ${careLens.denialRisk} based on: ${openGapCount} policy gaps, ${openRiskCount} unmitigated risks. Historical approval rate for similar ${selectedPatient.insurance} cases: 72%. Key factor: documentation completeness.`
+      return `Denial risk is ${careLens.denialRisk}. ${openGapCount} policy gaps, ${openRiskCount} open risks.`
     }
     if (q.includes("confidence") || q.includes("score")) {
-      const avgConfidence = Math.round((confidencePercents.evidence + confidencePercents.policy + confidencePercents.clinical) / 3)
-      return `Confidence is ${careLens.overallConfidence} (~${avgConfidence}% avg) because evidence=${confidencePercents.evidence}%, policy=${confidencePercents.policy}%, clinical=${confidencePercents.clinical}%. Resolve gaps to improve.`
+      const met = selectedPatient.payerRules.filter((rule) => rule.status === "satisfied").length
+      return `${met} of ${selectedPatient.payerRules.length} requirements met.`
     }
     if (q.includes("override") || q.includes("challenge")) {
       return "To override a risk assessment, click the Challenge button next to the risk factor. Provide clinical justification and I'll recalculate confidence. All overrides are logged for audit compliance."
@@ -277,19 +213,8 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     }, 1200)
   }
 
-  const handleChallenge = (riskId: string, riskFactor: string) => {
-    setChatOpen(true)
-    setChatMessages(prev => [...prev, 
-      { role: "user", content: `Why is "${riskFactor}" flagged as a risk?` }
-    ])
-    setIsTyping(true)
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { 
-        role: "assistant", 
-        content: `This risk was identified because: 1) Pattern analysis shows similar cases had 34% higher denial rates, 2) Payer ${selectedPatient.insurance} specifically requires documentation for this scenario. To override: provide clinical justification showing why this doesn't apply to this patient.`
-      }])
-      setIsTyping(false)
-    }, 1000)
+  const handleChallenge = (_riskId: string, _riskFactor: string) => {
+    // Chat is removed. The requirement row is the evidence.
   }
   
   const handleQuickAction = (actionType: string) => {
@@ -409,80 +334,43 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
         <ScrollArea className="flex-1 overflow-y-auto">
           <div className="p-3 space-y-3">
-            <div className="p-2.5 bg-[var(--neutral-50)] rounded-lg border border-border">
-              <p className="text-caption text-[var(--neutral-600)] leading-relaxed">
-                Analyzed {selectedPatient.documentsProcessed} documents for this case.
-                {openRiskCount > 0 
-                  ? <> Found {openRiskCount} item{openRiskCount > 1 ? 's' : ''} to review below.</>
-                  : <> Ready for PA preparation.</>
-                }
-              </p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Confidence</p>
-                <p className="text-label-md font-mono text-[var(--neutral-900)]">{careLens.overallConfidence}</p>
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Denial risk</p>
+                <p className="text-body text-[var(--neutral-900)]">{careLens.denialRisk}</p>
               </div>
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Denial Risk</p>
-                <p className="text-label-md font-mono text-[var(--neutral-900)]">{careLens.denialRisk}</p>
-              </div>
-              <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Rules</p>
-                <p className="text-label-md font-mono text-[var(--neutral-900)]">
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Requirements</p>
+                <p className="text-body text-[var(--neutral-900)]">
                   {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-caption font-medium text-[var(--neutral-700)]">How we calculated confidence</p>
-              <p className="text-caption text-[var(--neutral-500)] -mt-1">Click each score to see contributing factors</p>
-              
-              <ExplainableConfidence 
-                label="Evidence Quality"
-                score={confidencePercents.evidence}
-                color="bg-[var(--status-info-bg)]0"
-                explanation="Based on completeness and relevance of uploaded documentation for this diagnosis and payer."
-                factors={[
-                  { label: "Admission H&P found", met: true },
-                  { label: "Lab results within 24hrs", met: true },
-                  { label: "Imaging reports present", met: selectedPatient.documentsProcessed > 10 },
-                  { label: "Specialist consult documented", met: false },
-                ]}
-              />
-              
-              <ExplainableConfidence 
-                label="Policy Alignment"
-                score={confidencePercents.policy}
-                color="bg-[var(--status-info-bg)]0"
-                explanation={`Based on ${selectedPatient.insurance}'s published criteria for ${selectedPatient.diagnoses[0]}.`}
-                factors={[
-                  { label: `${selectedPatient.insurance} medical necessity met`, met: selectedPatient.payerRules.filter(r => r.status === "satisfied").length > 2 },
-                  { label: "Length of stay justified", met: true },
-                  { label: "Level of care appropriate", met: true },
-                  { label: "All required documentation present", met: confidencePercents.policy > 70 },
-                ]}
-              />
-              
-              <ExplainableConfidence 
-                label="Clinical Clarity"
-                score={confidencePercents.clinical}
-                color="bg-[var(--status-ok-bg)]0"
-                explanation="Based on how clearly the clinical narrative supports medical necessity."
-                factors={[
-                  { label: "Diagnosis clearly documented", met: true },
-                  { label: "Treatment plan articulated", met: true },
-                  { label: "Clinical progression noted", met: true },
-                  { label: "Discharge criteria defined", met: confidencePercents.clinical > 85 },
-                ]}
-              />
+            <div className="space-y-1">
+              {selectedPatient.payerRules.map((rule) => (
+                <div key={rule.id} className="flex items-start gap-1.5">
+                  <span className={cn(
+                    "mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0",
+                    rule.status === "satisfied" ? "bg-[var(--neutral-500)]" : "bg-[var(--status-warn-text)]"
+                  )} />
+                  <span className="text-caption text-[var(--neutral-700)]">{rule.rule}</span>
+                </div>
+              ))}
+              {careLens.policyGaps.map((gap) => (
+                <div key={gap.id} className="flex items-start gap-1.5">
+                  <span className={cn(
+                    "mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0",
+                    gap.status === "resolved" ? "bg-[var(--neutral-500)]" : "bg-[var(--status-warn-text)]"
+                  )} />
+                  <span className="text-caption text-[var(--neutral-700)]">{gap.gap}</span>
+                </div>
+              ))}
             </div>
 
             <Collapsible open={risksOpen} onOpenChange={setRisksOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
+                <span className="text-meta text-[var(--neutral-700)] flex items-center gap-1.5">
                   {risksOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                   <AlertTriangle className="h-3 w-3 text-[var(--neutral-500)]" />
                   Risk Factors
@@ -504,8 +392,8 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                       key={risk.id} 
                       className={cn(
                         "rounded-lg border text-caption overflow-hidden transition-all",
-                        isOpen ? "bg-[var(--status-error-bg)] border-[var(--status-error-border)]" : 
-                        isAddressed ? "bg-[var(--status-ok-bg)] border-[var(--status-ok-border)]" :
+                        isOpen ? "bg-transparent border-border" : 
+                        isAddressed ? "bg-transparent border-border" :
                         isDismissed ? "bg-[var(--neutral-50)] border-border opacity-50" :
                         "bg-[var(--neutral-50)] border-border"
                       )}
@@ -585,7 +473,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <Collapsible open={gapsOpen} onOpenChange={setGapsOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
+                <span className="text-meta text-[var(--neutral-700)] flex items-center gap-1.5">
                   {gapsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                   <FileWarning className="h-3 w-3 text-[var(--neutral-500)]" />
                   Policy Gaps
@@ -603,7 +491,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     className={cn(
                       "p-2 rounded-md border",
                       gap.status === "open" 
-                        ? "bg-[var(--status-warn-bg)] border-[var(--status-warn-border)]" 
+                        ? "bg-transparent border-border" 
                         : "bg-[var(--neutral-50)] border-border opacity-60"
                     )}
                   >
@@ -618,7 +506,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
             <Collapsible open={recsOpen} onOpenChange={setRecsOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5">
-                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
+                <span className="text-meta text-[var(--neutral-700)] flex items-center gap-1.5">
                   {recsOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                   <Lightbulb className="h-3 w-3 text-[var(--neutral-500)]" />
                   Recommendations
@@ -709,20 +597,6 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
               </CollapsibleContent>
             </Collapsible>
 
-            <div className="p-2 rounded-lg bg-[var(--neutral-50)] border border-border">
-              <p className="text-caption font-medium text-[var(--neutral-700)] mb-1.5">{selectedPatient.insurance} Intel</p>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                <div className="flex justify-between">
-                  <span className="text-caption text-[var(--neutral-500)]">Wait</span>
-                  <span className="text-caption text-[var(--neutral-700)]">~4 days</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-caption text-[var(--neutral-500)]">Similar</span>
-                  <span className="text-caption font-mono text-[var(--neutral-700)]">78%</span>
-                </div>
-              </div>
-            </div>
-
             {hasPermission("view_audit_log") && (
               <Button variant="outline" className="w-full h-8 text-label-sm gap-1.5 bg-transparent">
                 <Download className="h-3 w-3" />
@@ -732,87 +606,6 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
           </div>
         </ScrollArea>
 
-        {roleView.showChat && (
-          <div className="border-t border-border bg-[var(--neutral-50)] flex-shrink-0">
-            <Collapsible open={chatOpen} onOpenChange={setChatOpen}>
-              <CollapsibleTrigger className="w-full px-3 py-2 flex items-center justify-between hover:bg-[var(--neutral-100)] transition-colors">
-                <span className="text-caption font-medium text-[var(--neutral-700)] flex items-center gap-1.5">
-                  <MessageSquare className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
-                  Ask CareLens
-                  {chatMessages.length > 0 && (
-                    <Badge variant="secondary" className="h-4 px-1.5 text-caption font-semibold tabular-nums">{chatMessages.length}</Badge>
-                  )}
-                </span>
-                {chatOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <div className="px-3 pb-3">
-                  <div className="h-36 overflow-y-auto mb-2 space-y-2 bg-card rounded-lg p-2.5 border border-border">
-                    {chatMessages.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center text-center px-2">
-                        <MessageSquare className="h-6 w-6 text-[var(--neutral-300)] mb-2" />
-                        <p className="text-caption text-[var(--neutral-600)]">Ask questions about this case</p>
-                        <p className="text-caption text-[var(--neutral-500)] mt-0.5">e.g., &quot;Why is evidence score low?&quot; or &quot;Draft a consult request&quot;</p>
-                      </div>
-                    ) : (
-                      <>
-                        {chatMessages.map((msg, i) => (
-                          <ChatMessage 
-                            key={i} 
-                            role={msg.role} 
-                            content={msg.content} 
-                            quickActions={msg.quickActions}
-                            userName={userFirstName}
-                          />
-                        ))}
-                        {isTyping && <ChatMessage role="coach" content="" isLoading />}
-                        <div ref={chatEndRef} />
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    {[
-                      { label: "Why this score?", icon: <HelpCircle className="h-2.5 w-2.5" /> },
-                      { label: "Draft request", icon: <FileText className="h-2.5 w-2.5" /> },
-                      { label: "Similar cases", icon: <RefreshCw className="h-2.5 w-2.5" /> },
-                    ].map((q) => (
-                      <button
-                        key={q.label}
-                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--neutral-100)] border border-[var(--neutral-200)] text-[var(--neutral-700)] text-caption hover:bg-[var(--neutral-150)] transition-colors"
-                        onClick={() => {
-                          setChatInput(q.label)
-                          setTimeout(() => handleSendMessage(), 100)
-                        }}
-                      >
-                        {q.icon}
-                        {q.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-1.5">
-                    <Textarea
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
-                      placeholder="Ask about this case..."
-                      className="min-h-[32px] h-8 text-caption resize-none"
-                    />
-                    <Button 
-                      size="sm" 
-                      className="h-8 w-8 p-0 bg-[var(--brand-700)] hover:bg-[var(--brand-800)] text-white"
-                      onClick={handleSendMessage}
-                      disabled={!chatInput.trim() || isTyping}
-                    >
-                      <Send className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   )
