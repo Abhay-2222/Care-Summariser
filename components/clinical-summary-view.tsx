@@ -16,7 +16,6 @@ import {
   FileText,
   Search,
   Download,
-  RefreshCw,
   Clock,
   AlertTriangle,
   CheckCircle2,
@@ -31,6 +30,7 @@ import {
   FileWarning,
 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
+import { useTabContext } from "@/components/case-contexts"
 import { useToast } from "@/hooks/use-toast"
 import type { ConfidenceLevel } from "@/lib/types"
 import { statusConfig } from "@/lib/workflow-utils"
@@ -44,18 +44,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-
-// Import tab context - may not exist in all contexts
-let useTabContext: () => { setActiveTab: (tab: string) => void } = () => ({ setActiveTab: () => {} })
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const tabModule = require("@/app/patient/[id]/page")
-  if (tabModule.useTabContext) {
-    useTabContext = tabModule.useTabContext
-  }
-} catch {
-  // Tab context not available
-}
 
 function ConfidenceIndicator({ level }: { level: ConfidenceLevel }) {
   const config = {
@@ -75,7 +63,6 @@ function ConfidenceIndicator({ level }: { level: ConfidenceLevel }) {
 export function ClinicalSummaryView() {
   const { 
     selectedPatient, 
-    regenerateSummary, 
     requestDocumentation, 
   currentRole,
   currentUser,
@@ -107,13 +94,10 @@ export function ClinicalSummaryView() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCareLensHint, setShowCareLensHint] = useState(!hasSeenSwipeHint)
   
-  // Track requested items - stores rule IDs that have been requested
-  const [requestedItems, setRequestedItems] = useState<Set<string>>(new Set())
-
   if (!selectedPatient) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center text-[var(--neutral-400)]">
+        <div className="text-center text-[var(--neutral-500)]">
           <FileText className="h-8 w-8 mx-auto mb-2" />
           <p className="text-body-md">No patient selected</p>
         </div>
@@ -124,14 +108,7 @@ export function ClinicalSummaryView() {
   const workflow = selectedPatient.workflow
   const statusInfo = statusConfig[workflow.status]
 
-  const handleRegenerate = () => {
-    regenerateSummary()
-  }
-
-  const handleRequestDoc = (ruleId: string) => {
-    requestDocumentation(ruleId)
-    setRequestedItems(prev => new Set([...prev, ruleId]))
-  }
+  const requestedIds = new Set((selectedPatient.documentationRequests ?? []).map((request) => request.alertId))
 
   const handleExport = () => {
     toast({
@@ -178,6 +155,9 @@ export function ClinicalSummaryView() {
     setHasSeenSwipeHint(true)
   }
 
+  const documentTypes = [...new Set(selectedPatient.payerRules.map((rule) => rule.evidence).filter((evidence): evidence is string => !!evidence))]
+  const documentSource = documentTypes.length > 0 ? documentTypes.join(", ") : `${selectedPatient.documentsProcessed} documents on file`
+
   return (
     <div className="flex flex-col h-full">
       {/* Mobile CareLens Hint - shown once on first patient view */}
@@ -189,7 +169,7 @@ export function ClinicalSummaryView() {
           <button 
             type="button"
             onClick={dismissCareLensHint}
-            className="text-[var(--brand-300)] hover:text-[var(--brand-500)] ml-2 p-1"
+            className="focus-ring text-[var(--brand-300)] hover:text-[var(--brand-500)] ml-2 p-1"
           >
             <span className="sr-only">Dismiss</span>
             <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -278,17 +258,22 @@ export function ClinicalSummaryView() {
                   <p className={typography.meta}>Missing</p>
                   <div className="mt-1 space-y-1 border-l-2 border-[var(--status-error-text)] pl-3">
                     {selectedPatient.alerts.map((alert) => (
-                      <p key={alert.id} className={cn(typography.body, "text-[var(--status-error-text)]")}>{alert.message}</p>
+                      <p key={alert.id} className={cn(typography.body, "text-[var(--status-error-text)]")}>
+                        {alert.message}
+                        {requestedIds.has(alert.id) && <span className={cn(typography.meta, "ml-2 text-[var(--neutral-500)]")}>Requested</span>}
+                      </p>
                     ))}
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="mt-1 h-7 px-0 text-[var(--brand-600)]"
-                    onClick={() => selectedPatient.alerts.forEach((alert) => handleRequestDoc(alert.id))}
-                  >
-                    Request
-                  </Button>
+                  {selectedPatient.alerts.some((alert) => !requestedIds.has(alert.id)) && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="mt-1 h-7 px-0 text-[var(--brand-600)]"
+                      onClick={() => selectedPatient.alerts.forEach((alert) => requestDocumentation(alert.id))}
+                    >
+                      Request
+                    </Button>
+                  )}
                 </div>
               )}
             </section>
@@ -310,6 +295,11 @@ export function ClinicalSummaryView() {
                     "appeal started",
                     "gap resolved",
                     "gap not applicable",
+                    "documentation requested",
+                    "risk addressed",
+                    "risk dismissed",
+                    "risk reopened",
+                    "decision undone",
                   ].includes(entry.action),
                 )
                 .map((entry) => (
@@ -321,60 +311,13 @@ export function ClinicalSummaryView() {
           )}
 
           <div className="mt-8 space-y-3">
-          {/* Problem List */}
-          <Collapsible open={problemListOpen} onOpenChange={setProblemListOpen}>
-            <div className="bg-card rounded-xl border border-border shadow-ds-xs">
-              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
-                <div className="flex items-center gap-2">
-                  {problemListOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
-                  <span className={typography.sectionHeader}>Problem list</span>
-                  <span className={typography.label}>({selectedPatient.problemList.length})</span>
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <div className="px-3 pb-3 space-y-3">
-                  {/* Primary */}
-                  {selectedPatient.problemList.filter(p => p.type === "primary").map(problem => (
-                    <div key={problem.id} className="flex items-center justify-between py-2 px-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-[var(--brand-500)]" />
-                        <span className={typography.body}>{problem.name}</span>
-                      </div>
-                      <span className={typography.meta}>{problem.icdCode}</span>
-                    </div>
-                  ))}
-                  {/* Secondary */}
-                  {selectedPatient.problemList.filter(p => p.type === "secondary").map(problem => (
-                    <div key={problem.id} className="flex items-center justify-between py-1.5 px-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-400)]" />
-                        <span className={typography.body}>{problem.name}</span>
-                      </div>
-                              <span className={typography.meta}>{problem.icdCode}</span>
-                    </div>
-                  ))}
-                  {/* Comorbidities */}
-                  {selectedPatient.problemList.filter(p => p.type === "comorbidity").length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border">
-                      {selectedPatient.problemList.filter(p => p.type === "comorbidity").map(problem => (
-                        <span key={problem.id} className={typography.meta}>
-                          {problem.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
-
           {/* Payer Requirements with Evidence Links - Smart defaults: unmet first */}
           <Collapsible open={payerRulesOpen} onOpenChange={setPayerRulesOpen}>
             <div className="bg-card rounded-xl border border-border shadow-ds-xs">
               <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
                 <div className="flex items-center gap-2">
                   {payerRulesOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
-                  <span className={typography.sectionHeader}>Requirements</span>
+                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-900)]")}>Requirements</span>
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -416,7 +359,7 @@ export function ClinicalSummaryView() {
                                     <button
                                       key={doc}
                                       type="button"
-                                      className="text-caption text-[var(--brand-500)] hover:text-[var(--brand-700)] hover:underline cursor-pointer"
+                                      className="focus-ring text-caption text-[var(--brand-500)] hover:text-[var(--brand-700)] hover:underline cursor-pointer"
                                       onClick={() => setActiveTab("evidence")}
                                     >
                                       {doc}{i < linkedDocs.length - 1 ? "," : ""}
@@ -426,10 +369,6 @@ export function ClinicalSummaryView() {
                               )}
                               
                               {/* Missing doc - show request button or requested state */}
-                              {rule.status === "missing" && requestedItems.has(rule.id) && (
-                                <p className={cn(typography.meta, "mt-1")}>Requested</p>
-                              )}
-                              
                               {/* Unclear - show what's needed */}
                               {rule.status === "unclear" && rule.evidence && (
                                 <p className={cn(typography.label, "text-[var(--warning)] mt-1")}>{rule.evidence}</p>
@@ -444,29 +383,70 @@ export function ClinicalSummaryView() {
             </div>
           </Collapsible>
 
+          {/* Problem List */}
+          <Collapsible open={problemListOpen} onOpenChange={setProblemListOpen}>
+            <div className="bg-card rounded-xl border border-border shadow-ds-xs">
+              <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
+                <div className="flex items-center gap-2">
+                  {problemListOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
+                  <span className={cn(typography.sectionHeader, "text-[var(--neutral-900)]")}>Problem list</span>
+                  <span className={typography.label}>({selectedPatient.problemList.length})</span>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="px-3 pb-3 space-y-3">
+                  {/* Primary */}
+                  {selectedPatient.problemList.filter(p => p.type === "primary").map(problem => (
+                    <div key={problem.id} className="flex items-center justify-between py-2 px-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-[var(--brand-500)]" />
+                        <span className={typography.body}>{problem.name}</span>
+                      </div>
+                      <span className={typography.meta}>{problem.icdCode}</span>
+                    </div>
+                  ))}
+                  {/* Secondary */}
+                  {selectedPatient.problemList.filter(p => p.type === "secondary").map(problem => (
+                    <div key={problem.id} className="flex items-center justify-between py-1.5 px-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 w-1.5 rounded-full bg-[var(--neutral-400)]" />
+                        <span className={typography.body}>{problem.name}</span>
+                      </div>
+                              <span className={typography.meta}>{problem.icdCode}</span>
+                    </div>
+                  ))}
+                  {/* Comorbidities */}
+                  {selectedPatient.problemList.filter(p => p.type === "comorbidity").length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border">
+                      {selectedPatient.problemList.filter(p => p.type === "comorbidity").map(problem => (
+                        <span key={problem.id} className={typography.meta}>
+                          {problem.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
+
           {/* AI Summary - Collapsible with design system typography */}
           <Collapsible open={summaryOpen} onOpenChange={setSummaryOpen}>
             <div className="bg-card rounded-xl border border-border shadow-ds-xs">
               <div className="relative flex items-center">
-                <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors pr-20">
+                <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-[var(--neutral-50)] transition-colors">
                   <div className="flex items-center gap-2">
                     {summaryOpen ? <ChevronDown className="h-3.5 w-3.5 text-[var(--neutral-400)]" /> : <ChevronRight className="h-3.5 w-3.5 text-[var(--neutral-400)]" />}
-                    <span className={typography.sectionHeader}>
-                      Summary · drafted by CareLens from {selectedPatient.documentsProcessed} documents
+                    <span className={cn(typography.sectionHeader, "text-[var(--neutral-900)]")}>
+                      Summary · CareLens suggests, from {selectedPatient.documentsProcessed} documents
                     </span>
                   </div>
                 </CollapsibleTrigger>
-                <button
-                  type="button"
-                  className="absolute right-3 flex items-center gap-1 h-6 px-2 text-caption text-[var(--neutral-500)] rounded hover:bg-[var(--neutral-100)] transition-colors"
-                  onClick={(e) => { e.stopPropagation(); handleRegenerate() }}
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  Refresh
-                </button>
               </div>
               <CollapsibleContent>
                 <div className="px-3 pb-3 space-y-3">
+                  <p className={typography.meta}>From: {documentSource}</p>
+                  <p className={typography.meta}>Demo data</p>
                   <div>
                     <h4 className={cn(typography.label, "mb-1")}>Chief complaint</h4>
                     <p className={cn(typography.body, "leading-relaxed")}>{selectedPatient.chiefComplaint}</p>
@@ -486,7 +466,7 @@ export function ClinicalSummaryView() {
 
           {/* Timeline - Compact with design system typography */}
           <div className="bg-card rounded-xl border border-border p-3 shadow-ds-xs">
-            <h3 className={cn(typography.sectionHeader, "mb-3 flex items-center gap-2")}>
+            <h3 className={cn(typography.sectionHeader, "mb-3 flex items-center gap-2 text-[var(--neutral-900)]")}>
               <Clock className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
               Timeline
             </h3>
@@ -519,7 +499,7 @@ export function ClinicalSummaryView() {
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={handleExport}>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" aria-label="Download summary" onClick={handleExport}>
                     <Download className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   </Button>
                 </TooltipTrigger>
@@ -527,7 +507,7 @@ export function ClinicalSummaryView() {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" onClick={() => setActiveTab("evidence")}>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 bg-transparent" aria-label="Search evidence" onClick={() => setActiveTab("evidence")}>
                     <Search className="h-3.5 w-3.5 text-[var(--neutral-400)]" />
                   </Button>
                 </TooltipTrigger>

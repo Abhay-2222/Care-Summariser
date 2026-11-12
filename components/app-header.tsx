@@ -33,7 +33,7 @@ import { NotificationCenter } from "@/components/notification-center"
 
 const baseNavItems = [
   { name: "Queue", href: "/", icon: ClipboardList, roles: ["case_manager", "physician"] },
-  { name: "MD Review", href: "/medical-director", icon: Stethoscope, roles: ["physician"] },
+  { name: "Escalations", href: "/medical-director", icon: Stethoscope, roles: ["physician"] },
   { name: "Audit", href: "/audit", icon: FileCheck, roles: ["auditor"] },
 ]
 
@@ -124,7 +124,7 @@ export function AppHeader() {
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="h-8 w-8 rounded-full flex items-center justify-center text-[var(--neutral-400)] hover:text-foreground hover:bg-[var(--neutral-100)] transition-colors">
+                <button aria-label="Search" className="focus-ring h-8 w-8 rounded-full flex items-center justify-center text-[var(--neutral-400)] hover:text-foreground hover:bg-[var(--neutral-100)] transition-colors">
                   <Search className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
@@ -151,7 +151,8 @@ export function AppHeader() {
                       {currentRoleData.initials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline text-foreground">{currentRoleData.shortName}</span>
+                  <span className="hidden md:inline text-foreground">{currentUser.name}</span>
+                  <span className="hidden md:inline text-[var(--neutral-500)]">{currentRoleData.name}</span>
                   <ChevronDown className="h-3 w-3 text-[var(--neutral-400)]" />
                 </Button>
               </DropdownMenuTrigger>
@@ -160,7 +161,7 @@ export function AppHeader() {
                   Signed in as <span className="text-label-md text-foreground">{currentUser.name}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-overline text-[var(--neutral-400)]">Switch Role</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-meta text-[var(--neutral-500)]">Demo: switch role</DropdownMenuLabel>
                 {Object.entries(roleConfig).map(([id, role]) => (
                   <DropdownMenuItem 
                     key={id}
@@ -175,7 +176,7 @@ export function AppHeader() {
                     </div>
                     <span>{role.name}</span>
                     {currentRole === id && (
-                      <span className="ml-auto text-caption text-[var(--neutral-400)]">Active</span>
+                      <span className="ml-auto text-caption text-[var(--neutral-500)]">Active</span>
                     )}
                   </DropdownMenuItem>
                 ))}

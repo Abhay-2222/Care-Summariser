@@ -3,11 +3,26 @@
 import { Badge } from "@/components/ui/badge"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { useApp } from "@/lib/app-context"
-import { AlertCircle, CheckCircle2, Clock, FileText } from "lucide-react"
+import { demoNow } from "@/lib/demo-clock"
+import { AlertCircle, CheckCircle2, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { typography } from "@/lib/design-system"
+
+const APPEAL_WARNING_DAYS = 7
+const DAY_MS = 24 * 60 * 60 * 1000
+
+function dueOn(daysFromNow: number) {
+  return new Date(demoNow.getTime() + daysFromNow * DAY_MS)
+}
+
+function formatDue(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+}
+
+function dueWithinWarning(dueAt: Date) {
+  return dueAt.getTime() - demoNow.getTime() <= APPEAL_WARNING_DAYS * DAY_MS
+}
 
 const statusFilters = [
   { value: "all", label: "All" },
@@ -24,7 +39,7 @@ const mockAppeals = [
     submittedDate: "Jan 3, 2026",
     reason: "Initial denial - insufficient medical necessity documentation",
     nextStep: "Submit additional clinical notes",
-    dueDate: "Jan 10, 2026",
+    dueAt: dueOn(3),
   },
   {
     id: "2",
@@ -33,13 +48,26 @@ const mockAppeals = [
     submittedDate: "Dec 15, 2025",
     reason: "Denial of extended stay",
     nextStep: "None - case resolved",
-    dueDate: "-",
+    dueAt: null as Date | null,
   },
 ]
+
+function isPendingAppeal(status: string) {
+  return status.toLowerCase().startsWith("pending")
+}
 
 export function AppealsPanel() {
   const { selectedPatient } = useApp()
   const [statusFilter, setStatusFilter] = useState("all")
+  const sortedAppeals = [...mockAppeals].sort((a, b) => {
+    const aPending = isPendingAppeal(a.status)
+    const bPending = isPendingAppeal(b.status)
+    if (aPending !== bPending) return aPending ? -1 : 1
+    if (!aPending) return 0
+    const aTime = a.dueAt ? a.dueAt.getTime() : Number.POSITIVE_INFINITY
+    const bTime = b.dueAt ? b.dueAt.getTime() : Number.POSITIVE_INFINITY
+    return aTime - bTime
+  })
 
   if (!selectedPatient) {
     return (
@@ -56,10 +84,6 @@ export function AppealsPanel() {
         <div className="px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between mb-2.5">
             <p className={cn(typography.sectionHeader, "text-foreground")}>Appeals</p>
-            <Button size="sm" className="h-7 px-3 text-label-sm">
-              <FileText className="h-3 w-3" />
-              New Appeal
-            </Button>
           </div>
           
           <div className="flex items-center gap-1 overflow-x-auto pb-1">
@@ -68,7 +92,7 @@ export function AppealsPanel() {
                 key={filter.value}
                 type="button"
                 className={cn(
-                  "flex-shrink-0 h-6 px-2.5 rounded-full text-label-sm transition-all whitespace-nowrap",
+                  "focus-ring flex-shrink-0 h-6 px-2.5 rounded-full text-label-sm transition-all whitespace-nowrap",
                   statusFilter === filter.value 
                     ? "bg-[var(--neutral-900)] text-white" 
                     : "bg-[var(--neutral-50)] text-[var(--neutral-500)] hover:bg-[var(--neutral-100)] hover:text-[var(--neutral-700)]",
@@ -90,7 +114,7 @@ export function AppealsPanel() {
             </div>
           ) : (
             <div className="space-y-3">
-              {mockAppeals.map((appeal) => (
+              {sortedAppeals.map((appeal) => (
                 <div key={appeal.id} className="p-3 rounded-lg border border-border bg-[var(--neutral-50)]">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -112,6 +136,12 @@ export function AppealsPanel() {
                       </div>
                       <div className="mt-2 space-y-1">
                         <div className="flex gap-2">
+                          <span className="text-caption text-[var(--neutral-500)] w-16">Due</span>
+                          <span className={cn("text-meta", appeal.dueAt && dueWithinWarning(appeal.dueAt) ? "text-[var(--warning)]" : "text-[var(--neutral-700)]")}>
+                            {appeal.dueAt ? formatDue(appeal.dueAt) : "—"}
+                          </span>
+                        </div>
+                        <div className="flex gap-2">
                           <span className="text-caption text-[var(--neutral-500)] w-16">Submitted</span>
                           <span className="text-caption text-[var(--neutral-700)]">{appeal.submittedDate}</span>
                         </div>
@@ -123,19 +153,8 @@ export function AppealsPanel() {
                           <span className="text-caption text-[var(--neutral-500)] w-16">Next Step</span>
                           <span className="text-caption text-[var(--neutral-700)]">{appeal.nextStep}</span>
                         </div>
-                        {appeal.dueDate !== "-" && (
-                          <div className="flex gap-2">
-                            <span className="text-caption text-[var(--neutral-500)] w-16">Due Date</span>
-                            <span className="text-meta text-[var(--warning)]">{appeal.dueDate}</span>
-                          </div>
-                        )}
                       </div>
                     </div>
-                    {appeal.status === "Pending Review" && (
-                      <Button variant="ghost" size="sm" className="text-caption h-6 px-2 text-[var(--neutral-500)] hover:text-[var(--neutral-800)]">
-                        Update
-                      </Button>
-                    )}
                   </div>
                 </div>
               ))}

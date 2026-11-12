@@ -203,7 +203,7 @@ export function NotificationCenter() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <button className="relative h-7 w-7 rounded-md flex items-center justify-center text-[var(--neutral-500)] hover:bg-[var(--neutral-100)] transition-colors">
+        <button aria-label="Notifications" className="focus-ring relative h-7 w-7 rounded-md flex items-center justify-center text-[var(--neutral-500)] hover:bg-[var(--neutral-100)] transition-colors">
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
             <span className={cn(
@@ -255,7 +255,7 @@ export function NotificationCenter() {
           <TabsContent value={activeTab} className="m-0">
             <ScrollArea className="h-[350px]">
               {filteredNotifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[200px] text-[var(--neutral-400)]">
+                <div className="flex flex-col items-center justify-center h-[200px] text-[var(--neutral-500)]">
                   <Bell className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-body-sm">No notifications</p>
                 </div>
@@ -297,7 +297,8 @@ export function NotificationCenter() {
                                   e.stopPropagation()
                                   dismissNotification(notification.id)
                                 }}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity h-5 w-5 rounded flex items-center justify-center hover:bg-[var(--neutral-200)]"
+                                aria-label="Dismiss notification"
+                                className="focus-ring opacity-0 group-hover:opacity-100 transition-opacity h-5 w-5 rounded flex items-center justify-center hover:bg-[var(--neutral-200)]"
                               >
                                 <X className="h-3 w-3 text-[var(--neutral-400)]" />
                               </button>
@@ -306,7 +307,7 @@ export function NotificationCenter() {
                               {notification.message}
                             </p>
                             <div className="flex items-center justify-between mt-2">
-                              <span className="text-caption text-[var(--neutral-400)]">{notification.timestamp}</span>
+                              <span className="text-caption text-[var(--neutral-500)]">{notification.timestamp}</span>
                               {notification.actionUrl && (
                                 <a
                                   href={notification.actionUrl}

@@ -1,5 +1,18 @@
 import type { CaseStatus, CaseWorkflow, Patient, UserRole } from "./types"
 import { statusLabels } from "./design-system"
+import { demoNow, demoRandom } from "./demo-clock"
+
+export function rulesMet(patient: Pick<Patient, "payerRules">): number {
+  return patient.payerRules.filter((rule) => rule.status === "satisfied").length
+}
+
+export function unmetRequirements(patient: Pick<Patient, "payerRules" | "careLens">): string[] {
+  const rules = patient.payerRules.filter((rule) => rule.status !== "satisfied").map((rule) => rule.rule)
+  const risks = patient.careLens.riskFactors
+    .filter((risk) => risk.severity === "High" && risk.status === "open")
+    .map((risk) => risk.factor)
+  return [...rules, ...risks]
+}
 
 export function requirementsMet(patient: Pick<Patient, "payerRules" | "careLens">): boolean {
   const rulesOk = patient.payerRules.every((rule) => rule.status === "satisfied")
@@ -9,12 +22,28 @@ export function requirementsMet(patient: Pick<Patient, "payerRules" | "careLens"
   return rulesOk && noHighOpenRisk
 }
 
+export function isDueToday(patient: Pick<Patient, "paDeadline">): boolean {
+  return !!patient.paDeadline && (patient.paDeadline.hoursRemaining <= 24 || patient.paDeadline.status === "overdue")
+}
+
+const urgencyPriority = { STAT: 0, URGENT: 1, ROUTINE: 2 }
+
+export function compareByDeadline(a: Patient, b: Patient): number {
+  const aOver = a.paDeadline?.status === "overdue" ? 0 : 1
+  const bOver = b.paDeadline?.status === "overdue" ? 0 : 1
+  if (aOver !== bOver) return aOver - bOver
+  const aHours = a.paDeadline ? a.paDeadline.hoursRemaining : Number.POSITIVE_INFINITY
+  const bHours = b.paDeadline ? b.paDeadline.hoursRemaining : Number.POSITIVE_INFINITY
+  if (aHours !== bHours) return aHours - bHours
+  return urgencyPriority[a.urgency] - urgencyPriority[b.urgency]
+}
+
 // Calculate progress based on CareLens data and payer rules
 export function calculateProgress(patient: Patient): number {
   const { careLens, payerRules } = patient
   
   // Weight factors
-  const satisfiedRules = payerRules.filter(r => r.status === "satisfied").length
+  const satisfiedRules = rulesMet({ payerRules })
   const totalRules = payerRules.length
   const rulesProgress = totalRules > 0 ? (satisfiedRules / totalRules) * 40 : 0
   
@@ -67,7 +96,7 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
     status,
     progressPercent: progress,
     readyForPA,
-    lastUpdated: new Date(Date.now() - Math.random() * 86400000 * 3).toISOString(),
+    lastUpdated: new Date(demoNow.getTime() - demoRandom() * 86400000 * 3).toISOString(),
     statusHistory: [],
   }
   
@@ -75,7 +104,7 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
   if (status !== "new") {
     workflow.assignment = {
       assignedTo: assignedUser.name,
-      assignedAt: new Date(Date.now() - Math.random() * 86400000 * 2).toISOString(),
+      assignedAt: new Date(demoNow.getTime() - demoRandom() * 86400000 * 2).toISOString(),
       role: assignedUser.role,
     }
     
@@ -93,7 +122,7 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
     workflow.physicianDecision = {
       decision: "escalated",
       decidedBy: physician.name,
-      decidedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+      decidedAt: new Date(demoNow.getTime() - demoRandom() * 86400000).toISOString(),
       notes: "Sent to the medical director.",
     }
   }
@@ -104,7 +133,7 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
     workflow.physicianDecision = {
       decision: status === "denied" ? "escalated" : "approved",
       decidedBy: physician.name,
-      decidedAt: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+      decidedAt: new Date(demoNow.getTime() - demoRandom() * 86400000).toISOString(),
       notes: status === "approved" ? "Documentation complete, approved for submission" : undefined
     }
   }
@@ -116,7 +145,7 @@ export function generateWorkflow(patient: Omit<Patient, "workflow">, index: numb
 function calculateProgressFromPartial(patient: Omit<Patient, "workflow">): number {
   const { careLens, payerRules } = patient
   
-  const satisfiedRules = payerRules.filter(r => r.status === "satisfied").length
+  const satisfiedRules = rulesMet({ payerRules })
   const totalRules = payerRules.length
   const rulesProgress = totalRules > 0 ? (satisfiedRules / totalRules) * 40 : 0
   

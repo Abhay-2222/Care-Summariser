@@ -1,19 +1,19 @@
-import type { Patient, RiskFactor, PolicyGap, Recommendation, AuditEntry, SDOHFactor, PADeadline, EditSession } from "./types"
+import type { SeedPatient, RiskFactor, PolicyGap, Recommendation, AuditEntry, SDOHFactor, PADeadline, EditSession } from "./types"
+import { deadlineFromNow, demoRandom } from "./demo-clock"
 
-const uid = () => Math.random().toString(36).substring(2, 9)
+const uid = () => demoRandom().toString(36).substring(2, 9)
 
 // ============================================
 // EDGE CASE 1: "Data Desert" - Sparse Data
 // Patient with only 1 triage note, no history
 // ============================================
-export const dataDesertPatient: Patient = {
+export const dataDesertPatient: SeedPatient = {
   id: "edge-1",
   name: "Unknown Doe",
   mrn: "MRN-000001",
   age: 45,
   gender: "M",
   dob: "Unknown",
-  ssn: "***-**-0000",
   insurance: "Unknown - Verification Pending",
   admitted: "Today",
   admissionDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -75,7 +75,7 @@ export const dataDesertPatient: Patient = {
       }
     ],
     policyGaps: [
-      { id: "pg-edge1-1", gap: "Patient identity not verified", status: "open", policyReference: "Hospital Policy: Patient Identification Requirements" },
+      { id: "pg-edge1-1", gap: "Patient identity not verified", status: "open", policyReference: "Hospital Policy: SeedPatient Identification Requirements" },
       { id: "pg-edge1-2", gap: "Insurance eligibility not confirmed", status: "open", policyReference: "Revenue Cycle Policy: Pre-Authorization Requirements" },
     ],
     conflictingNotes: [],
@@ -116,14 +116,13 @@ export const dataDesertPatient: Patient = {
 // EDGE CASE 2: "Data Tsunami" - Excessive Data
 // 500+ notes, 20 diagnoses, complex chronic case
 // ============================================
-export const dataTsunamiPatient: Patient = {
+export const dataTsunamiPatient: SeedPatient = {
   id: "edge-2",
   name: "Martha Complexity",
   mrn: "MRN-999999",
   age: 78,
   gender: "F",
   dob: "3/15/1947",
-  ssn: "***-**-9999",
   insurance: "Medicare Advantage",
   admitted: "12 days ago",
   admissionDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -176,8 +175,7 @@ export const dataTsunamiPatient: Patient = {
   dataQuality: "excessive",
   paDeadline: {
     type: "concurrent",
-    deadline: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: 6,
+    ...deadlineFromNow(6),
     isWeekend: false,
     payerSLA: "24h concurrent review response",
     status: "at_risk"
@@ -269,14 +267,13 @@ export const dataTsunamiPatient: Patient = {
 // EDGE CASE 3: "Insurance Limbo" - Dual Coverage
 // Dual coverage with conflicting requirements
 // ============================================
-export const insuranceLimboPatient: Patient = {
+export const insuranceLimboPatient: SeedPatient = {
   id: "edge-3",
   name: "Carlos Dualcoverage",
   mrn: "MRN-333333",
   age: 66,
   gender: "M",
   dob: "8/22/1959",
-  ssn: "***-**-3333",
   insurance: "Medicare + Medicaid (Dual Eligible)",
   admitted: "3 days ago",
   admissionDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -315,8 +312,7 @@ export const insuranceLimboPatient: Patient = {
   dataQuality: "complete",
   paDeadline: {
     type: "initial",
-    deadline: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: 12,
+    ...deadlineFromNow(12),
     isWeekend: false,
     payerSLA: "Medicare: Initial PA within 72h",
     status: "at_risk"
@@ -393,14 +389,13 @@ export const insuranceLimboPatient: Patient = {
 // EDGE CASE 4: "Policy Void" - Rare Disease
 // Rare disease with no matching payer policy
 // ============================================
-export const policyVoidPatient: Patient = {
+export const policyVoidPatient: SeedPatient = {
   id: "edge-4",
   name: "Priya Rarecondition",
   mrn: "MRN-444444",
   age: 32,
   gender: "F",
   dob: "5/10/1993",
-  ssn: "***-**-4444",
   insurance: "Blue Cross Blue Shield",
   admitted: "5 days ago",
   admissionDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -517,14 +512,13 @@ export const policyVoidPatient: Patient = {
 // EDGE CASE 5: "Conflict Central" - Conflicting Notes
 // 3 providers with conflicting diagnoses/plans
 // ============================================
-export const conflictCentralPatient: Patient = {
+export const conflictCentralPatient: SeedPatient = {
   id: "edge-5",
   name: "Robert Contradictus",
   mrn: "MRN-555555",
   age: 58,
   gender: "M",
   dob: "11/3/1967",
-  ssn: "***-**-5555",
   insurance: "Aetna",
   admitted: "4 days ago",
   admissionDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -640,14 +634,13 @@ export const conflictCentralPatient: Patient = {
 // EDGE CASE 6: "Status Flip" - Observation to Inpatient
 // Observation converted to inpatient mid-stay
 // ============================================
-export const statusFlipPatient: Patient = {
+export const statusFlipPatient: SeedPatient = {
   id: "edge-6",
   name: "Diana Statuschange",
   mrn: "MRN-666666",
   age: 71,
   gender: "F",
   dob: "2/28/1954",
-  ssn: "***-**-6666",
   insurance: "Medicare Traditional",
   admitted: "2 days ago (Obs), converted today",
   admissionDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -684,8 +677,7 @@ export const statusFlipPatient: Patient = {
   dataQuality: "complete",
   paDeadline: {
     type: "urgent",
-    deadline: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: 4,
+    ...deadlineFromNow(4),
     isWeekend: false,
     payerSLA: "Retroactive IP conversion: 24h",
     status: "at_risk"
@@ -763,14 +755,13 @@ export const statusFlipPatient: Patient = {
 // EDGE CASE 7: "AI Uncertainty" - 50% Confidence
 // Case where AI genuinely cannot determine risk
 // ============================================
-export const aiUncertaintyPatient: Patient = {
+export const aiUncertaintyPatient: SeedPatient = {
   id: "edge-7",
   name: "Thomas Grayzone",
   mrn: "MRN-777777",
   age: 49,
   gender: "M",
   dob: "7/14/1976",
-  ssn: "***-**-7777",
   insurance: "UnitedHealthcare",
   admitted: "3 days ago",
   admissionDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -879,14 +870,13 @@ export const aiUncertaintyPatient: Patient = {
 // EDGE CASE 8: "Override Required" - AI Wrong
 // AI recommends action that doctor knows is incorrect
 // ============================================
-export const overrideRequiredPatient: Patient = {
+export const overrideRequiredPatient: SeedPatient = {
   id: "edge-8",
   name: "Helen Expertknows",
   mrn: "MRN-888888",
   age: 62,
   gender: "F",
   dob: "9/5/1963",
-  ssn: "***-**-8888",
   insurance: "Cigna",
   admitted: "2 days ago",
   admissionDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -983,14 +973,13 @@ export const overrideRequiredPatient: Patient = {
 // EDGE CASE 9: "Stale State" - PA Expired
 // PA expired mid-stay, needs urgent re-auth
 // ============================================
-export const staleStatePatient: Patient = {
+export const staleStatePatient: SeedPatient = {
   id: "edge-9",
   name: "Victor Expiredauth",
   mrn: "MRN-999990",
   age: 55,
   gender: "M",
   dob: "4/18/1970",
-  ssn: "***-**-9990",
   insurance: "Humana",
   admitted: "7 days ago",
   admissionDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1028,8 +1017,7 @@ export const staleStatePatient: Patient = {
   dataQuality: "complete",
   paDeadline: {
     type: "concurrent",
-    deadline: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: -48,
+    ...deadlineFromNow(-48),
     isWeekend: false,
     payerSLA: "Concurrent review: Every 5 days",
     status: "overdue"
@@ -1107,14 +1095,13 @@ export const staleStatePatient: Patient = {
 // EDGE CASE 10: "Clean Slate" - Perfect Case
 // Zero issues, ready to submit, shows ideal state
 // ============================================
-export const cleanSlatePatient: Patient = {
+export const cleanSlatePatient: SeedPatient = {
   id: "edge-10",
   name: "Grace Perfectcase",
   mrn: "MRN-100000",
   age: 45,
   gender: "F",
   dob: "12/1/1980",
-  ssn: "***-**-1000",
   insurance: "Kaiser Permanente",
   admitted: "3 days ago",
   admissionDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1187,14 +1174,13 @@ export const cleanSlatePatient: Patient = {
 // EDGE CASE 11: "SDOH Blocking" - Social Barriers
 // Medically ready but socially blocked discharge
 // ============================================
-export const sdohBlockingPatient: Patient = {
+export const sdohBlockingPatient: SeedPatient = {
   id: "edge-11",
   name: "Maria Housingstuck",
   mrn: "MRN-111111",
   age: 68,
   gender: "F",
   dob: "6/20/1957",
-  ssn: "***-**-1111",
   insurance: "Medicaid",
   admitted: "8 days ago",
   admissionDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1212,7 +1198,7 @@ export const sdohBlockingPatient: Patient = {
     { id: uid(), timestamp: "Day 5-8", title: "SDOH Barriers", description: "No SNF beds, no home, no caregiver - stuck" },
   ],
   alerts: [
-    { id: uid(), message: "SDOH BARRIER: Patient is homeless - cannot discharge to street", type: "error" },
+    { id: uid(), message: "SDOH BARRIER: SeedPatient is homeless - cannot discharge to street", type: "error" },
     { id: uid(), message: "SNF placement failed - no Medicaid beds available", type: "error" },
     { id: uid(), message: "4 days without medical necessity - denial expected", type: "warning" },
   ],
@@ -1336,14 +1322,13 @@ export const sdohBlockingPatient: Patient = {
 // EDGE CASE 12: "Concurrent Edit" - Multi-User
 // Multiple providers editing same case
 // ============================================
-export const concurrentEditPatient: Patient = {
+export const concurrentEditPatient: SeedPatient = {
   id: "edge-12",
   name: "James Multiteam",
   mrn: "MRN-121212",
   age: 59,
   gender: "M",
   dob: "3/8/1966",
-  ssn: "***-**-1212",
   insurance: "Anthem",
   admitted: "4 days ago",
   admissionDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1497,14 +1482,13 @@ export const concurrentEditPatient: Patient = {
 // EDGE CASE 13: "24h Timer" - Urgent Deadline
 // PA due in 24 hours with weekend approaching
 // ============================================
-export const urgentTimerPatient: Patient = {
+export const urgentTimerPatient: SeedPatient = {
   id: "edge-13",
   name: "Nancy Deadlinewatch",
   mrn: "MRN-131313",
   age: 72,
   gender: "F",
   dob: "10/12/1953",
-  ssn: "***-**-1313",
   insurance: "Medicare Advantage",
   admitted: "2 days ago",
   admissionDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1540,8 +1524,7 @@ export const urgentTimerPatient: Patient = {
   dataQuality: "complete",
   paDeadline: {
     type: "initial",
-    deadline: new Date(Date.now() + 22 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: 22,
+    ...deadlineFromNow(22),
     isWeekend: true,
     payerSLA: "MA Plan: 24h response, no weekend processing",
     status: "at_risk"
@@ -1607,14 +1590,13 @@ export const urgentTimerPatient: Patient = {
 // EDGE CASE 14: "Appeal Reopen" - Denial Received
 // Previously denied, appeal workflow triggered
 // ============================================
-export const appealReopenPatient: Patient = {
+export const appealReopenPatient: SeedPatient = {
   id: "edge-14",
   name: "Frank Deniedtwice",
   mrn: "MRN-141414",
   age: 64,
   gender: "M",
   dob: "1/30/1961",
-  ssn: "***-**-1414",
   insurance: "Blue Cross Blue Shield",
   admitted: "6 days ago (discharged), readmitted today for appeal",
   admissionDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1651,8 +1633,7 @@ export const appealReopenPatient: Patient = {
   dataQuality: "complete",
   paDeadline: {
     type: "appeal",
-    deadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString(),
-    hoursRemaining: 25 * 24,
+    ...deadlineFromNow(25 * 24),
     isWeekend: false,
     payerSLA: "Appeal must be filed within 30 days of denial",
     status: "on_track"
@@ -1739,14 +1720,13 @@ export const appealReopenPatient: Patient = {
 // EDGE CASE 15: "Language Barrier" - Translation
 // Non-English documentation requiring translation
 // ============================================
-export const languageBarrierPatient: Patient = {
+export const languageBarrierPatient: SeedPatient = {
   id: "edge-15",
   name: "Wei Chen",
   mrn: "MRN-151515",
   age: 76,
   gender: "M",
   dob: "8/3/1949",
-  ssn: "***-**-1515",
   insurance: "Medicare Traditional",
   admitted: "2 days ago",
   admissionDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -1879,7 +1859,7 @@ export const languageBarrierPatient: Patient = {
 }
 
 // Export all edge case patients
-export const edgeCasePatients: Patient[] = [
+export const edgeCasePatients: SeedPatient[] = [
   dataDesertPatient,
   dataTsunamiPatient,
   insuranceLimboPatient,

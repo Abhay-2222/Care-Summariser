@@ -22,7 +22,7 @@ export default function MedicalDirectorPage() {
       <main className="flex flex-1 overflow-hidden">
         <aside className="w-full max-w-sm border-r border-border overflow-y-auto">
           <div className="px-4 py-3 border-b border-border">
-            <h1 className="text-heading-sm text-foreground">Escalated cases</h1>
+            <h1 className="text-heading-sm text-foreground">Escalations</h1>
             <p className="text-caption text-[var(--neutral-500)]">{escalated.length} undecided</p>
           </div>
           {escalated.length === 0 ? (
@@ -36,7 +36,7 @@ export default function MedicalDirectorPage() {
                   setSelectedId(patient.id)
                   setReason("")
                 }}
-                className={`w-full text-left px-4 py-3 border-b border-border hover:bg-[var(--neutral-50)] ${
+                className={`focus-ring w-full text-left px-4 py-3 border-b border-border hover:bg-[var(--neutral-50)] ${
                   selected?.id === patient.id ? "bg-[var(--neutral-50)]" : ""
                 }`}
               >

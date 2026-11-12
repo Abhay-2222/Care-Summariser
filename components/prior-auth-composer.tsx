@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useApp } from "@/lib/app-context"
 import { useToast } from "@/hooks/use-toast"
-import { Wand2, Download, Copy, Eye } from "lucide-react"
+import { Wand2, Copy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { typography } from "@/lib/design-system"
 
 export function PriorAuthComposer() {
-  const { selectedPatient } = useApp()
+  const { selectedPatient, currentRole } = useApp()
+  const readOnly = currentRole === "physician"
   const { toast } = useToast()
   const [generatedText, setGeneratedText] = useState("")
+  const [draftEdited, setDraftEdited] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
 
   if (!selectedPatient) {
@@ -28,6 +30,7 @@ export function PriorAuthComposer() {
   const handleGenerate = () => {
     setIsGenerating(true)
     setTimeout(() => {
+      setDraftEdited(false)
       setGeneratedText(
         `PRIOR AUTHORIZATION REQUEST\n\nPatient: ${selectedPatient.name}\nMRN: ${selectedPatient.mrn}\nDOB: [Date of Birth]\nInsurance: ${selectedPatient.insurance}\n\nCLINICAL INFORMATION:\nDiagnosis: ${selectedPatient.diagnoses.join(", ")}\n\nMedical Necessity:\n${selectedPatient.chiefComplaint}\n\nClinical Course:\n${selectedPatient.clinicalCourse}\n\nRequested Services:\n- Continued inpatient care\n- Ongoing monitoring and treatment\n- Planned diagnostic procedures\n\nSupporting Documentation:\n- Clinical notes (${selectedPatient.documentsProcessed} documents)\n- Laboratory results\n- Imaging studies\n- Treatment response documentation\n\nJustification:\nBased on the clinical presentation and response to treatment, continued inpatient care is medically necessary. The patient requires ongoing monitoring and intervention that cannot be safely provided in a lower level of care.`,
       )
@@ -49,9 +52,9 @@ export function PriorAuthComposer() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-100">
+      <div className="bg-white rounded-lg border border-border">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <p className={typography.sectionHeader}>Request</p>
           <span className="text-caption text-[var(--neutral-500)]">
             {selectedPatient.insurance}
@@ -80,35 +83,36 @@ export function PriorAuthComposer() {
           </div>
 
           {!generatedText ? (
-            <div className="flex flex-col items-center justify-center py-10 border-t border-slate-100 mt-4">
+            <div className="flex flex-col items-center justify-center py-10 border-t border-border mt-4">
               <h3 className="text-label-md text-foreground mb-3">Draft the request from this case</h3>
-              <Button onClick={handleGenerate} disabled={isGenerating} size="sm" className="h-7 px-3">
-                {isGenerating ? "Drafting..." : "Draft request"}
-              </Button>
+              {!readOnly && (
+                <Button onClick={handleGenerate} disabled={isGenerating} size="sm" className="h-7 px-3">
+                  {isGenerating ? "Drafting..." : "Draft request"}
+                </Button>
+              )}
             </div>
           ) : (
-<div className="space-y-3 border-t border-slate-100 mt-4 pt-4">
-              <div className="flex gap-2 flex-wrap">
-                <Button onClick={handleGenerate} variant="outline" size="sm" className="gap-1.5 bg-transparent h-7">
-                  <Wand2 className="h-3 w-3" />
-                  Regenerate
-                </Button>
-                <Button onClick={handleCopy} variant="outline" size="sm" className="gap-1.5 bg-transparent h-7">
-                  <Copy className="h-3 w-3" />
-                  Copy
-                </Button>
-                <Button variant="outline" size="sm" className="gap-1.5 bg-transparent h-7">
-                  <Eye className="h-3 w-3" />
-                  Preview
-                </Button>
-                <Button size="sm" className="ml-auto gap-1.5 h-7">
-                  <Download className="h-3 w-3" />
-                  Submit
-                </Button>
-              </div>
+<div className="space-y-3 border-t border-border mt-4 pt-4">
+              {!readOnly && (
+                <div className="flex gap-2 flex-wrap">
+                  <Button onClick={handleGenerate} variant="outline" size="sm" className="gap-1.5 bg-transparent h-7">
+                    <Wand2 className="h-3 w-3" />
+                    Draft again
+                  </Button>
+                  <Button onClick={handleCopy} variant="outline" size="sm" className="gap-1.5 bg-transparent h-7">
+                    <Copy className="h-3 w-3" />
+                    Copy
+                  </Button>
+                </div>
+              )}
+              <p className={typography.meta}>{draftEdited ? "Edited" : "CareLens suggests"} · Demo data</p>
               <Textarea
                 value={generatedText}
-                onChange={(e) => setGeneratedText(e.target.value)}
+                onChange={(e) => {
+                  setGeneratedText(e.target.value)
+                  setDraftEdited(true)
+                }}
+                readOnly={readOnly}
                 className="min-h-[400px] text-body-sm leading-relaxed"
               />
             </div>

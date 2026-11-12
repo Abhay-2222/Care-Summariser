@@ -13,10 +13,6 @@ import {
   Search, 
   ArrowUp, 
   ArrowDown,
-  Users,
-  LayoutDashboard,
-  FileText,
-  RefreshCw,
   Command,
 } from "lucide-react"
 
@@ -31,42 +27,12 @@ interface ShortcutGroup {
 
 const shortcutGroups: ShortcutGroup[] = [
   {
-    title: "Navigation",
+    title: "Queue",
     shortcuts: [
-      { keys: ["G", "P"], description: "Go to Patients", icon: <Users className="h-3.5 w-3.5" /> },
-      { keys: ["G", "D"], description: "Go to Dashboard", icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
       { keys: ["/"], description: "Focus search", icon: <Search className="h-3.5 w-3.5" /> },
-      { keys: ["?"], description: "Show shortcuts", icon: <Command className="h-3.5 w-3.5" /> },
-    ],
-  },
-  {
-    title: "Patient List",
-    shortcuts: [
       { keys: ["J"], description: "Next patient", icon: <ArrowDown className="h-3.5 w-3.5" /> },
       { keys: ["K"], description: "Previous patient", icon: <ArrowUp className="h-3.5 w-3.5" /> },
-      { keys: ["1"], description: "Filter: All" },
-      { keys: ["2"], description: "Filter: STAT" },
-      { keys: ["3"], description: "Filter: Urgent" },
-      { keys: ["4"], description: "Filter: Routine" },
-    ],
-  },
-  {
-    title: "Patient Detail",
-    shortcuts: [
-      { keys: ["1"], description: "Summary tab" },
-      { keys: ["2"], description: "Prior Auth tab" },
-      { keys: ["3"], description: "Evidence tab" },
-      { keys: ["4"], description: "Appeals tab" },
-      { keys: ["R"], description: "Regenerate AI summary", icon: <RefreshCw className="h-3.5 w-3.5" /> },
-      { keys: ["E"], description: "Export summary", icon: <FileText className="h-3.5 w-3.5" /> },
-    ],
-  },
-  {
-    title: "CareLens Panel",
-    shortcuts: [
-      { keys: ["["], description: "Collapse panel" },
-      { keys: ["]"], description: "Expand panel" },
-      { keys: ["A"], description: "Toggle audit log" },
+      { keys: ["?"], description: "Show shortcuts", icon: <Command className="h-3.5 w-3.5" /> },
     ],
   },
 ]

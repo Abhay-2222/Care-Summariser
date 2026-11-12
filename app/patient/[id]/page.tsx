@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useParams } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { PatientListPanel } from "@/components/patient-list-panel"
@@ -12,28 +13,14 @@ import { AppealsPanel } from "@/components/appeals-panel"
 import { CollaborationPanel } from "@/components/collaboration-panel"
 import { Activity, FileText, Search, RefreshCw, Loader2, Brain, MessageSquare } from "lucide-react"
 import { useApp } from "@/lib/app-context"
-import { useEffect, useState, createContext, useContext } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-
-// Tab context to allow child components to switch tabs
-const TabContext = createContext<{
-  activeTab: string
-  setActiveTab: (tab: string) => void
-}>({ activeTab: "clinical-summary", setActiveTab: () => {} })
-
-// CareLens context for opt-in drawer
-const CareLensContext = createContext<{
-  isOpen: boolean
-  setIsOpen: (open: boolean) => void
-}>({ isOpen: false, setIsOpen: () => {} })
-
-export const useTabContext = () => useContext(TabContext)
-export const useCareLensContext = () => useContext(CareLensContext)
+import { CareLensContext, TabContext } from "@/components/case-contexts"
 
 export default function PatientDetailPage() {
   const params = useParams()
   const id = params.id as string
-  const { setSelectedPatientId, selectedPatient, hasPermission, careLensOpen, setCareLensOpen } = useApp()
+  const { patients, setSelectedPatientId, selectedPatient, currentRole, hasPermission, careLensOpen, setCareLensOpen } = useApp()
   const [activeTab, setActiveTab] = useState("clinical-summary")
 
   useEffect(() => {
@@ -42,7 +29,24 @@ export default function PatientDetailPage() {
     }
   }, [id, setSelectedPatientId])
 
-  // Loading state (Heuristic #1: Visibility of system status)
+  const known = patients.some((patient) => patient.id === id)
+  if (!known) {
+    return (
+      <div className="flex h-screen flex-col bg-background">
+        <AppHeader />
+        <div className="flex flex-1 overflow-hidden">
+          <PatientListPanel />
+          <main className="flex flex-1 items-center justify-center bg-background">
+            <div className="text-center">
+              <p className="text-body text-[var(--neutral-700)]">This case is not in the queue.</p>
+              <Link href="/" className="mt-2 inline-block text-body text-[var(--brand-600)]">Back to the queue</Link>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
   if (!selectedPatient) {
     return (
       <div className="flex h-screen flex-col bg-background">
@@ -69,7 +73,7 @@ export default function PatientDetailPage() {
   ]
 
   // Nurse/Case Manager view (full tabbed layout)
-  const nurseView = (
+  const caseManagerView = (
     <CareLensContext.Provider value={{ isOpen: careLensOpen, setIsOpen: setCareLensOpen }}>
       <TabContext.Provider value={{ activeTab, setActiveTab }}>
         <div className="flex flex-1 overflow-hidden">
@@ -107,7 +111,7 @@ export default function PatientDetailPage() {
                     <Brain className="h-4 w-4" />
                     <span className="hidden sm:inline">CareLens</span>
                     {!careLensOpen && selectedPatient?.careLens?.policyGaps?.filter(g => g.status === "open").length > 0 && (
-                      <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-amber-100 text-amber-700 text-meta flex items-center justify-center">
+                      <span className="h-5 min-w-[20px] px-1.5 rounded-full bg-[var(--status-warn-bg)] text-[var(--status-warn-text)] text-meta flex items-center justify-center">
                         {selectedPatient.careLens.policyGaps.filter(g => g.status === "open").length}
                       </span>
                     )}
@@ -119,12 +123,18 @@ export default function PatientDetailPage() {
                 <ClinicalSummaryView />
               </TabsContent>
               <TabsContent value="prior-auth" className="m-0 flex-1 overflow-y-auto bg-background">
+                {currentRole === "physician" && (
+                  <p className="px-4 pt-3 text-meta text-[var(--neutral-500)]">Read-only. Sending the request stays with the case manager.</p>
+                )}
                 <PriorAuthComposer />
               </TabsContent>
               <TabsContent value="evidence" className="m-0 flex-1 overflow-y-auto bg-background">
                 <EvidencePanel />
               </TabsContent>
               <TabsContent value="appeals" className="m-0 flex-1 overflow-y-auto bg-background">
+                {currentRole === "physician" && (
+                  <p className="px-4 pt-3 text-meta text-[var(--neutral-500)]">Read-only. Appeals stay with the case manager.</p>
+                )}
                 <AppealsPanel />
               </TabsContent>
               <TabsContent value="collaboration" className="m-0 flex-1 overflow-y-auto bg-background p-4">
@@ -146,7 +156,7 @@ export default function PatientDetailPage() {
   return (
     <div className="flex h-screen flex-col bg-background">
       <AppHeader />
-      {nurseView}
+      {caseManagerView}
     </div>
   )
 }

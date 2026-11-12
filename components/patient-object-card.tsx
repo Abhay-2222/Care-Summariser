@@ -44,7 +44,7 @@ export function PatientObjectCard({
             <span className={typography.name}>{patient.name}</span>
             <span className={typography.meta}>{patient.age} {patient.gender}</span>
             {onTogglePHI && (
-              <Button variant="ghost" size="sm" className="h-5 w-5 p-0" onClick={onTogglePHI}>
+              <Button variant="ghost" size="sm" className="h-5 w-5 p-0" aria-label={showPHI ? "Hide details" : "Show details"} onClick={onTogglePHI}>
                 {showPHI ? (
                   <EyeOff className="h-3 w-3 text-[var(--neutral-400)]" />
                 ) : (

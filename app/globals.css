@@ -27,6 +27,7 @@
   --neutral-700: #3f3f46;   /* playbook neutral-700 */
   --neutral-800: #27272a;   /* near-black body text */
   --neutral-900: #18181b;   /* headings / high-emphasis */
+  --focus-ring: var(--brand-500);
 
   /* Semantic tokens */
   --background: #f7f8fa;
@@ -341,10 +342,6 @@
     animation: fade-out 0.15s ease-in forwards;
   }
 
-  .focus-ring {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
-  }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -419,4 +416,9 @@
   letter-spacing: 0;
   text-transform: none;
   line-height: 1.4;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }

@@ -113,6 +113,8 @@ export interface EditSession {
   activeSection?: string
 }
 
+export type SeedPatient = Omit<Patient, "workflow">
+
 export interface Patient {
   id: string
   name: string
@@ -120,7 +122,6 @@ export interface Patient {
   age: number
   gender: "M" | "F"
   dob: string
-  ssn: string
   insurance: string
   admitted: string
   admissionDate: string
@@ -134,6 +135,7 @@ export interface Patient {
   clinicalCourse: string
   timeline: TimelineEvent[]
   alerts: DocumentationAlert[]
+  documentationRequests?: DocumentationRequest[]
   documentsProcessed: number
   // Problem List Hierarchy
   problemList: ProblemListItem[]
@@ -213,7 +215,7 @@ export type RiskFactorStatus = "open" | "addressed" | "not_applicable"
 
 export interface RiskFactorAction {
   id: string
-  type: "create_plan" | "add_documentation" | "request_consult" | "order_test"
+  type: "create_plan" | "add_documentation" | "request_consult" | "order_test" | "review_case" | "send_message"
   label: string
   description?: string
 }
@@ -260,4 +262,10 @@ export interface DocumentationAlert {
   id: string
   message: string
   type: "warning" | "error"
+}
+
+export interface DocumentationRequest {
+  alertId: string
+  requestedBy: string
+  requestedAt: string
 }

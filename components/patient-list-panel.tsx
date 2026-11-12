@@ -27,10 +27,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/lib/app-context"
-import { useRouter } from "next/navigation"
-import { statusConfig, urgencyConfig } from "@/lib/workflow-utils"
+import { usePathname, useRouter } from "next/navigation"
+import { compareByDeadline, isDueToday, rulesMet, statusConfig, urgencyConfig } from "@/lib/workflow-utils"
 import type { CaseStatus } from "@/lib/types"
-import { typography } from "@/lib/design-system"
+import { statusLabels, typography } from "@/lib/design-system"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -61,14 +61,11 @@ const urgencyOptions = [
   { label: "Routine", value: "ROUTINE", icon: Clock },
 ]
 
-const statusOptions: { label: string; value: CaseStatus | "ALL"; color: string }[] = [
-  { label: "All", value: "ALL", color: "bg-[var(--neutral-100)] text-[var(--neutral-600)]" },
-  { label: "New", value: "new", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
-  { label: "In Progress", value: "in_progress", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
-  { label: "With physician", value: "needs_physician", color: "bg-[var(--status-warn-bg)] text-[var(--status-warn-text)]" },
-  { label: "Escalated", value: "escalated", color: "bg-[var(--status-error-bg)] text-[var(--status-error-text)]" },
-  { label: "Signed off", value: "ready", color: "bg-[var(--status-ok-bg)] text-[var(--status-ok-text)]" },
-  { label: "Submitted", value: "submitted", color: "bg-[var(--status-info-bg)] text-[var(--status-info-text)]" },
+const queueStatuses = ["new", "in_progress", "needs_physician", "escalated", "ready", "submitted"] as const
+
+const statusOptions: { label: string; value: CaseStatus | "ALL" }[] = [
+  { label: "All", value: "ALL" },
+  ...queueStatuses.map((value) => ({ label: statusLabels[value], value })),
 ]
 
 export function PatientListPanel() {
@@ -97,6 +94,7 @@ export function PatientListPanel() {
   const mobileOpen = patientListOpen
   const setMobileOpen = setPatientListOpen
   const router = useRouter()
+  const pathname = usePathname()
 
   const filteredPatients = useMemo(() => {
     return patients.filter((patient) => {
@@ -106,7 +104,7 @@ export function PatientListPanel() {
         searchQuery === "" ||
         patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         patient.mrn.toLowerCase().includes(searchQuery.toLowerCase())
-      const dueToday = !!patient.paDeadline && (patient.paDeadline.hoursRemaining <= 24 || patient.paDeadline.status === "overdue")
+      const dueToday = isDueToday(patient)
       const yours = patient.workflow.assignment?.assignedTo === currentUser.name
       const waiting = patient.workflow.status === "needs_physician" || patient.workflow.status === "escalated" || patient.workflow.status === "submitted"
       const matchesSlice =
@@ -118,28 +116,17 @@ export function PatientListPanel() {
     })
   }, [patients, selectedFilter, statusFilter, searchQuery, queueSlice, currentUser.name])
 
-  // Sort by urgency priority and then by status
   const sortedPatients = useMemo(() => {
-    const urgencyPriority = { STAT: 0, URGENT: 1, ROUTINE: 2 }
-    const statusPriority = { new: 0, needs_physician: 1, escalated: 2, in_progress: 3, ready: 4, submitted: 5, approved: 6, denied: 7, appealing: 8 }
-    
-    return [...filteredPatients].sort((a, b) => {
-      // First by urgency
-      const urgencyDiff = urgencyPriority[a.urgency] - urgencyPriority[b.urgency]
-      if (urgencyDiff !== 0) return urgencyDiff
-      // Then by status
-      return statusPriority[a.workflow.status] - statusPriority[b.workflow.status]
-    })
+    return [...filteredPatients].sort(compareByDeadline)
   }, [filteredPatients])
 
-  const statusCounts = useMemo(() => ({
-    ALL: patients.length,
-    new: patients.filter(p => p.workflow.status === "new").length,
-    in_progress: patients.filter(p => p.workflow.status === "in_progress").length,
-    needs_physician: patients.filter(p => p.workflow.status === "needs_physician").length,
-    ready: patients.filter(p => p.workflow.status === "ready").length,
-    submitted: patients.filter(p => p.workflow.status === "submitted").length,
-  }), [patients])
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = { ALL: patients.length }
+    for (const patient of patients) {
+      counts[patient.workflow.status] = (counts[patient.workflow.status] ?? 0) + 1
+    }
+    return counts
+  }, [patients])
 
   const urgencyCounts = useMemo(() => ({
     ALL: patients.length,
@@ -158,21 +145,23 @@ export function PatientListPanel() {
         document.getElementById("patient-search")?.focus()
       }
       
-      if ((e.key === "j" || e.key === "k") && sortedPatients.length > 0) {
+      if ((e.key === "j" || e.key === "k" || e.key === "ArrowDown" || e.key === "ArrowUp") && sortedPatients.length > 0) {
+        e.preventDefault()
         const currentIndex = sortedPatients.findIndex(p => p.id === selectedPatientId)
-        let newIndex = e.key === "j" ? currentIndex + 1 : currentIndex - 1
+        const moveNext = e.key === "j" || e.key === "ArrowDown"
+        let newIndex = moveNext ? currentIndex + 1 : currentIndex - 1
         newIndex = Math.max(0, Math.min(sortedPatients.length - 1, newIndex))
         const newPatient = sortedPatients[newIndex]
         if (newPatient) {
           setSelectedPatientId(newPatient.id)
-          router.push(`/patient/${newPatient.id}`)
+          if (pathname.startsWith("/patient")) router.push(`/patient/${newPatient.id}`)
         }
       }
     }
     
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [sortedPatients, selectedPatientId, setSelectedPatientId, router])
+  }, [sortedPatients, selectedPatientId, setSelectedPatientId, router, pathname])
 
   const handleClaimCase = (patientId: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -247,7 +236,7 @@ export function PatientListPanel() {
         </div>
         <div className="flex gap-1 mb-2">
           {([
-            ["due", "Due today", patients.filter((patient) => !!patient.paDeadline && (patient.paDeadline.hoursRemaining <= 24 || patient.paDeadline.status === "overdue")).length],
+            ["due", "Due today", patients.filter((patient) => isDueToday(patient)).length],
             ["yours", "Yours", patients.filter((patient) => patient.workflow.assignment?.assignedTo === currentUser.name).length],
             ["waiting", "Waiting", patients.filter((patient) => patient.workflow.status === "needs_physician" || patient.workflow.status === "escalated" || patient.workflow.status === "submitted").length],
           ] as const).map(([id, label, count]) => (
@@ -256,7 +245,7 @@ export function PatientListPanel() {
               type="button"
               onClick={() => setQueueSlice(queueSlice === id ? "all" : id)}
               className={cn(
-                "flex-1 rounded-lg border px-2 py-1 text-left",
+                "focus-ring flex-1 rounded-lg border px-2 py-1 text-left",
                 queueSlice === id ? "border-[var(--brand-500)] bg-[var(--brand-50)]" : "border-border bg-card"
               )}
             >
@@ -268,12 +257,12 @@ export function PatientListPanel() {
         {/* Search + Filters in one row */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--neutral-300)]" />
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--neutral-500)]" />
             <input
               id="patient-search"
               type="text"
               placeholder="Name or MRN"
-              className="w-full h-8 pl-8 pr-8 rounded-lg text-body-sm bg-[var(--neutral-50)] border border-border text-foreground placeholder:text-[var(--neutral-400)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-100)] focus:border-transparent"
+              className="w-full h-8 pl-8 pr-8 rounded-lg text-body-sm bg-[var(--neutral-50)] border border-border text-foreground placeholder:text-[var(--neutral-500)] focus-ring"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -281,7 +270,8 @@ export function PatientListPanel() {
               <button 
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--neutral-300)] hover:text-[var(--neutral-500)]"
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--neutral-500)] hover:text-[var(--neutral-700)] focus-ring"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -322,12 +312,34 @@ export function PatientListPanel() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {(queueSlice !== "all" || statusFilter !== "ALL" || searchQuery !== "" || selectedFilter !== "ALL") && (
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <p className={typography.meta}>
+              {sortedPatients.length} of {patients.length}
+              {queueSlice !== "all" ? ` · ${queueSlice === "due" ? "Due today" : queueSlice === "yours" ? "Yours" : "Waiting"}` : ""}
+              {statusFilter !== "ALL" ? ` · ${statusOptions.find((status) => status.value === statusFilter)?.label}` : ""}
+              {searchQuery ? ` · “${searchQuery}”` : ""}
+            </p>
+            <button
+              type="button"
+              className={cn(typography.meta, "text-[var(--brand-600)] focus-ring")}
+              onClick={() => {
+                setQueueSlice("all")
+                setStatusFilter("ALL")
+                setSelectedFilter("ALL")
+                setSearchQuery("")
+              }}
+            >
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Patient List */}
       <div className="flex-1 overflow-y-auto">
         {sortedPatients.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-40 text-[var(--neutral-400)]">
+          <div className="flex flex-col items-center justify-center h-40 text-[var(--neutral-500)]">
             <Search className="h-5 w-5 mb-2" />
             <span className="text-caption">
               {searchQuery ? `No match for "${searchQuery}"` : "Nothing in the queue."}
@@ -341,32 +353,34 @@ export function PatientListPanel() {
               const statusInfo = statusConfig[workflow.status]
 
               return (
-                <div
-                  key={patient.id}
-                  className={cn(
-                    "relative px-2 py-2 transition-colors cursor-pointer group",
-                    isSelected
-                      ? "bg-[var(--brand-50)] border-l-2 border-l-[var(--brand-500)]"
-                      : "hover:bg-[var(--neutral-50)] border-l-2 border-l-transparent",
-                  )}
-                  onClick={() => {
-                    setSelectedPatientId(patient.id)
-                    router.push(`/patient/${patient.id}`)
-                  }}
-                >
-                  <div className="flex items-start gap-2">
+                <div key={patient.id} className="flex items-start">
                     {bulkMode && (
                       <button
-                        className="mt-1 flex-shrink-0"
+                        type="button"
+                        aria-label={`Select ${patient.name}`}
+                        className="mt-3 ml-2 flex-shrink-0 focus-ring"
                         onClick={(e) => togglePatientSelection(patient.id, e)}
                       >
                         {selectedIds.has(patient.id) ? (
                           <CheckSquare className="h-4 w-4 text-[var(--brand-500)]" />
                         ) : (
-                          <Square className="h-4 w-4 text-[var(--neutral-300)] hover:text-[var(--neutral-400)]" />
+                          <Square className="h-4 w-4 text-[var(--neutral-500)]" />
                         )}
                       </button>
                     )}
+                  <button
+                    type="button"
+                    className={cn(
+                      "relative flex-1 px-2 py-2 text-left transition-colors cursor-pointer group focus-ring",
+                      isSelected
+                        ? "bg-[var(--brand-50)] border-l-2 border-l-[var(--brand-500)]"
+                        : "hover:bg-[var(--neutral-50)] border-l-2 border-l-transparent",
+                    )}
+                    onClick={() => {
+                      setSelectedPatientId(patient.id)
+                      router.push(`/patient/${patient.id}`)
+                    }}
+                  >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <span className={cn("text-name truncate", isSelected ? "text-[var(--brand-700)]" : "text-foreground")}>
@@ -385,14 +399,14 @@ export function PatientListPanel() {
                             ? patient.paDeadline.status === "overdue"
                               ? `Overdue ${Math.abs(patient.paDeadline.hoursRemaining)} h`
                               : `Due in ${patient.paDeadline.hoursRemaining} h`
-                            : `${patient.payerRules.filter((rule) => rule.status === "satisfied").length} of ${patient.payerRules.length}`}
+                            : `${rulesMet(patient)} of ${patient.payerRules.length}`}
                         </span>
                         {patient.careLens?.denialRisk === "High" && (
                           <span className="text-meta text-[var(--status-error-text)]">High risk</span>
                         )}
                       </div>
                     </div>
-                  </div>
+                  </button>
                 </div>
               )
             })}
@@ -452,7 +466,7 @@ export function PatientListPanel() {
           {hasPermission("claim_case") && !bulkMode && (
             <button
               type="button"
-              className="text-[var(--neutral-500)] hover:text-foreground"
+              className="focus-ring text-[var(--neutral-500)] hover:text-foreground"
               onClick={() => setBulkMode(true)}
             >
               Bulk
