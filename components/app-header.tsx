@@ -32,7 +32,7 @@ import { useApp } from "@/lib/app-context"
 import { NotificationCenter } from "@/components/notification-center"
 
 const baseNavItems = [
-  { name: "Queue", href: "/", icon: ClipboardList, roles: ["case_manager", "physician"] },
+  { name: "Queue", href: "/queue", icon: ClipboardList, roles: ["case_manager", "physician"] },
   { name: "Escalations", href: "/medical-director", icon: Stethoscope, roles: ["physician"] },
   { name: "Audit", href: "/audit", icon: FileCheck, roles: ["auditor"] },
 ]
@@ -87,7 +87,7 @@ export function AppHeader() {
     )}>
       <div className="flex h-12 items-center px-3 md:px-4">
         {/* Left: Logo only - clean minimal branding */}
-        <Link href="/" className="flex items-center mr-4 md:mr-6">
+        <Link href="/queue" className="flex items-center mr-4 md:mr-6" aria-label="CareSummarizer">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-500)] shadow-ds-xs">
             <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />

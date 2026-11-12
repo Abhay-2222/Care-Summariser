@@ -181,14 +181,14 @@ export function ClinicalSummaryView() {
       
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
-          <div className="flex items-start justify-between gap-8">
-            <PatientObjectCard
-              className="min-w-0 flex-1"
-              patient={selectedPatient}
-              showPHI={showPHI}
-              onTogglePHI={() => setShowPHI(!showPHI)}
-            />
-            <div className="shrink-0">
+          <section className="mb-6 rounded-xl border border-border bg-card px-3 py-3 shadow-ds-xs">
+            <div className="flex flex-col items-start gap-4 xl:flex-row xl:items-start xl:justify-between">
+              <PatientObjectCard
+                className="min-w-0 flex-1"
+                patient={selectedPatient}
+                showPHI={showPHI}
+                onTogglePHI={() => setShowPHI(!showPHI)}
+              />
               <WorkflowBar
                 onRequestDocs={() => setPayerRulesOpen(true)}
                 onSendToMD={handleSendToPhysician}
@@ -196,87 +196,70 @@ export function ClinicalSummaryView() {
                 onSubmit={() => setActiveTab("prior-auth")}
               />
             </div>
-          </div>
+          </section>
 
           {(selectedPatient.careLens.conflictingNotes.length > 0 ||
             selectedPatient.alerts.length > 0 ||
             selectedPatient.dataQuality === "sparse" ||
             (selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0)) && (
-            <section className="mt-8">
-              <div className="flex items-baseline gap-2">
-                <h3 className="text-meta text-[var(--neutral-900)]">Review issues</h3>
-                <span className={typography.meta}>
-                  {selectedPatient.careLens.conflictingNotes.length +
-                    selectedPatient.alerts.length +
-                    (selectedPatient.dataQuality === "sparse" ? 1 : 0) +
-                    (selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0 ? 1 : 0)}
-                </span>
-              </div>
-
-              {selectedPatient.dataQuality === "sparse" && (
-                <div className="mt-3">
-                  <p className={typography.meta}>Chart</p>
-                  <p className={cn(typography.body, "mt-1")}>
-                    Only {selectedPatient.documentsProcessed} documents on file
-                  </p>
-                </div>
-              )}
-
-              {selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0 && (
-                <div className="mt-3">
-                  <p className={typography.meta}>In the chart</p>
-                  <p className={cn(typography.body, "mt-1")}>
-                    {selectedPatient.activeSessions.map((session) => session.user).join(", ")}
-                  </p>
-                </div>
-              )}
-
-              {selectedPatient.careLens.conflictingNotes.length > 0 && (
-                <div className="mt-3">
-                  <p className={typography.meta}>Conflict</p>
-                  <div className="mt-1 space-y-2">
-                    {selectedPatient.careLens.conflictingNotes.map((note) => {
-                      const sides = note.split(/ vs\.? /)
-                      if (sides.length < 2) {
-                        return (
-                          <p key={note} className={typography.body}>{note}</p>
-                        )
-                      }
-                      return (
-                        <div key={note} className="flex flex-wrap items-start gap-x-4">
-                          <p className={typography.body}>{sides[0]}</p>
-                          <p className={cn(typography.body, "border-l border-border pl-4")}>{sides.slice(1).join(" vs ")}</p>
-                        </div>
-                      )
-                    })}
+            <div className="space-y-6">
+              {(selectedPatient.careLens.conflictingNotes.length > 0 ||
+                selectedPatient.dataQuality === "sparse" ||
+                (selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0)) && (
+                <section className="rounded-xl border border-border bg-card px-3 py-3 shadow-ds-xs">
+                  <h3 className="text-meta text-[var(--neutral-900)]">
+                    Review issues {selectedPatient.careLens.conflictingNotes.length + (selectedPatient.dataQuality === "sparse" ? 1 : 0) + (selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0 ? 1 : 0)}
+                  </h3>
+                  <div className="mt-3 space-y-3">
+                    {selectedPatient.dataQuality === "sparse" && (
+                      <div className="grid grid-cols-[20px_1fr] gap-x-3">
+                        <AlertTriangle className="h-3.5 w-3.5 text-[var(--neutral-500)]" aria-hidden="true" />
+                        <p className={typography.body}>Only {selectedPatient.documentsProcessed} documents on file</p>
+                      </div>
+                    )}
+                    {selectedPatient.activeSessions && selectedPatient.activeSessions.length > 0 && (
+                      <div className="grid grid-cols-[20px_1fr] gap-x-3">
+                        <AlertCircle className="h-3.5 w-3.5 text-[var(--neutral-500)]" aria-hidden="true" />
+                        <p className={typography.body}>{selectedPatient.activeSessions.map((session) => session.user).join(", ")} in the chart</p>
+                      </div>
+                    )}
+                    {selectedPatient.careLens.conflictingNotes.map((note) => (
+                      <div key={note} className="grid grid-cols-[20px_1fr] gap-x-3">
+                        <AlertTriangle className="h-3.5 w-3.5 text-[var(--neutral-500)]" aria-hidden="true" />
+                        <p className={typography.body}>{note}</p>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                </section>
               )}
-
-              {selectedPatient.alerts.length > 0 && (
-                <div className="mt-4 max-w-2xl">
-                  <p className={typography.meta}>Missing</p>
-                  <div className="mt-1 space-y-1 border-l-2 border-[var(--status-error-text)] pl-3">
-                    {selectedPatient.alerts.map((alert) => (
-                      <p key={alert.id} className={cn(typography.body, "text-[var(--status-error-text)]")}>
+              {selectedPatient.alerts.filter((alert) => !/deadline|due in/i.test(alert.message)).length > 0 && (
+                <section className="rounded-xl border border-border bg-card px-3 py-3 shadow-ds-xs">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-meta text-[var(--neutral-900)]">
+                      Missing {selectedPatient.alerts.filter((alert) => !/deadline|due in/i.test(alert.message)).length}
+                    </h3>
+                    {selectedPatient.alerts.some((alert) => !requestedIds.has(alert.id) && !/deadline|due in/i.test(alert.message)) && (
+                      <button
+                        type="button"
+                        className="focus-ring text-meta text-[var(--brand-600)]"
+                        aria-label="Request missing documents"
+                        onClick={() => selectedPatient.alerts.filter((alert) => !/deadline|due in/i.test(alert.message)).forEach((alert) => requestDocumentation(alert.id))}
+                      >
+                        Request missing documents
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {selectedPatient.alerts.filter((alert) => !/deadline|due in/i.test(alert.message)).map((alert) => (
+                      <p key={alert.id} className={typography.body}>
                         {alert.message}
-                        {requestedIds.has(alert.id) && <span className={cn(typography.meta, "ml-2 text-[var(--neutral-500)]")}>Requested</span>}
+                        {requestedIds.has(alert.id) && <span className={cn(typography.meta, "ml-2")}>Requested</span>}
                       </p>
                     ))}
                   </div>
-                  {selectedPatient.alerts.some((alert) => !requestedIds.has(alert.id)) && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="mt-1 h-7 px-0 text-[var(--brand-600)]"
-                      onClick={() => selectedPatient.alerts.forEach((alert) => requestDocumentation(alert.id))}
-                    >
-                      Request
-                    </Button>
-                  )}
-                </div>
+                </section>
               )}
-            </section>
+            </div>
           )}
 
           {hasPermission("view_audit_log") && (
@@ -310,7 +293,7 @@ export function ClinicalSummaryView() {
             </div>
           )}
 
-          <div className="mt-8 space-y-3">
+          <div className="mt-6 space-y-3">
           {/* Payer Requirements with Evidence Links - Smart defaults: unmet first */}
           <Collapsible open={payerRulesOpen} onOpenChange={setPayerRulesOpen}>
             <div className="bg-card rounded-xl border border-border shadow-ds-xs">
@@ -349,7 +332,7 @@ export function ClinicalSummaryView() {
                               <AlertCircle className={cn("h-3.5 w-3.5 mt-0.5 flex-shrink-0", styles.icon)} />
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className={cn(typography.body, rule.status === "missing" ? "text-[var(--status-error-text)]" : "text-foreground")}>{rule.rule}</p>
+                              <p className={cn(typography.body, rule.status === "missing" ? "text-[var(--neutral-800)]" : "text-foreground")}>{rule.rule}</p>
                               
                               {/* Evidence Links - Click to navigate to Evidence tab */}
                               {rule.status === "satisfied" && linkedDocs && (

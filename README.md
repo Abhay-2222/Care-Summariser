@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. The queue is the home screen. Sarah Johnson is patient `1`.
+Open http://localhost:3000 for the introduction. The queue is at /queue. Sarah Johnson is patient `1`.
 
 `npm test` checks the deadline sort, the due-today rule, and `rulesMet`. `npm run lint` runs ESLint. `npx tsc --noEmit` is the typecheck.
 

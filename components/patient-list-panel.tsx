@@ -28,7 +28,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useApp } from "@/lib/app-context"
 import { usePathname, useRouter } from "next/navigation"
-import { compareByDeadline, isDueToday, rulesMet, statusConfig, urgencyConfig } from "@/lib/workflow-utils"
+import { compareByDeadline, formatDeadline, isDueToday, rulesMet, statusConfig, urgencyConfig } from "@/lib/workflow-utils"
 import type { CaseStatus } from "@/lib/types"
 import { statusLabels, typography } from "@/lib/design-system"
 import { Button } from "@/components/ui/button"
@@ -231,9 +231,6 @@ export function PatientListPanel() {
       
       {/* Header - Optimized minimal design */}
       <div className="px-3 py-2.5 border-b border-border">
-        <div className="mb-2">
-          <h2 className={typography.title}>Queue</h2>
-        </div>
         <div className="flex gap-1 mb-2">
           {([
             ["due", "Due today", patients.filter((patient) => isDueToday(patient)).length],
@@ -383,7 +380,7 @@ export function PatientListPanel() {
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className={cn("text-name truncate", isSelected ? "text-[var(--brand-700)]" : "text-foreground")}>
+                        <span className={cn("text-body truncate", isSelected ? "text-[var(--brand-700)]" : "text-[var(--neutral-800)]")}>
                           {patient.name}
                         </span>
                         <span className={cn("flex-shrink-0 text-meta", statusInfo.badgeClass)}>
@@ -396,13 +393,11 @@ export function PatientListPanel() {
                           patient.paDeadline?.status === "overdue" ? "text-[var(--status-error-text)]" : "text-[var(--neutral-500)]"
                         )}>
                           {patient.paDeadline
-                            ? patient.paDeadline.status === "overdue"
-                              ? `Overdue ${Math.abs(patient.paDeadline.hoursRemaining)} h`
-                              : `Due in ${patient.paDeadline.hoursRemaining} h`
+                            ? formatDeadline(patient.paDeadline.hoursRemaining)
                             : `${rulesMet(patient)} of ${patient.payerRules.length}`}
                         </span>
                         {patient.careLens?.denialRisk === "High" && (
-                          <span className="text-meta text-[var(--status-error-text)]">High risk</span>
+                          <span className="text-meta text-[var(--neutral-800)]">High risk</span>
                         )}
                       </div>
                     </div>
