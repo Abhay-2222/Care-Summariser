@@ -4,7 +4,7 @@ Language, components, design thinking, and where the product should show more th
 
 CareSummarizer is a clickable prior-authorization front end (Next.js 16, React 19, built in v0 and deployed on Vercel). There is no API, no model call, no login, and no save. Refreshing the page rebuilds the queue from generators, so IDs and assignments change. Every "AI", "sync", and "submit" is local state or a fixed sentence.
 
-The product name in the page title is **CareSummarizer AI**. The assistant inside a case is **CareLens**. Training copy says **CareSummarize AI**. Settings calls the user a **Utilization Review Nurse** while the role switcher says **Case Manager**. Those four names are the first check: this is not one product yet.
+The product name in the page title is **CareSummarizer**. The assistant inside a case is **CareLens**. The role switcher says **Case Manager**.
 
 ## What the product is trying to say
 
@@ -27,7 +27,7 @@ CareLens changes title by role in [components/care-lens-drawer.tsx](../component
 - "Clinical Review" for the physician (read-only)
 - "Compliance Report" for the auditor (export)
 
-Roles in [lib/types.ts](../lib/types.ts) are `case_manager`, `physician`, and `auditor`, shown as CM, MD, and AU. The signed-in people are fixed: Maria Santos, Dr. Robert Kim, Jennifer Walsh. The layout in [components/role-aware-layout.tsx](../components/role-aware-layout.tsx) still calls the case-manager view `nurseView`. The story doc never says nurse.
+Roles in [lib/types.ts](../lib/types.ts) are `case_manager`, `physician`, and `auditor`, shown as CM, MD, and AU. The signed-in people are fixed: Maria Santos, Dr. Robert Kim, Jennifer Walsh. The case manager view is the one case layout. The story doc never says nurse.
 
 ### Case status
 
@@ -42,7 +42,7 @@ The words on the badge come from `statusConfig` in [lib/workflow-utils.ts](../li
 - `denied` → Denied
 - `appealing` → Appealing
 
-The story also says **escalated**. That word is not a status. `physicianEscalate` in [lib/app-context.tsx](../lib/app-context.tsx) writes a decision of `"escalated"` and then sets the badge back to **In Progress**. Medical Director does not read that decision. It shows its own list (Sarah Johnson, James Wilson, Maria Garcia) with reasons that are not the patient store.
+**Escalated** is a real status. `physicianEscalate` in [lib/app-context.tsx](../lib/app-context.tsx) sets the case to escalated, and Medical Director reads those cases from the patient store. **Signed off** is the label for `ready`, and that status is computed from payer rules in `requirementsMet`, not assigned by rotation.
 
 **Urgency**, separate from status: STAT, URGENT, ROUTINE.
 
@@ -93,7 +93,7 @@ The story says Needs MD goes to Escalated and then to the medical director. The 
 
 ### Shell
 
-- [app/layout.tsx](../app/layout.tsx) sets the title "CareSummarizer AI - Healthcare Prior Authorization Platform" and the description "utilization review and prior authorization". Fonts are Plus Jakarta for the UI, JetBrains Mono for section labels, and Fraunces, which the case manager screens do not use.
+- [app/layout.tsx](../app/layout.tsx) sets the title "CareSummarizer" and the description "utilization review and prior authorization". Fonts are Plus Jakarta for the UI, JetBrains Mono for section labels, and Fraunces, which the case manager screens do not use.
 - [components/app-header.tsx](../components/app-header.tsx) is the live nav: Queue, Dashboard, MD Review (physician only), Appeals (case manager only), Audit (auditor only). The role switcher is the only login. Search says Ctrl+K and opens nothing.
 - [components/app-sidebar.tsx](../components/app-sidebar.tsx) is not on screen. It names a second product: Patient List, Ops Dashboard, Integration Management, Quality & Compliance, Training & Support, Settings. Those routes exist. The header never links to them.
 - [components/role-aware-layout.tsx](../components/role-aware-layout.tsx) swaps the whole tree by role. On the home page and on a patient URL, physician and auditor never see the case-manager workspace.
@@ -129,8 +129,8 @@ The story says Needs MD goes to Escalated and then to the medical director. The 
 - [app/appeals/page.tsx](../app/appeals/page.tsx), [app/evidence/page.tsx](../app/evidence/page.tsx), and [app/prior-auth/page.tsx](../app/prior-auth/page.tsx) are full-page twins of the patient tabs, with their own copy and data.
 - [app/integrations/page.tsx](../app/integrations/page.tsx) names Epic, Availity, Cerner, Surescripts, and Change Healthcare, with Synced, Partial, Failed, and Offline. Nothing syncs. It is not in the header.
 - [app/compliance/page.tsx](../app/compliance/page.tsx) shows "98.5%" and is a different page from Audit.
-- [app/training/page.tsx](../app/training/page.tsx) says "CareSummarize AI". The cards do not open anything.
-- [app/settings/page.tsx](../app/settings/page.tsx) shows Dr. Emily Rodriguez, Utilization Review Nurse. Save does not change the signed-in user.
+- [app/training/page.tsx](../app/training/page.tsx) says "CareSummarizer". The cards do not open anything.
+- [app/settings/page.tsx](../app/settings/page.tsx) shows Dr. Emily Rodriguez, Case Manager. Save does not change the signed-in user.
 - [app/calibration/page.tsx](../app/calibration/page.tsx) and [components/ai-calibration-test-sheet.tsx](../components/ai-calibration-test-sheet.tsx) are an internal test sheet, "UM Dashboard AI Calibration Test Sheet", with a second status vocabulary: PENDING_REVIEW, IN_REVIEW, MORE_INFO_NEEDED. Those are not case statuses.
 - [components/ai-progress.tsx](../components/ai-progress.tsx) is not mounted. It would cycle "Extracting clinical data → Analyzing documentation → Validating against policy → Generating summary" on a timer.
 - [components/redwood/index.tsx](../components/redwood/index.tsx) (page header, scorecard, gauge, timeline, status badge) is the dashboard's design system. The case workspace uses [lib/design-system.ts](../lib/design-system.ts). Two badge components, two color maps.
@@ -208,10 +208,10 @@ The prototype can demo a morning's queue. It becomes the system of work when the
 ## How to check it, in order
 
 1. Say a status on the queue, the workflow bar, the audit stat, and the notification. They should be the same word. Ready, Approved, and "Treatment Authorized" are three events today.
-2. Escalate as the physician. The badge returns to In Progress. MD Review does not gain that patient.
+2. Escalate as the physician. The badge says Escalated, and that case appears on Escalations.
 3. Ask CareLens why the score is what it is. The reply invents a percent and a historical approval rate.
 4. Click "Request Cardiology Note". The toast says it was sent. No task, message, or document appears.
-5. Compare a Ready badge with that patient's payer rules. The badge was assigned by rotation, not by readiness.
+5. Compare a Signed off badge with that patient's payer rules. The badge is on only when every rule is satisfied and no high risk is still open.
 6. Switch to physician on a patient URL. You leave the summary tabs. The story says the physician sees the same summary, read-only.
 7. Look for social needs, a weekend deadline, a second editor, or "cannot read Mandarin" on the summary. The data has them. The screens do not.
 8. Reload. The claim, the chat, and the audit log are gone. Generated MRNs change.

@@ -2,6 +2,7 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { toast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 import React from "react"
 
@@ -37,6 +38,7 @@ import {
   Target,
 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
+import { rulesMet } from "@/lib/workflow-utils"
 import type { RiskLevel } from "@/lib/types"
 import { riskStyles } from "@/lib/design-system"
 
@@ -101,7 +103,7 @@ function ChatMessage({
                   <button
                     key={action.id}
                     onClick={action.action}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-[var(--neutral-300)] hover:bg-[var(--neutral-50)] text-[var(--neutral-700)] text-caption transition-colors"
+                    className="focus-ring flex items-center gap-1 px-1.5 py-0.5 rounded bg-card border border-[var(--neutral-300)] hover:bg-[var(--neutral-50)] text-[var(--neutral-700)] text-caption transition-colors"
                   >
                     {action.icon}
                     {action.label}
@@ -123,7 +125,7 @@ interface CoachMessage {
 }
 
 export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
-  const { selectedPatient, currentRole, currentUser, hasPermission, updateRiskFactorStatus, updateRecommendationStatus } = useApp()
+  const { selectedPatient, currentRole, hasPermission, updateRiskFactorStatus, updateRecommendationStatus, logAction } = useApp()
   const [confidenceOpen, setConfidenceOpen] = useState(true)
   const [risksOpen, setRisksOpen] = useState(true)
   const [gapsOpen, setGapsOpen] = useState(true)
@@ -135,41 +137,32 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
   const [hasGreeted, setHasGreeted] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
   
-  const userFirstName = currentUser.name.split(" ")[0]
-
-  const handleQuickActionTrigger = (actionId: string) => {
-    console.log(`Quick action triggered: ${actionId}`)
-  }
-
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatMessages])
   
-  useEffect(() => {
-    if (isOpen && selectedPatient && !hasGreeted && mode === "full") {
-      setHasGreeted(true)
-      const { careLens } = selectedPatient
-      const openRisks = careLens.riskFactors.filter(r => r.status === "open")
-      const openGaps = careLens.policyGaps.filter(g => g.status === "open")
-      
-      // Simple contextual greeting - not overly chatty
-      let greeting = ""
-      if (openRisks.length > 0 && openRisks[0].severity === "High") {
-        greeting = `${openRisks.length} risk${openRisks.length > 1 ? "s" : ""} flagged. Top issue: ${openRisks[0].factor}`
-      } else if (openGaps.length > 0) {
-        greeting = `${openGaps.length} policy gap${openGaps.length > 1 ? "s" : ""} to address before submission.`
-      } else {
-        greeting = `Case looks ready. All criteria met for ${selectedPatient.insurance}.`
-      }
-      
-      setChatMessages([{ role: "assistant", content: greeting }])
-    }
-  }, [isOpen, selectedPatient, hasGreeted, mode])
-  
-  useEffect(() => {
+  const patientKey = selectedPatient?.id ?? ""
+  const [chatKey, setChatKey] = useState(patientKey)
+  if (chatKey !== patientKey) {
+    setChatKey(patientKey)
     setHasGreeted(false)
     setChatMessages([])
-  }, [selectedPatient?.id])
+  } else if (isOpen && selectedPatient && !hasGreeted && mode === "full") {
+    const { careLens } = selectedPatient
+    const openRisks = careLens.riskFactors.filter((risk) => risk.status === "open")
+    const openGaps = careLens.policyGaps.filter((gap) => gap.status === "open")
+    const caseLine = selectedPatient.diagnoses[0]
+      ? `${selectedPatient.name}: ${selectedPatient.diagnoses[0]}`
+      : selectedPatient.name
+    const detail = openRisks.length > 0 && openRisks[0].severity === "High"
+      ? `${openRisks.length} risk${openRisks.length > 1 ? "s" : ""} flagged. Top issue: ${openRisks[0].factor}`
+      : openGaps.length > 0
+        ? `${openGaps.length} policy gap${openGaps.length > 1 ? "s" : ""} to address before submission.`
+        : `Case looks ready. All criteria met for ${selectedPatient.insurance}.`
+    const greeting = `${caseLine}. ${detail}`
+    setHasGreeted(true)
+    setChatMessages([{ role: "assistant", content: greeting }])
+  }
 
   if (!selectedPatient) return null
 
@@ -182,20 +175,23 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
   const getAIResponse = (question: string): string => {
     const q = question.toLowerCase()
+    const met = rulesMet(selectedPatient)
+    const record = `${met} of ${selectedPatient.payerRules.length} requirements met. ${selectedPatient.documentsProcessed} documents on file. ${careLens.conflictingNotes.length} conflicting notes. Denial risk on the record is ${careLens.denialRisk}.`
     if (q.includes("los") || q.includes("length of stay")) {
-      return "LOS risk is flagged because the patient's frailty score (6/10) combined with a 72-hour respiratory decline pattern suggests potential extended stay. Similar cases average 2.3 additional days. Consider documenting step-down criteria to mitigate."
+      return selectedPatient.lengthOfStay
+        ? `Length of stay on the record is ${selectedPatient.lengthOfStay}. The record does not include a frailty score or a similar-case average.`
+        : "The record does not include a length of stay. Check the admission note."
     }
-    if (q.includes("deny") || q.includes("denial")) {
-      return `Denial risk is ${careLens.denialRisk}. ${openGapCount} policy gaps, ${openRiskCount} open risks.`
-    }
-    if (q.includes("confidence") || q.includes("score")) {
-      const met = selectedPatient.payerRules.filter((rule) => rule.status === "satisfied").length
-      return `${met} of ${selectedPatient.payerRules.length} requirements met.`
+    if (q.includes("deny") || q.includes("denial") || q.includes("confidence") || q.includes("score")) {
+      return record
     }
     if (q.includes("override") || q.includes("challenge")) {
-      return "To override a risk assessment, click the Challenge button next to the risk factor. Provide clinical justification and I'll recalculate confidence. All overrides are logged for audit compliance."
+      return "Addressed and Dismiss update this case and are written to the audit log. There is no Challenge action."
     }
-    return `Based on ${selectedPatient.name}'s case: The primary diagnosis (${selectedPatient.diagnoses[0]}) with current payer rules suggests focusing on ${openGapCount > 0 ? "resolving policy gaps first" : "preparing PA documentation"}. Would you like specific guidance?`
+    if (selectedPatient.diagnoses[0]) {
+      return `${selectedPatient.name}: ${selectedPatient.diagnoses[0]}. ${record}`
+    }
+    return "The record does not have an answer to that. Check the notes on this case."
   }
 
   const handleSendMessage = () => {
@@ -213,55 +209,44 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
     }, 1200)
   }
 
-  const handleChallenge = (_riskId: string, _riskFactor: string) => {
-    // Chat is removed. The requirement row is the evidence.
-  }
-  
   const handleQuickAction = (actionType: string) => {
     setIsTyping(true)
     let response = ""
-    let followUpActions: QuickAction[] = []
+    const followUpActions: QuickAction[] = []
     
     switch (actionType) {
       case "draft_request":
-        response = `Got it, ${userFirstName}. I've drafted a cardiology consult request for ${selectedPatient.name.split(" ")[0]}:\n\n"Requesting urgent cardiology consult for echo to document EF for ${selectedPatient.insurance} PA criteria. Patient with ${selectedPatient.diagnoses[0]}, admitted ${selectedPatient.admitted}."\n\nWant me to send this to cardiology?`
-        followUpActions = [
-          { id: "send", label: "Send to cardiology", icon: <Send className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("confirm_send") },
-          { id: "edit", label: "Edit first", icon: <FileText className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("edit_draft") },
-        ]
+        response = `CareLens suggests a note, not a sent request: consult for ${selectedPatient.diagnoses[0] || "this case"} to meet ${selectedPatient.insurance} criteria. Nothing has been sent.`
         break
-      case "show_criteria":
-        response = `Here's what ${selectedPatient.insurance} needs for ${selectedPatient.diagnoses[0]}:\n\n1. Echo with documented EF (currently missing)\n2. BNP > 400 or Troponin elevation (you have this)\n3. Failed outpatient management (documented)\n4. Cardiology consult within 24hrs (pending)\n\nYou're at 2/4 criteria. The echo is the key blocker.`
-        followUpActions = [
-          { id: "draft", label: "Request echo now", icon: <Zap className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("draft_request") },
-        ]
+      case "show_criteria": {
+        const lines = selectedPatient.payerRules.map((rule, index) => `${index + 1}. ${rule.rule} (${rule.status})`).join("\n")
+        response = lines
+          ? `Requirements on this case:\n\n${lines}`
+          : "This case has no payer requirements on the record."
         break
+      }
       case "similar_cases":
-        response = `Found 12 similar ${selectedPatient.diagnoses[0]} cases you've worked on:\n\n- 8 approved (avg 1.8 days to decision)\n- 3 initially denied, won on appeal\n- 1 denied (missing echo - same gap as this case)\n\nThe approved cases all had echo within 24hrs of admission. Want me to apply what worked?`
-        followUpActions = [
-          { id: "apply", label: "Apply winning pattern", icon: <Check className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("apply_pattern") },
-        ]
+        response = "The record does not include similar cases or their outcomes."
         break
-      case "address_gaps":
-        response = `Let's close these gaps for ${selectedPatient.name.split(" ")[0]}:\n\n${careLens.policyGaps.filter(g => g.status === "open").map((g, i) => `${i+1}. ${g.gap}`).join("\n")}\n\nI can draft documentation requests for each. Start with the first one?`
-        followUpActions = [
-          { id: "draft_all", label: "Draft all requests", icon: <FileText className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("draft_all") },
-        ]
+      case "address_gaps": {
+        const open = careLens.policyGaps.filter((gap) => gap.status === "open")
+        response = open.length
+          ? `Open gaps on this case:\n\n${open.map((gap, index) => `${index + 1}. ${gap.gap}`).join("\n")}`
+          : "This case has no open policy gaps."
         break
+      }
       case "generate_pa":
-        response = `Great choice, ${userFirstName}! I'll prep the PA for ${selectedPatient.name.split(" ")[0]}. Based on the ${selectedPatient.documentsProcessed} docs I've analyzed, here's the medical necessity summary I'd include:\n\n"${selectedPatient.diagnoses[0]} requiring inpatient level of care due to..."\n\nReady to generate the full PA document?`
-        followUpActions = [
-          { id: "generate", label: "Generate PA now", icon: <FileText className="h-2.5 w-2.5 mr-0.5" />, action: () => handleQuickActionTrigger("open_pa") },
-        ]
+        response = `The request draft is on the Request tab. It starts from ${selectedPatient.diagnoses[0] || "the diagnosis"} and the clinical course on this case. CareLens has not generated a separate document.`
         break
       case "confirm_send":
-        response = `Done! Consult request sent to cardiology. I'll notify you when they respond. In the meantime, anything else for ${selectedPatient.name.split(" ")[0]}'s case?`
+        response = "Nothing was sent and no recommendation was changed. That action is a suggestion only."
         break
       case "apply_pattern":
-        response = `Applied the winning pattern from your approved cases. I've updated the recommendations to match what worked before. The key additions:\n\n1. Echo request (just sent)\n2. Early discharge planning note template\n3. ${selectedPatient.insurance}-specific language in clinical summary\n\nThis should boost approval confidence significantly.`
+        logAction("suggestion saved", selectedPatient.id)
+        response = "Nothing was sent and no recommendation was changed. That action is a suggestion only."
         break
       default:
-        response = `I'm on it, ${userFirstName}. What would you like to do next with ${selectedPatient.name.split(" ")[0]}'s case?`
+        response = `The record for ${selectedPatient.name} does not have an answer to that. Check the notes on this case.`
     }
     
     setTimeout(() => {
@@ -277,7 +262,7 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
   const roleViews = {
     case_manager: {
       title: "CareLens Coach",
-      subtitle: `Hey ${userFirstName}`,
+      subtitle: "CareLens suggests",
       badgeColor: "bg-[var(--status-info-bg)] text-[var(--brand-500)] border-[var(--status-info-border)]",
       showChat: true,
       showActions: true,
@@ -321,11 +306,11 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                     {hasPermission("edit_summary") ? "Interactive" : hasPermission("approve_pa") ? "Review" : "Audit"}
                   </Badge>
                 </div>
-                <p className="text-caption text-[var(--neutral-500)] truncate">{selectedPatient.name} · {selectedPatient.insurance}</p>
+                <p className="text-caption text-[var(--neutral-500)] truncate">{selectedPatient.name} · {selectedPatient.insurance} · Demo data</p>
               </div>
             </div>
             {roleView.showExport && (
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 flex-shrink-0">
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 flex-shrink-0" aria-label="Export analysis">
                 <Download className="h-3.5 w-3.5 text-[var(--neutral-500)]" />
               </Button>
             )}
@@ -334,16 +319,18 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
 
         <ScrollArea className="flex-1 overflow-y-auto">
           <div className="p-3 space-y-3">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Denial risk</p>
-                <p className="text-body text-[var(--neutral-900)]">{careLens.denialRisk}</p>
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Rules met</p>
+                <p className="text-body text-[var(--neutral-900)]">{rulesMet(selectedPatient)} of {selectedPatient.payerRules.length}</p>
               </div>
               <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
-                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Requirements</p>
-                <p className="text-body text-[var(--neutral-900)]">
-                  {selectedPatient.payerRules.filter(r => r.status === "satisfied").length}/{selectedPatient.payerRules.length}
-                </p>
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Documents</p>
+                <p className="text-body text-[var(--neutral-900)]">{selectedPatient.documentsProcessed}</p>
+              </div>
+              <div className="p-2 rounded-lg border border-border bg-[var(--neutral-50)] text-center">
+                <p className="text-overline text-[var(--neutral-500)] mb-0.5">Open conflicts</p>
+                <p className="text-body text-[var(--neutral-900)]">{careLens.conflictingNotes.length}</p>
               </div>
             </div>
 
@@ -428,22 +415,23 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                         )}
                         
                         {isOpen && roleView.showActions && (
-                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--status-error-border)]">
-                            <button 
-                              type="button"
-                              className="text-caption text-[var(--neutral-600)] hover:text-foreground underline"
-                              onClick={() => handleChallenge(risk.id, risk.factor)}
-                            >
-                              Why is this flagged?
-                            </button>
-                            <div className="flex items-center gap-1">
+                          <div className="flex items-center justify-end gap-1 mt-2 pt-2 border-t border-border">
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
                                 className="h-6 px-2 text-caption text-[var(--neutral-700)] hover:bg-[var(--neutral-100)] gap-1 bg-transparent"
                                 onClick={() => {
+                                  const previous = risk.status
                                   updateRiskFactorStatus(risk.id, "addressed", "Resolved")
-                                  toast({ title: "Risk Addressed", description: "Marked as addressed" })
+                                  logAction("risk addressed", selectedPatient.id)
+                                  toast({
+                                    title: "Risk addressed",
+                                    action: (
+                                      <ToastAction altText="Undo" onClick={() => updateRiskFactorStatus(risk.id, previous, "Reopened")}>
+                                        Undo
+                                      </ToastAction>
+                                    ),
+                                  })
                                 }}
                               >
                                 <Check className="h-3 w-3" />
@@ -454,14 +442,22 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                                 size="sm" 
                                 className="h-6 px-2 text-caption text-[var(--neutral-500)] hover:bg-[var(--neutral-50)] gap-1 bg-transparent"
                                 onClick={() => {
+                                  const previous = risk.status
                                   updateRiskFactorStatus(risk.id, "not_applicable", "Not applicable")
-                                  toast({ title: "Risk Dismissed", description: "Marked as not applicable" })
+                                  logAction("risk dismissed", selectedPatient.id)
+                                  toast({
+                                    title: "Risk dismissed",
+                                    action: (
+                                      <ToastAction altText="Undo" onClick={() => updateRiskFactorStatus(risk.id, previous, "Reopened")}>
+                                        Undo
+                                      </ToastAction>
+                                    ),
+                                  })
                                 }}
                               >
                                 <X className="h-3 w-3" />
                                 Dismiss
                               </Button>
-                            </div>
                           </div>
                         )}
                       </div>
@@ -568,6 +564,14 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                               variant="ghost" 
                               size="sm" 
                               className="h-6 px-2 text-caption text-[var(--neutral-700)] hover:bg-[var(--neutral-100)] gap-1 bg-transparent"
+                              onClick={() => handleQuickAction("apply_pattern")}
+                            >
+                              Apply
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2 text-caption text-[var(--neutral-700)] hover:bg-[var(--neutral-100)] gap-1 bg-transparent"
                               onClick={() => {
                                 updateRecommendationStatus(rec.id, "completed", "Done")
                                 toast({ title: "Recommendation Completed", description: "Action marked as done" })
@@ -603,6 +607,11 @@ export function CareLensDrawer({ isOpen, onClose, mode }: CareLensDrawerProps) {
                 Export Analysis Report
               </Button>
             )}
+            <div aria-live="polite" aria-relevant="additions" className="space-y-2">
+              {chatMessages.filter((message) => message.role !== "user").map((message, index) => (
+                <p key={`${message.role}-${index}`} className="text-caption text-[var(--neutral-700)]">{message.content}</p>
+              ))}
+            </div>
           </div>
         </ScrollArea>
 

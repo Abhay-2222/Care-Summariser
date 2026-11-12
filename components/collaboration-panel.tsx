@@ -84,7 +84,7 @@ interface TeamMember {
 const mockNotes: CaseNote[] = [
   {
     id: "note-1",
-    author: { name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-purple-500" },
+    author: { name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-[var(--neutral-200)]" },
     content: "Patient stable overnight. Continue current diuretic regimen. Ready for PA submission pending cardiology consult documentation.",
     timestamp: "Today at 8:30 AM",
     type: "note",
@@ -93,7 +93,7 @@ const mockNotes: CaseNote[] = [
   },
   {
     id: "note-2",
-    author: { name: "Sarah Williams", role: "Case Manager", initials: "SW", color: "bg-blue-500" },
+    author: { name: "Sarah Williams", role: "Case Manager", initials: "SW", color: "bg-[var(--neutral-200)]" },
     content: "@Dr. Chen - Cardiology note received. PA now 95% complete. Should we submit today?",
     timestamp: "Today at 9:15 AM",
     type: "mention",
@@ -102,7 +102,7 @@ const mockNotes: CaseNote[] = [
   },
   {
     id: "note-3",
-    author: { name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-purple-500" },
+    author: { name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-[var(--neutral-200)]" },
     content: "Yes, please proceed with PA submission. I've reviewed and approved the clinical justification.",
     timestamp: "Today at 9:22 AM",
     type: "note",
@@ -111,14 +111,14 @@ const mockNotes: CaseNote[] = [
   },
   {
     id: "note-4",
-    author: { name: "System", role: "Automated", initials: "SY", color: "bg-slate-400" },
+    author: { name: "System", role: "Automated", initials: "SY", color: "bg-[var(--neutral-200)]" },
     content: "Case status changed from 'In Progress' to 'Ready for PA'",
     timestamp: "Today at 9:25 AM",
     type: "system",
   },
   {
     id: "note-5",
-    author: { name: "Jennifer Martinez", role: "Social Worker", initials: "JM", color: "bg-emerald-500" },
+    author: { name: "Jennifer Martinez", role: "Social Worker", initials: "JM", color: "bg-[var(--neutral-200)]" },
     content: "Discharge planning note: Patient will need home health PT. Family meeting scheduled for tomorrow to discuss care plan.",
     timestamp: "Yesterday at 4:15 PM",
     type: "note",
@@ -127,11 +127,11 @@ const mockNotes: CaseNote[] = [
 ]
 
 const teamMembers: TeamMember[] = [
-  { id: "tm-1", name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-purple-500", status: "online" },
-  { id: "tm-2", name: "Sarah Williams", role: "Case Manager", initials: "SW", color: "bg-blue-500", status: "online" },
-  { id: "tm-3", name: "Jennifer Martinez", role: "Social Worker", initials: "JM", color: "bg-emerald-500", status: "busy" },
-  { id: "tm-4", name: "Dr. Lisa Park", role: "Cardiologist", initials: "LP", color: "bg-amber-500", status: "away" },
-  { id: "tm-5", name: "Michael Torres", role: "Physical Therapist", initials: "MT", color: "bg-red-500", status: "offline" },
+  { id: "tm-1", name: "Dr. Robert Chen", role: "Attending Physician", initials: "RC", color: "bg-[var(--neutral-200)]", status: "online" },
+  { id: "tm-2", name: "Sarah Williams", role: "Case Manager", initials: "SW", color: "bg-[var(--neutral-200)]", status: "online" },
+  { id: "tm-3", name: "Jennifer Martinez", role: "Social Worker", initials: "JM", color: "bg-[var(--neutral-200)]", status: "busy" },
+  { id: "tm-4", name: "Dr. Lisa Park", role: "Cardiologist", initials: "LP", color: "bg-[var(--neutral-200)]", status: "away" },
+  { id: "tm-5", name: "Michael Torres", role: "Physical Therapist", initials: "MT", color: "bg-[var(--neutral-200)]", status: "offline" },
 ]
 
 const statusColors = {
@@ -139,6 +139,13 @@ const statusColors = {
   busy: "bg-[var(--destructive)]",
   away: "bg-[var(--warning)]",
   offline: "bg-[var(--neutral-300)]",
+}
+
+const statusWords = {
+  online: "Online",
+  busy: "Busy",
+  away: "Away",
+  offline: "Offline",
 }
 
 const categoryConfig = {
@@ -183,7 +190,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
     const mentions = newNote.match(/@[\w\s.]+/g)?.map((m) => m.slice(1)) || []
     const newCaseNote: CaseNote = {
       id: `note-${Date.now()}`,
-      author: { name: "Current User", role: "Case Manager", initials: "CU", color: "bg-blue-500" },
+      author: { name: "Current User", role: "Case Manager", initials: "CU", color: "bg-[var(--neutral-200)]" },
       content: newNote,
       timestamp: "Just now",
       type: mentions.length > 0 ? "mention" : "note",
@@ -236,7 +243,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <div className="flex items-center gap-2 text-body-sm text-[var(--neutral-500)]">
                       <Clock className="h-3 w-3" />
                       <span>{note.content}</span>
-                      <span className="text-[var(--neutral-400)] ml-auto">{note.timestamp}</span>
+                      <span className="text-[var(--neutral-500)] ml-auto">{note.timestamp}</span>
                     </div>
                   ) : (
                     <>
@@ -252,7 +259,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                               <span className="text-label-md text-foreground">{note.author.name}</span>
                               {note.pinned && <Pin className="h-3 w-3 text-[var(--warning)]" />}
                             </div>
-                            <span className="text-caption text-[var(--neutral-400)]">{note.author.role}</span>
+                            <span className="text-caption text-[var(--neutral-500)]">{note.author.role}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
@@ -294,11 +301,11 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                         )}
                       </p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-caption text-[var(--neutral-400)]">{note.timestamp}</span>
+                        <span className="text-caption text-[var(--neutral-500)]">{note.timestamp}</span>
                         {note.mentions && note.mentions.length > 0 && (
                           <div className="flex items-center gap-1">
-                            <AtSign className="h-3 w-3 text-[var(--neutral-400)]" />
-                            <span className="text-caption text-[var(--neutral-400)]">{note.mentions.join(", ")}</span>
+                            <AtSign className="h-3 w-3 text-[var(--neutral-500)]" />
+                            <span className="text-caption text-[var(--neutral-500)]">{note.mentions.join(", ")}</span>
                           </div>
                         )}
                       </div>
@@ -328,7 +335,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <button
                       key={member.id}
                       onClick={() => handleMention(member)}
-                      className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[var(--neutral-100)] rounded"
+                      className="focus-ring w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[var(--neutral-100)] rounded"
                     >
                       <Avatar className="h-5 w-5">
                         <AvatarFallback className="text-caption text-[var(--neutral-700)] bg-[var(--neutral-100)]">
@@ -337,7 +344,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                       </Avatar>
                       <div>
                         <p className="text-label-md">{member.name}</p>
-                        <p className="text-caption text-[var(--neutral-400)]">{member.role}</p>
+                        <p className="text-caption text-[var(--neutral-500)]">{member.role}</p>
                       </div>
                     </button>
                   ))}
@@ -407,7 +414,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     </div>
                     <div>
                       <p className="text-label-md text-foreground">{member.name}</p>
-                      <p className="text-caption text-[var(--neutral-400)]">{member.role}</p>
+                      <p className="text-caption text-[var(--neutral-500)]">{member.role} · {statusWords[member.status]}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -447,8 +454,8 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
                     <p className="text-label-md text-foreground">{item.action}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-caption text-[var(--neutral-500)]">{item.user}</span>
-                      <span className="text-caption text-[var(--neutral-300)]">|</span>
-                      <span className="text-caption text-[var(--neutral-400)]">{item.time}</span>
+                      <span className="text-caption text-[var(--neutral-500)]">|</span>
+                      <span className="text-caption text-[var(--neutral-500)]">{item.time}</span>
                     </div>
                   </div>
                 </div>
@@ -518,7 +525,7 @@ export function CollaborationPanel({ patientId, patientName }: CollaborationPane
             </div>
             <div className="flex items-center gap-2 p-3 rounded-lg border border-border">
               <AlertTriangle className="h-4 w-4 text-[var(--warning)] flex-shrink-0" />
-              <p className="text-meta text-amber-800">
+              <p className="text-meta text-[var(--neutral-700)]">
                 The recipient will be notified immediately and will have full access to case history and notes.
               </p>
             </div>

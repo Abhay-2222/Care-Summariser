@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { useApp } from "@/lib/app-context"
 import { Search, FileText, Calendar, User, CheckCircle2, Link2 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -26,7 +25,6 @@ const mockDocuments = [
     date: "Jan 7, 2026 08:00",
     author: "Dr. Sarah Mitchell",
     excerpt: "Patient continues to improve. Diuresis ongoing with good response...",
-    relevance: 95,
     satisfiesRequirements: ["Medical Necessity", "Clinical Documentation"],
     isNeededForAuth: true,
   },
@@ -36,7 +34,6 @@ const mockDocuments = [
     date: "Jan 7, 2026 06:30",
     author: "Lab System",
     excerpt: "BNP: 840 (decreased from 1240), Creatinine: 1.2, Potassium: 4.1...",
-    relevance: 92,
     satisfiesRequirements: ["Lab Documentation"],
     isNeededForAuth: true,
   },
@@ -46,7 +43,6 @@ const mockDocuments = [
     date: "Jan 6, 2026 15:20",
     author: "Dr. James Chen, Radiology",
     excerpt: "Chest X-ray shows interval improvement in pulmonary edema...",
-    relevance: 88,
     satisfiesRequirements: ["Diagnostic Imaging"],
     isNeededForAuth: true,
   },
@@ -56,7 +52,6 @@ const mockDocuments = [
     date: "Jan 6, 2026 10:00",
     author: "Dr. Maria Rodriguez, Cardiology",
     excerpt: "Acute decompensated heart failure likely secondary to medication non-compliance...",
-    relevance: 90,
     satisfiesRequirements: ["Specialist Consultation", "Medical Necessity"],
     isNeededForAuth: true,
   },
@@ -66,7 +61,6 @@ const mockDocuments = [
     date: "Jan 5, 2026 14:30",
     author: "Dr. Robert Kim",
     excerpt: "67yo F presenting with acute SOB and chest pain. History of CHF, last admission 3 months ago...",
-    relevance: 85,
     satisfiesRequirements: ["Initial Assessment"],
     isNeededForAuth: false,
   },
@@ -105,16 +99,16 @@ export function EvidencePanel() {
 
   return (
     <div className="p-4">
-      <div className="bg-white rounded-lg border border-slate-100">
+      <div className="bg-white rounded-lg border border-border">
         {/* Header - minimal with design system typography */}
-        <div className="px-4 py-3 border-b border-slate-100">
+        <div className="px-4 py-3 border-b border-border">
           <p className={cn(typography.sectionHeader, "mb-2")}>Evidence</p>
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-300" />
+            <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--neutral-400)]" />
             <input
               type="text"
               placeholder="Search documentation..."
-              className="w-full h-7 pl-7 pr-3 rounded-md text-body bg-[var(--neutral-50)] border-0 text-[var(--neutral-700)] placeholder:text-[var(--neutral-400)] focus:outline-none focus:ring-1 focus:ring-[var(--neutral-200)]"
+              className="focus-ring w-full h-7 pl-7 pr-3 rounded-md text-body bg-[var(--neutral-50)] border-0 text-[var(--neutral-700)] placeholder:text-[var(--neutral-500)]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -127,11 +121,11 @@ export function EvidencePanel() {
                 key={filter.value}
                 type="button"
                 className={cn(
-                  "h-6 px-2 rounded text-meta transition-all",
+                  "focus-ring h-6 px-2 rounded text-meta transition-all",
                   docTypeFilter === filter.value 
                     ? "bg-[var(--neutral-800)] text-white" 
                     : "text-[var(--neutral-500)] hover:text-foreground hover:bg-[var(--neutral-50)]",
-                  filter.value === "needed" && "border border-blue-200"
+                  filter.value === "needed" && "border border-border"
                 )}
                 onClick={() => setDocTypeFilter(filter.value)}
               >
@@ -145,7 +139,7 @@ export function EvidencePanel() {
         </div>
         
         {/* Documents list with Satisfies badges */}
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-border">
           {filteredDocs.map((doc) => (
             <div
               key={doc.id}
@@ -182,27 +176,20 @@ export function EvidencePanel() {
                   
                   {/* Satisfies Requirements - clickable links back to Summary */}
                   {doc.satisfiesRequirements && doc.satisfiesRequirements.length > 0 && (
-                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border">
                       <span className="text-caption text-[var(--neutral-500)]">
                         Meets {doc.satisfiesRequirements.join(", ")}
                       </span>
                     </div>
                   )}
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 px-2 text-meta hover:text-foreground bg-transparent"
-                >
-                  View
-                </Button>
               </div>
             </div>
           ))}
         </div>
         
         {/* Footer stats */}
-        <div className="px-4 py-2 border-t border-slate-100 bg-[var(--neutral-50)]">
+        <div className="px-4 py-2 border-t border-border bg-[var(--neutral-50)]">
           <div className="flex items-center justify-between">
             <span className={typography.label}>
               {filteredDocs.length} documents · {neededForAuthCount} needed for authorization

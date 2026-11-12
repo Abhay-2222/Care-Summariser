@@ -4,7 +4,9 @@ import { useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useApp } from "@/lib/app-context"
-import { statusConfig, requirementsMet } from "@/lib/workflow-utils"
+import { statusConfig, requirementsMet, rulesMet, unmetRequirements } from "@/lib/workflow-utils"
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 import { typography } from "@/lib/design-system"
 import { cn } from "@/lib/utils"
 import {
@@ -41,18 +43,21 @@ export function WorkflowBar({
     physicianApprove,
     physicianDefer,
     physicianEscalate,
+    restorePatient,
     setSelectedPatientId,
   } = useApp()
   const router = useRouter()
   const pathname = usePathname()
+  const { toast } = useToast()
   const [reason, setReason] = useState("")
 
   if (!selectedPatient) return null
 
   const workflow = selectedPatient.workflow
   const statusInfo = statusConfig[workflow.status]
-  const met = selectedPatient.payerRules.filter((rule) => rule.status === "satisfied").length
+  const met = rulesMet(selectedPatient)
   const total = selectedPatient.payerRules.length
+  const gaps = unmetRequirements(selectedPatient)
   const isPhysician = hasPermission("approve_pa")
   const isCaseManager = hasPermission("claim_case")
   const physicianTurn = workflow.status === "needs_physician" || workflow.status === "escalated"
@@ -67,21 +72,41 @@ export function WorkflowBar({
     setReason("")
   }
 
-  const signOff = () => {
-    physicianApprove(selectedPatient.id, reason)
+  const decide = (label: string, run: () => void) => {
+    const snapshot = structuredClone(selectedPatient)
+    run()
+    toast({
+      title: label,
+      description: snapshot.name,
+      action: (
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            restorePatient(snapshot)
+            setSelectedPatientId(snapshot.id)
+            if (pathname.startsWith("/patient")) router.push(`/patient/${snapshot.id}`)
+          }}
+        >
+          Undo
+        </ToastAction>
+      ),
+    })
     advance()
+  }
+
+  const signOff = () => {
+    if (!requirementsMet(selectedPatient)) return
+    decide("Signed off", () => physicianApprove(selectedPatient.id, reason))
   }
 
   const sendBack = () => {
     if (!reason.trim()) return
-    physicianDefer(selectedPatient.id, reason)
-    advance()
+    decide("Sent back", () => physicianDefer(selectedPatient.id, reason))
   }
 
   const escalate = () => {
     if (!reason.trim()) return
-    physicianEscalate(selectedPatient.id, reason)
-    advance()
+    decide("Escalated", () => physicianEscalate(selectedPatient.id, reason))
   }
 
   const holder = workflow.assignment?.assignedTo
@@ -124,12 +149,16 @@ export function WorkflowBar({
 
           {isPhysician && physicianTurn && (
             <>
-              <input
-                value={reason}
-                onChange={(event) => setReason(event.target.value)}
-                placeholder="Reason"
-                className="h-7 w-36 rounded-md border border-border bg-card px-2 text-caption"
-              />
+              <label className="flex flex-col">
+                <span className={typography.meta}>Reason</span>
+                <input
+                  value={reason}
+                  onChange={(event) => setReason(event.target.value)}
+                  aria-label="Reason, required for Send back and Escalate"
+                  placeholder="Required for Send back and Escalate"
+                  className="focus-ring mt-1 h-7 w-44 rounded-md border border-border bg-card px-2 text-body"
+                />
+              </label>
               <Button
                 size="sm"
                 className="h-7 px-2 sm:px-3 text-body gap-1.5"
@@ -149,6 +178,11 @@ export function WorkflowBar({
           )}
         </div>
       </div>
+      {isPhysician && physicianTurn && gaps.length > 0 && (
+        <p className={cn(typography.meta, "mt-2 max-w-md text-[var(--status-error-text)]")}>
+          Missing: {gaps.join("; ")}
+        </p>
+      )}
     </div>
   )
 }

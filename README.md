@@ -1,30 +1,28 @@
-# CareSummarizer AI UI (2)
+# CareSummarizer
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+CareSummarizer is a prior-authorization workspace for a case manager, a physician, and an auditor. CareLens is the assistant inside a case. It quotes the open record. It does not submit a request.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/abhayaksharma-gmailcoms-projects/v0-care-summarizer-ai-ui)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/RPomzVEyoMb)
+## Roles
 
-## Overview
+The header switch is a demo. It is not access control. Anyone using this prototype can become a physician and sign off a case.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+- Case manager: Maria Santos. Claims a case, sends it for sign-off, and sends a signed-off case to the payer.
+- Physician: Dr. Robert Kim. Signs off, sends back, or escalates. Sign off stays disabled until the payer rules are met.
+- Auditor: Jennifer Walsh. Reads the audit view.
 
-## Deployment
+## Run
 
-Your project is live at:
+```bash
+npm install
+npm run dev
+```
 
-**[https://vercel.com/abhayaksharma-gmailcoms-projects/v0-care-summarizer-ai-ui](https://vercel.com/abhayaksharma-gmailcoms-projects/v0-care-summarizer-ai-ui)**
+Open http://localhost:3000. The queue is the home screen. Sarah Johnson is patient `1`.
 
-## Build your app
+`npm test` checks the deadline sort, the due-today rule, and `rulesMet`. `npm run lint` runs ESLint. `npx tsc --noEmit` is the typecheck.
 
-Continue building your app on:
+## What is mocked
 
-**[https://v0.app/chat/RPomzVEyoMb](https://v0.app/chat/RPomzVEyoMb)**
+Patients, rules, and deadlines are generated in the browser from a fixed seed. A refresh keeps the same cases. Nothing is saved. There is no payer connection and no model call.
 
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+Vercel Analytics is loaded on each page. It does not receive patient data from this app. The seed does not include a social security number.

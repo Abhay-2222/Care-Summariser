@@ -1,13 +1,13 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
-import type { Patient, RecommendationStatus, RiskFactorStatus, PolicyGapStatus, CaseStatus, UserRole, Permission, AuditEntry } from "./types"
+import { createContext, useContext, useMemo, useState, useCallback, type ReactNode } from "react"
+import type { Patient, SeedPatient, RecommendationStatus, RiskFactorStatus, PolicyGapStatus, CaseStatus, UserRole, Permission, AuditEntry, RiskFactor, PolicyGap } from "./types"
 import { ROLE_PERMISSIONS } from "./types"
 import { allPatients } from "./patient-data"
 import { edgeCasePatients } from "./edge-case-patients"
 import { generateWorkflow, calculateProgress, requirementsMet } from "./workflow-utils"
 
-const mockPatients: Patient[] = [
+const mockPatients: SeedPatient[] = [
   {
     id: "1",
     name: "Sarah Johnson",
@@ -15,7 +15,6 @@ const mockPatients: Patient[] = [
     age: 67,
     gender: "F",
     dob: "03/15/1958",
-    ssn: "***-**-4521",
     insurance: "Medicare Advantage",
     admitted: "2 days ago",
     admissionDate: "Jan 5, 2026",
@@ -181,7 +180,6 @@ const mockPatients: Patient[] = [
     age: 54,
     gender: "M",
     dob: "08/22/1971",
-    ssn: "***-**-7832",
     insurance: "Blue Cross Blue Shield",
     admitted: "5 days ago",
     admissionDate: "Jan 2, 2026",
@@ -335,7 +333,6 @@ const mockPatients: Patient[] = [
     age: 42,
     gender: "F",
     dob: "11/03/1983",
-    ssn: "***-**-1923",
     insurance: "United Healthcare",
     admitted: "1 day ago",
     admissionDate: "Jan 6, 2026",
@@ -387,8 +384,8 @@ const mockPatients: Patient[] = [
         clinicalClarity: "High",
       },
       denialRisk: "Low",
-      riskFactors: [] as any[],
-      policyGaps: [] as any[],
+      riskFactors: [] as RiskFactor[],
+      policyGaps: [] as PolicyGap[],
       conflictingNotes: [],
       recommendations: [
         {
@@ -451,8 +448,7 @@ interface AppContextType {
   physicianDefer: (patientId: string, notes?: string) => void
   physicianEscalate: (patientId: string, notes?: string) => void
   submitPA: (patientId: string) => void
-  // Existing actions
-  regenerateSummary: () => void
+  restorePatient: (patient: Patient) => void
   requestDocumentation: (alertId: string) => void
   updateRecommendationStatus: (recommendationId: string, status: RecommendationStatus, notes?: string) => void
   executeRecommendationAction: (recommendationId: string, actionId: string) => Promise<{ success: boolean; message: string }>
@@ -544,17 +540,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const selectedPatient = patients.find((p) => p.id === selectedPatientId) || null
 
-  const regenerateSummary = () => {
-    console.log("[v0] Regenerating clinical summary for patient:", selectedPatientId)
-    // In a real app, this would call an API
-  }
+  const restorePatient = useCallback((patient: Patient) => {
+    setPatients((prev) => prev.map((item) => (item.id === patient.id ? patient : item)))
+    logAction("decision undone", patient.id)
+  }, [logAction])
 
-  const requestDocumentation = (alertId: string) => {
-    console.log("[v0] Requesting documentation for alert:", alertId)
-    // In a real app, this would send a request
-  }
+  const requestDocumentation = useCallback((alertId: string) => {
+    if (!selectedPatientId) return
+    const requestedAt = new Date().toISOString()
+    setPatients((prev) =>
+      prev.map((patient) => {
+        if (patient.id !== selectedPatientId) return patient
+        const existing = patient.documentationRequests ?? []
+        if (existing.some((request) => request.alertId === alertId)) return patient
+        return {
+          ...patient,
+          documentationRequests: [
+            ...existing,
+            { alertId, requestedBy: currentUser.name, requestedAt },
+          ],
+        }
+      }),
+    )
+    logAction("documentation requested", selectedPatientId)
+  }, [selectedPatientId, currentUser.name, logAction])
 
-  const updateRecommendationStatus = (recommendationId: string, status: RecommendationStatus, notes?: string) => {
+  const updateRecommendationStatus = useCallback((recommendationId: string, status: RecommendationStatus, notes?: string) => {
     setPatients((prevPatients) =>
       prevPatients.map((patient) => ({
         ...patient,
@@ -591,9 +602,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         },
       }))
     )
-  }
+  }, [])
 
-  const executeRecommendationAction = async (
+  const executeRecommendationAction = useCallback(async (
     recommendationId: string,
     actionId: string
   ): Promise<{ success: boolean; message: string }> => {
@@ -628,9 +639,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       success: true,
       message: actionMessages[action.type] || "Action completed successfully.",
     }
-  }
+  }, [patients, updateRecommendationStatus])
 
-  const updateRiskFactorStatus = (riskFactorId: string, status: RiskFactorStatus, notes?: string) => {
+  const updateRiskFactorStatus = useCallback((riskFactorId: string, status: RiskFactorStatus, notes?: string) => {
     setPatients((prevPatients) =>
       prevPatients.map((patient) => ({
         ...patient,
@@ -652,8 +663,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     hour: "2-digit",
                     minute: "2-digit",
                   }),
-                  action: status === "not_applicable" ? "gap not applicable" : "gap resolved",
-                  user: "Dr. Current User",
+                  action: status === "not_applicable" ? "risk dismissed" : status === "addressed" ? "risk addressed" : "risk reopened",
+                  user: currentUser.name,
                 },
                 ...patient.careLens.auditTrail,
               ]
@@ -661,9 +672,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         },
       }))
     )
-  }
+  }, [currentUser.name])
 
-  const executeRiskFactorAction = async (
+  const executeRiskFactorAction = useCallback(async (
     riskFactorId: string,
     actionId: string
   ): Promise<{ success: boolean; message: string }> => {
@@ -690,9 +701,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       success: true,
       message: actionMessages[action.type] || "Action completed successfully.",
     }
-  }
+  }, [patients])
 
-  const updatePolicyGapStatus = (policyGapId: string, status: PolicyGapStatus, notes?: string) => {
+  const updatePolicyGapStatus = useCallback((policyGapId: string, status: PolicyGapStatus, notes?: string) => {
     setPatients((prevPatients) =>
       prevPatients.map((patient) => ({
         ...patient,
@@ -723,10 +734,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         },
       }))
     )
-  }
+  }, [currentUser.name])
 
   // Workflow Actions
-  const claimCase = (patientId: string) => {
+  const claimCase = useCallback((patientId: string) => {
     logAction("claimed", patientId)
     setPatients((prev) =>
       prev.map((p) =>
@@ -757,9 +768,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [logAction, currentUser.name, currentRole])
 
-  const unclaimCase = (patientId: string) => {
+  const unclaimCase = useCallback((patientId: string) => {
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -785,9 +796,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [currentUser.name])
 
-  const updateCaseStatus = (patientId: string, newStatus: CaseStatus, notes?: string) => {
+  const updateCaseStatus = useCallback((patientId: string, newStatus: CaseStatus, notes?: string) => {
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId
@@ -816,14 +827,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [currentUser.name])
 
-  const sendToPhysician = (patientId: string, notes?: string) => {
+  const sendToPhysician = useCallback((patientId: string, notes?: string) => {
     logAction("sent for sign-off", patientId)
     updateCaseStatus(patientId, "needs_physician", notes || "Sent to physician for review and approval")
-  }
+  }, [logAction, updateCaseStatus])
 
-  const physicianApprove = (patientId: string, notes?: string) => {
+  const physicianApprove = useCallback((patientId: string, notes?: string) => {
     const target = patients.find((p) => p.id === patientId)
     if (!target || !requirementsMet(target)) return
     logAction("signed off", patientId)
@@ -857,9 +868,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [patients, logAction, currentUser.name])
 
-  const physicianDefer = (patientId: string, notes?: string) => {
+  const physicianDefer = useCallback((patientId: string, notes?: string) => {
     if (!notes?.trim()) return
     logAction("sent back", patientId)
     setPatients((prev) =>
@@ -892,9 +903,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [logAction, currentUser.name])
 
-  const physicianEscalate = (patientId: string, notes?: string) => {
+  const physicianEscalate = useCallback((patientId: string, notes?: string) => {
     if (!notes?.trim()) return
     logAction("escalated", patientId)
     setPatients((prev) =>
@@ -927,14 +938,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : p
       )
     )
-  }
+  }, [logAction, currentUser.name])
 
-  const submitPA = (patientId: string) => {
+  const submitPA = useCallback((patientId: string) => {
     logAction("sent to payer", patientId)
     updateCaseStatus(patientId, "submitted", "PA submitted to payer")
-  }
+  }, [logAction, updateCaseStatus])
 
-  const getAuditStats = (): AuditStats => {
+  const getAuditStats = useCallback((): AuditStats => {
     const byStatus = patients.reduce((acc, p) => {
       acc[p.workflow.status] = (acc[p.workflow.status] || 0) + 1
       return acc
@@ -952,11 +963,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       pendingPhysician: byStatus.needs_physician || 0,
       readyForSubmission: byStatus.ready || 0,
     }
-  }
+  }, [patients])
 
-  return (
-    <AppContext.Provider
-      value={{
+  const contextValue = useMemo(() => ({
         patients,
         selectedPatientId,
         selectedPatient,
@@ -987,7 +996,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         physicianDefer,
         physicianEscalate,
         submitPA,
-        regenerateSummary,
+        restorePatient,
         requestDocumentation,
         updateRecommendationStatus,
         executeRecommendationAction,
@@ -995,8 +1004,41 @@ export function AppProvider({ children }: { children: ReactNode }) {
         executeRiskFactorAction,
         updatePolicyGapStatus,
         getAuditStats,
-      }}
-    >
+  }), [
+    patients,
+    selectedPatientId,
+    selectedPatient,
+    selectedFilter,
+    statusFilter,
+    activeView,
+    currentRole,
+    currentUser,
+    patientListOpen,
+    careLensOpen,
+    hasSeenSwipeHint,
+    hasPermission,
+    logAction,
+    auditLog,
+    claimCase,
+    unclaimCase,
+    updateCaseStatus,
+    sendToPhysician,
+    physicianApprove,
+    physicianDefer,
+    physicianEscalate,
+    submitPA,
+    restorePatient,
+    requestDocumentation,
+    updateRecommendationStatus,
+    executeRecommendationAction,
+    updateRiskFactorStatus,
+    executeRiskFactorAction,
+    updatePolicyGapStatus,
+    getAuditStats,
+  ])
+
+  return (
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   )

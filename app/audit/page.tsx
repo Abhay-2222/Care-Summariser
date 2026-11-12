@@ -17,7 +17,6 @@ import {
   AlertTriangle,
   FileText,
   ArrowRight,
-  Calendar,
   Activity,
   BarChart3,
 } from "lucide-react"
@@ -32,7 +31,6 @@ function StatCard({
   trend, 
   trendUp,
   icon: Icon,
-  color = "blue"
 }: { 
   title: string
   value: string | number
@@ -40,15 +38,7 @@ function StatCard({
   trend?: string
   trendUp?: boolean
   icon: React.ElementType
-  color?: "blue" | "emerald" | "amber" | "red" | "teal"
 }) {
-  const colorClasses = {
-    blue: "bg-[var(--brand-50)] text-[var(--brand-500)]",
-    emerald: "bg-[var(--status-ok-bg)] text-[var(--success)]",
-    amber: "bg-[var(--status-warn-bg)] text-[var(--warning)]",
-    red: "bg-[var(--status-error-bg)] text-[var(--destructive)]",
-    teal: "bg-[var(--status-ok-bg)] text-[var(--success)]",
-  }
   
   return (
     <div className="bg-card rounded-xl border border-border p-4 shadow-ds-xs">
@@ -67,7 +57,7 @@ function StatCard({
             </div>
           )}
         </div>
-        <div className={cn("p-2 rounded-lg", colorClasses[color])}>
+        <div className="p-2 rounded-lg bg-[var(--neutral-100)] text-[var(--neutral-600)]">
           <Icon className="h-5 w-5" />
         </div>
       </div>
@@ -79,7 +69,7 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
   const percentage = total > 0 ? (count / total) * 100 : 0
   return (
     <div className="flex items-center gap-3">
-      <span className="text-body-sm text-[var(--neutral-600)] w-24">{label}</span>
+      <span className="text-body-sm text-[var(--neutral-700)] w-36">{label}</span>
       <div className="flex-1 h-2 bg-[var(--neutral-150)] rounded-full overflow-hidden">
         <div className={cn("h-full rounded-full", color)} style={{ width: `${percentage}%` }} />
       </div>
@@ -89,7 +79,7 @@ function StatusBar({ label, count, total, color }: { label: string; count: numbe
 }
 
 export default function AuditPage() {
-  const { patients, getAuditStats, currentRole, hasPermission } = useApp()
+  const { patients, auditLog, getAuditStats, currentRole, hasPermission } = useApp()
   const stats = getAuditStats()
 
   const recentActivity = useMemo(() => {
@@ -137,7 +127,7 @@ export default function AuditPage() {
             <AlertTriangle className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" />
             <h2 className="text-heading-md text-foreground">Access Restricted</h2>
             <p className="text-body-md text-[var(--neutral-500)] mt-1">This page is only available to Auditors.</p>
-            <p className="text-body-sm text-[var(--neutral-400)] mt-2">Switch to Auditor role in the header to access this page.</p>
+            <p className="text-body-sm text-[var(--neutral-500)] mt-2">Switch to Auditor role in the header to access this page.</p>
           </div>
         </div>
       </div>
@@ -154,11 +144,22 @@ export default function AuditPage() {
               <h1 className="text-heading-lg text-foreground">Audit Dashboard</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="h-8 text-label-sm gap-1.5 bg-transparent">
-                <Calendar className="h-3.5 w-3.5" />
-                Last 30 Days
-              </Button>
-              <Button className="h-8 text-label-sm gap-1.5">
+              <Button
+                className="h-8 text-label-sm gap-1.5"
+                onClick={() => {
+                  const header = "timestamp,user,role,action,patientId"
+                  const rows = auditLog.map((entry) =>
+                    [entry.timestamp, entry.user, entry.role ?? "", entry.action, entry.patientId ?? ""].map((value) => `"${String(value).replace(/"/g, '""')}"`).join(",")
+                  )
+                  const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv" })
+                  const url = URL.createObjectURL(blob)
+                  const link = document.createElement("a")
+                  link.href = url
+                  link.download = "audit.csv"
+                  link.click()
+                  URL.revokeObjectURL(url)
+                }}
+              >
                 <FileText className="h-3.5 w-3.5" />
                 Export Report
               </Button>
@@ -172,21 +173,18 @@ export default function AuditPage() {
               value={stats.totalCases} 
               subtitle="Active in system"
               icon={FileText}
-              color="blue"
             />
             <StatCard 
               title="Approval Rate" 
               value={`${stats.approvalRate}%`} 
-              subtitle="of decided cases"
+              subtitle={`${stats.byStatus.approved || 0} of ${(stats.byStatus.approved || 0) + (stats.byStatus.denied || 0)} decided`}
               icon={CheckCircle2}
-              color="emerald"
             />
             <StatCard 
               title="Denial Rate" 
               value={`${stats.denialRate}%`} 
-              subtitle="of decided cases"
+              subtitle={`${stats.byStatus.denied || 0} of ${(stats.byStatus.approved || 0) + (stats.byStatus.denied || 0)} decided`}
               icon={XCircle}
-              color="red"
             />
           </div>
 
@@ -199,17 +197,17 @@ export default function AuditPage() {
                   <BarChart3 className="h-4 w-4 text-[var(--neutral-400)]" />
                   Case Status Distribution
                 </h3>
-                <span className="text-caption text-[var(--neutral-400)]">{stats.totalCases} total</span>
+                <span className="text-caption text-[var(--neutral-500)]">{stats.totalCases} total</span>
               </div>
               <div className="flex flex-col gap-3">
-                <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-[var(--brand-500)]" />
-                <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
-                <StatusBar label="With physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-[var(--warning)]" />
-                <StatusBar label="Escalated" count={stats.byStatus.escalated || 0} total={stats.totalCases} color="bg-[var(--destructive)]" />
-                <StatusBar label="Signed off" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-[var(--success)]" />
-                <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-[var(--brand-400)]" />
-                <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-[var(--success)]" />
-                <StatusBar label="Denied" count={stats.byStatus.denied || 0} total={stats.totalCases} color="bg-[var(--destructive)]" />
+                <StatusBar label="New" count={stats.byStatus.new || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="In Progress" count={stats.byStatus.in_progress || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="With physician" count={stats.byStatus.needs_physician || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="Escalated" count={stats.byStatus.escalated || 0} total={stats.totalCases} color="bg-[var(--status-error-text)]" />
+                <StatusBar label="Signed off" count={stats.byStatus.ready || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="Submitted" count={stats.byStatus.submitted || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="Approved" count={stats.byStatus.approved || 0} total={stats.totalCases} color="bg-[var(--neutral-500)]" />
+                <StatusBar label="Denied" count={stats.byStatus.denied || 0} total={stats.totalCases} color="bg-[var(--status-error-text)]" />
               </div>
             </div>
 
@@ -225,7 +223,7 @@ export default function AuditPage() {
                 {casesByInsurance.map(([insurance, count]) => (
                   <StatusBar 
                     key={insurance} 
-                    label={insurance.length > 15 ? insurance.slice(0, 15) + "..." : insurance} 
+                    label={insurance} 
                     count={count} 
                     total={stats.totalCases} 
                     color="bg-[var(--brand-500)]" 
@@ -298,13 +296,13 @@ export default function AuditPage() {
                     <div key={idx} className="flex items-center gap-2 py-1.5 border-b border-border last:border-0">
                       <div className="flex-1 min-w-0">
                         <p className="text-body-sm text-foreground truncate">{activity.patientName}</p>
-                        <p className="text-caption text-[var(--neutral-400)]">
+                        <p className="text-caption text-[var(--neutral-500)]">
                           {fromConfig.label} → {toConfig.label}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-caption text-[var(--neutral-500)]">{activity.changedBy}</p>
-                        <p className="text-caption text-[var(--neutral-400)]">
+                        <p className="text-caption text-[var(--neutral-500)]">
                           {new Date(activity.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -312,7 +310,7 @@ export default function AuditPage() {
                   )
                 })}
                 {recentActivity.length === 0 && (
-                  <p className="text-body-sm text-[var(--neutral-400)] text-center py-4">No recent activity</p>
+                  <p className="text-body-sm text-[var(--neutral-500)] text-center py-4">No recent activity</p>
                 )}
               </div>
             </div>
@@ -320,7 +318,7 @@ export default function AuditPage() {
 
           {/* Footer note */}
           <div className="text-center py-4">
-            <p className="text-caption text-[var(--neutral-400)]">
+            <p className="text-caption text-[var(--neutral-500)]">
               Data refreshes automatically. Last updated: {new Date().toLocaleTimeString()}
             </p>
           </div>

@@ -1,7 +1,8 @@
-import type { Patient, RiskFactor, PolicyGap, Recommendation, AuditEntry } from "./types"
+import type { SeedPatient, RiskFactor, PolicyGap, Recommendation, AuditEntry } from "./types"
+import { demoRandom } from "./demo-clock"
 
 // Helper to generate unique IDs
-const uid = () => Math.random().toString(36).substring(2, 9)
+const uid = () => demoRandom().toString(36).substring(2, 9)
 
 // Name pools for realistic patient names
 const firstNames = {
@@ -14,7 +15,7 @@ const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "
 const insurances = ["Medicare Advantage", "Blue Cross Blue Shield", "Aetna", "UnitedHealthcare", "Cigna", "Humana", "Kaiser Permanente", "Medicaid", "Medicare Traditional", "Anthem"]
 
 // Room generator
-const generateRoom = () => `${Math.floor(Math.random() * 500) + 100}-${"ABCD"[Math.floor(Math.random() * 4)]}`
+const generateRoom = () => `${Math.floor(demoRandom() * 500) + 100}-${"ABCD"[Math.floor(demoRandom() * 4)]}`
 
 // Date generator (within last 10 days)
 const generateAdmissionDate = (daysAgo: number) => {
@@ -24,15 +25,15 @@ const generateAdmissionDate = (daysAgo: number) => {
 }
 
 // MRN generator
-const generateMRN = () => `MRN-${Math.floor(Math.random() * 900000) + 100000}`
+const generateMRN = () => `MRN-${Math.floor(demoRandom() * 900000) + 100000}`
 
 // ============================================
 // ARCHETYPE 1: Surgery Infection Cases (10)
 // ============================================
-function generateSurgeryInfectionCase(index: number, state: "fresh" | "halfway" | "clean"): Patient {
-  const gender = Math.random() > 0.5 ? "M" : "F"
-  const age = Math.floor(Math.random() * 30) + 45
-  const daysAgo = Math.floor(Math.random() * 5) + 2
+function generateSurgeryInfectionCase(index: number, state: "fresh" | "halfway" | "clean"): SeedPatient {
+  const gender = demoRandom() > 0.5 ? "M" : "F"
+  const age = Math.floor(demoRandom() * 30) + 45
+  const daysAgo = Math.floor(demoRandom() * 5) + 2
   const surgeryTypes = ["CABG", "hip replacement", "knee arthroplasty", "spinal fusion", "abdominal surgery", "colectomy"]
   const surgery = surgeryTypes[index % surgeryTypes.length]
   
@@ -188,8 +189,7 @@ function generateSurgeryInfectionCase(index: number, state: "fresh" | "halfway" 
     mrn: generateMRN(),
     age,
     gender,
-    dob: `${Math.floor(Math.random() * 12) + 1}/${Math.floor(Math.random() * 28) + 1}/${2026 - age}`,
-    ssn: "***-**-" + Math.floor(Math.random() * 9000 + 1000),
+    dob: `${Math.floor(demoRandom() * 12) + 1}/${Math.floor(demoRandom() * 28) + 1}/${2026 - age}`,
     insurance: insurances[index % insurances.length],
     admitted: `${daysAgo} days ago`,
     admissionDate: generateAdmissionDate(daysAgo),
@@ -210,7 +210,7 @@ function generateSurgeryInfectionCase(index: number, state: "fresh" | "halfway" 
       { id: uid(), message: "IV antibiotic justification documentation required", type: "warning" },
       { id: uid(), message: "Step-down criteria not yet documented", type: "warning" },
     ],
-    documentsProcessed: Math.floor(Math.random() * 10) + 8,
+    documentsProcessed: Math.floor(demoRandom() * 10) + 8,
     problemList: [
       { id: uid(), name: "Surgical Site Infection", icdCode: "T81.41XA", type: "primary", status: "active" },
       { id: uid(), name: `Status post ${surgery}`, icdCode: "Z96.89", type: "secondary", status: "active" },
@@ -242,10 +242,10 @@ function generateSurgeryInfectionCase(index: number, state: "fresh" | "halfway" 
 // ============================================
 // ARCHETYPE 2: CHF Exacerbation Cases (10)
 // ============================================
-function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): Patient {
-  const gender = Math.random() > 0.5 ? "M" : "F"
-  const age = Math.floor(Math.random() * 25) + 55
-  const daysAgo = Math.floor(Math.random() * 4) + 1
+function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): SeedPatient {
+  const gender = demoRandom() > 0.5 ? "M" : "F"
+  const age = Math.floor(demoRandom() * 25) + 55
+  const daysAgo = Math.floor(demoRandom() * 4) + 1
 
   const baseRisks: RiskFactor[] = [
     {
@@ -365,8 +365,7 @@ function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): P
     mrn: generateMRN(),
     age,
     gender,
-    dob: `${Math.floor(Math.random() * 12) + 1}/${Math.floor(Math.random() * 28) + 1}/${2026 - age}`,
-    ssn: "***-**-" + Math.floor(Math.random() * 9000 + 1000),
+    dob: `${Math.floor(demoRandom() * 12) + 1}/${Math.floor(demoRandom() * 28) + 1}/${2026 - age}`,
     insurance: insurances[(index + 3) % insurances.length],
     admitted: `${daysAgo} days ago`,
     admissionDate: generateAdmissionDate(daysAgo),
@@ -377,7 +376,7 @@ function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): P
     chiefComplaint: "Acute onset shortness of breath and lower extremity edema, worsening over 48 hours",
     diagnoses: ["Acute decompensated heart failure", "Volume overload", "Pulmonary edema"],
     medications: "Furosemide 40mg IV BID, Carvedilol 12.5mg PO BID, Lisinopril 10mg PO daily, Spironolactone 25mg PO daily",
-    clinicalCourse: `Patient admitted with acute decompensated heart failure. BNP elevated at ${1000 + Math.floor(Math.random() * 500)}. Started on IV diuretics with ${state === "clean" ? "excellent" : "good"} response. Fluid balance negative ${1 + Math.random().toFixed(1)}L.`,
+    clinicalCourse: `Patient admitted with acute decompensated heart failure. BNP elevated at ${1000 + Math.floor(demoRandom() * 500)}. Started on IV diuretics with ${state === "clean" ? "excellent" : "good"} response. Fluid balance negative ${1 + demoRandom().toFixed(1)}L.`,
     timeline: [
       { id: uid(), timestamp: generateAdmissionDate(daysAgo) + " 14:30", title: "ED Admission", description: "Acute SOB, O2 88% RA, bilateral crackles" },
       { id: uid(), timestamp: generateAdmissionDate(daysAgo) + " 16:00", title: "Chest X-ray", description: "Bilateral pulmonary edema, cardiomegaly" },
@@ -386,7 +385,7 @@ function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): P
     alerts: state === "clean" ? [] : [
       { id: uid(), message: "Missing cardiology consultation for medical necessity", type: "warning" },
     ],
-    documentsProcessed: Math.floor(Math.random() * 8) + 10,
+    documentsProcessed: Math.floor(demoRandom() * 8) + 10,
     problemList: [
       { id: uid(), name: "Acute Decompensated Heart Failure", icdCode: "I50.31", type: "primary", status: "active" },
       { id: uid(), name: "Pulmonary Edema", icdCode: "J81.0", type: "secondary", status: "active" },
@@ -417,10 +416,10 @@ function generateCHFCase(index: number, state: "fresh" | "halfway" | "clean"): P
 // ============================================
 // ARCHETYPE 3: COPD/AECOPD Cases (10)
 // ============================================
-function generateCOPDCase(index: number, state: "fresh" | "halfway" | "clean"): Patient {
-  const gender = Math.random() > 0.6 ? "M" : "F"
-  const age = Math.floor(Math.random() * 20) + 55
-  const daysAgo = Math.floor(Math.random() * 4) + 1
+function generateCOPDCase(index: number, state: "fresh" | "halfway" | "clean"): SeedPatient {
+  const gender = demoRandom() > 0.6 ? "M" : "F"
+  const age = Math.floor(demoRandom() * 20) + 55
+  const daysAgo = Math.floor(demoRandom() * 4) + 1
 
   const baseRisks: RiskFactor[] = [
     {
@@ -515,8 +514,7 @@ function generateCOPDCase(index: number, state: "fresh" | "halfway" | "clean"): 
     mrn: generateMRN(),
     age,
     gender,
-    dob: `${Math.floor(Math.random() * 12) + 1}/${Math.floor(Math.random() * 28) + 1}/${2026 - age}`,
-    ssn: "***-**-" + Math.floor(Math.random() * 9000 + 1000),
+    dob: `${Math.floor(demoRandom() * 12) + 1}/${Math.floor(demoRandom() * 28) + 1}/${2026 - age}`,
     insurance: insurances[(index + 5) % insurances.length],
     admitted: `${daysAgo} days ago`,
     admissionDate: generateAdmissionDate(daysAgo),
@@ -535,7 +533,7 @@ function generateCOPDCase(index: number, state: "fresh" | "halfway" | "clean"): 
     alerts: state === "clean" ? [] : [
       { id: uid(), message: "Steroid taper plan documentation required", type: "warning" },
     ],
-    documentsProcessed: Math.floor(Math.random() * 6) + 8,
+    documentsProcessed: Math.floor(demoRandom() * 6) + 8,
     problemList: [
       { id: uid(), name: "Acute Exacerbation of COPD", icdCode: "J44.1", type: "primary", status: "active" },
       { id: uid(), name: "Acute Respiratory Failure", icdCode: "J96.00", type: "secondary", status: "active" },
@@ -564,10 +562,10 @@ function generateCOPDCase(index: number, state: "fresh" | "halfway" | "clean"): 
 // ============================================
 // ARCHETYPE 4: Psych Admission Cases (10)
 // ============================================
-function generatePsychCase(index: number, state: "fresh" | "halfway" | "clean"): Patient {
-  const gender = Math.random() > 0.5 ? "M" : "F"
-  const age = Math.floor(Math.random() * 40) + 20
-  const daysAgo = Math.floor(Math.random() * 5) + 2
+function generatePsychCase(index: number, state: "fresh" | "halfway" | "clean"): SeedPatient {
+  const gender = demoRandom() > 0.5 ? "M" : "F"
+  const age = Math.floor(demoRandom() * 40) + 20
+  const daysAgo = Math.floor(demoRandom() * 5) + 2
   const diagnoses = ["Major depressive disorder with suicidal ideation", "Bipolar disorder - manic episode", "Schizophrenia - acute exacerbation", "Anxiety disorder with panic attacks"]
   const diagnosis = diagnoses[index % diagnoses.length]
 
@@ -671,12 +669,11 @@ function generatePsychCase(index: number, state: "fresh" | "halfway" | "clean"):
     mrn: generateMRN(),
     age,
     gender,
-    dob: `${Math.floor(Math.random() * 12) + 1}/${Math.floor(Math.random() * 28) + 1}/${2026 - age}`,
-    ssn: "***-**-" + Math.floor(Math.random() * 9000 + 1000),
+    dob: `${Math.floor(demoRandom() * 12) + 1}/${Math.floor(demoRandom() * 28) + 1}/${2026 - age}`,
     insurance: insurances[(index + 7) % insurances.length],
     admitted: `${daysAgo} days ago`,
     admissionDate: generateAdmissionDate(daysAgo),
-    room: `BH-${Math.floor(Math.random() * 20) + 101}`,
+    room: `BH-${Math.floor(demoRandom() * 20) + 101}`,
     urgency: state === "fresh" ? "STAT" : "URGENT",
     tasks: state === "fresh" ? 4 : state === "halfway" ? 2 : 0,
     lengthOfStay: `${daysAgo} days`,
@@ -692,7 +689,7 @@ function generatePsychCase(index: number, state: "fresh" | "halfway" | "clean"):
       { id: uid(), message: "Safety plan documentation required", type: "error" },
       { id: uid(), message: "Psychiatric medication reconciliation incomplete", type: "warning" },
     ],
-    documentsProcessed: Math.floor(Math.random() * 5) + 6,
+    documentsProcessed: Math.floor(demoRandom() * 5) + 6,
     problemList: [
       { id: uid(), name: diagnosis, icdCode: "F32.9", type: "primary", status: "active" },
       { id: uid(), name: "Insomnia", icdCode: "G47.00", type: "secondary", status: "active" },
@@ -721,9 +718,9 @@ function generatePsychCase(index: number, state: "fresh" | "halfway" | "clean"):
 // ============================================
 // ARCHETYPE 5: OB Complication Cases (10)
 // ============================================
-function generateOBCase(index: number, state: "fresh" | "halfway" | "clean"): Patient {
-  const age = Math.floor(Math.random() * 15) + 22
-  const daysAgo = Math.floor(Math.random() * 3) + 1
+function generateOBCase(index: number, state: "fresh" | "halfway" | "clean"): SeedPatient {
+  const age = Math.floor(demoRandom() * 15) + 22
+  const daysAgo = Math.floor(demoRandom() * 3) + 1
   const complications = ["Preterm labor at 32 weeks", "Preeclampsia with severe features", "Placenta previa with bleeding", "Gestational diabetes - uncontrolled"]
   const complication = complications[index % complications.length]
 
@@ -820,12 +817,11 @@ function generateOBCase(index: number, state: "fresh" | "halfway" | "clean"): Pa
     mrn: generateMRN(),
     age,
     gender: "F",
-    dob: `${Math.floor(Math.random() * 12) + 1}/${Math.floor(Math.random() * 28) + 1}/${2026 - age}`,
-    ssn: "***-**-" + Math.floor(Math.random() * 9000 + 1000),
+    dob: `${Math.floor(demoRandom() * 12) + 1}/${Math.floor(demoRandom() * 28) + 1}/${2026 - age}`,
     insurance: insurances[(index + 2) % insurances.length],
     admitted: `${daysAgo} days ago`,
     admissionDate: generateAdmissionDate(daysAgo),
-    room: `L&D-${Math.floor(Math.random() * 10) + 1}`,
+    room: `L&D-${Math.floor(demoRandom() * 10) + 1}`,
     urgency: state === "fresh" ? "STAT" : "URGENT",
     tasks: state === "fresh" ? 3 : state === "halfway" ? 1 : 0,
     lengthOfStay: `${daysAgo} days`,
@@ -841,7 +837,7 @@ function generateOBCase(index: number, state: "fresh" | "halfway" | "clean"): Pa
     alerts: state === "clean" ? [] : [
       { id: uid(), message: "Tocolysis justification documentation required", type: "warning" },
     ],
-    documentsProcessed: Math.floor(Math.random() * 5) + 8,
+    documentsProcessed: Math.floor(demoRandom() * 5) + 8,
     problemList: [
       { id: uid(), name: complication, icdCode: "O60.00", type: "primary", status: "active" },
       { id: uid(), name: "Pregnancy at 32 weeks", icdCode: "Z3A.32", type: "secondary", status: "active" },
@@ -871,8 +867,8 @@ function generateOBCase(index: number, state: "fresh" | "halfway" | "clean"): Pa
 // ============================================
 // Generate All Patients
 // ============================================
-export function generateAllPatients(): Patient[] {
-  const patients: Patient[] = []
+export function generateAllPatients(): SeedPatient[] {
+  const patients: SeedPatient[] = []
   const states: ("fresh" | "halfway" | "clean")[] = ["fresh", "halfway", "clean"]
   
   // Generate 10 cases per archetype, rotating through states

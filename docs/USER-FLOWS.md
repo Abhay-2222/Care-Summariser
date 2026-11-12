@@ -1,4 +1,4 @@
-# CareSummarizer AI - Complete User Flows & Component Documentation
+# CareSummarizer - Complete User Flows & Component Documentation
 
 ## System Architecture Overview
 
